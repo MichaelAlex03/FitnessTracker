@@ -1,12 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
-import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar'
 import axios from '../api/axios';
 
 const LOGIN_URL = '/auth/login';
-
 
 export default function Login() {
 
@@ -54,8 +51,6 @@ export default function Login() {
         setErrMsg('Registration Failed');
       }
     }
-
-
   }
 
   return (
