@@ -11,9 +11,7 @@ const handleLogin = async (req, res) => {
     const foundUser = await pg.findUser(user);
     if (foundUser.rows.length !== 1) return res.sendStatus(401); //user not found
     //evaluate password
-    // const match = await bcrypt.compare(pwd, founderUser.password);
-    console.log(foundUser)
-    const match = (foundUser.rows[0].user_pass === pwd);
+    const match = await bcrypt.compare(pwd, foundUser.rows[0].user_pass);
     if (match) {
         //create JWTs
         const accessToken = jwt.sign(
@@ -27,7 +25,7 @@ const handleLogin = async (req, res) => {
             { expiresIn: '1d' }
         );
         //Saving refresh token with current user
-        const result = await pg.saveUser(user, refreshToken);
+        const result = await pg.updateUser(user, refreshToken);
         console.log(result);
 
         res.cookie('jwt', refreshToken, { httpOnly: true, sameSite: 'None', secure: true, maxAge: 24 * 60 * 60 * 1000 });

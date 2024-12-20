@@ -7,6 +7,7 @@ const { logger } = require('./middleware/logEvents');
 const path = require('path');
 const pool = require('./config/dbConn');
 const verifyJWT = require('./middleware/verifyJWT');
+const credentials = require('./middleware/credentials');
 const PORT = process.env.PORT || 3000;
 
 const app = express();
@@ -14,6 +15,8 @@ const app = express();
 
 //logs requests made to server
 app.use(logger);
+
+app.use(credentials)
 
 //handle form data
 app.use(express.urlencoded({extended : true}));
@@ -143,49 +146,6 @@ app.post("/create_exercises", verifyJWT, async (req, res) => {
   }
 })
 
-
-app.post('/login', async (req, res) => {
-  const { email, password } = req.body
-  console.log(req.body);
-  console.log(email);
-  console.log(password)
-
-  try{
-    const result = await pool.query('SELECT * FROM users WHERE user_email = $1', [email])
-    console.log(result.rows)
-    if(result.rows.length === 0){
-      return res.json({
-        auth: false, 
-        success: false, 
-        message: 'User not found'
-      })
-    }
-    else if(result.rows[0].user_pass !== password){
-      return res.json({
-        auth: false, 
-        success: false, 
-        message: 'Invalid password'
-      })
-    }
-    else{
-      const id = result.rows[0].id
-      const token = jwt.sign({ userId: id }, 'secret', {
-        expiresIn: '1h'
-      })
-      console.log("Login: Token payload:", jwt.decode(token));
-      return res.json({
-        auth: true, 
-        token: token, 
-        success: true, 
-        message: 'User logged in successfully'
-      })
-    }
-  } catch (error) {
-    console.error('Error logging in user:', error);
-    res.status(500).send({ success: false, message: 'Internal Server Error' });
-  }
-
-});
 
 
 app.post('/create-account', async (req, res) => {

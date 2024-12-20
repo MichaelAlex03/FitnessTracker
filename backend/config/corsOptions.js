@@ -1,10 +1,10 @@
 //Cross Origin Resource Sharing
-const whitelist = ['https://www.google.com', 'http://localhost:5173']; //domains that can access the backend
+const allowedOrigins = require('./allowedOrigins');
 
 //Checks if origin is in whitelist if not sends back error
 const corsOptions = {
     origin: (origin, callback) => {
-        if(whitelist.indexOf(origin) !== -1 || !origin){
+        if(allowedOrigins.indexOf(origin) !== -1 || !origin){
             callback(null, true);
         } else {
             callback(new Error('Not allowed by CORS'))
