@@ -9,10 +9,6 @@ export default function Login() {
 
   const navigate = useNavigate();
 
-  const navigateToWorkout = () => {
-    navigate('/workout');
-  };
-
   const [user, setUser] = useState('');
   const [userFocus, setUserFocus] = useState(false);
 
@@ -32,6 +28,10 @@ export default function Login() {
         {
           user: user,
           pwd: pwd,
+        },
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true
         }
       );
       if (response.status === 200) {

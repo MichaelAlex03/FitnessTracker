@@ -3,12 +3,16 @@ import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icon
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar'
-import axios from 'axios';
+import axios from '../api/axios';
+
+const REGISTER_URL = '/auth/register';
 
 const USER_REGEX = /^[a-zA-Z][a-zA-Z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
 export default function Register() {
+
+  const navigate = useNavigate();
 
   const [user, setUser] = useState('');
   const [validName, setValidName] = useState(false);
@@ -39,16 +43,6 @@ export default function Register() {
   }, [user, pwd, matchPwd])
 
 
-  // async function checkEmailExists(email: string) {
-  //   try {
-  //     const response = await axios.get(`http://localhost:3000/check-email?email=${email}`);
-  //     return response.data.exists;
-  //   } catch (error) {
-  //     console.error('Error checking email:', error);
-  //     return false;
-  //   }
-  // }
-
   async function handleSubmit(e) {
     e.preventDefault();
     // if button enabled with JS hack
@@ -59,17 +53,20 @@ export default function Register() {
       return;
     }
     try {
-      const response = await axios.post('http://localhost:3000/create-account',
-        JSON.stringify({
-          firstName: user,
-          password: pwd,
-        }),
+      const response = await axios.post(REGISTER_URL,
+        {
+          user: user,
+          pwd: pwd,
+        },
         {
           headers: { 'Content-Type': 'application/json' },
           withCredentials: true
         }
       );
-      console.log(response.data);
+      
+      if(response.status === 201){
+        navigate("/login");
+      }
       setUser('');
       setPwd('');
       setMatchPwd('');
