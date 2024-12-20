@@ -1,78 +1,127 @@
-import { useState} from 'react'
+import { useState, useRef, useEffect } from 'react';
+import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../components/Navbar'
 import axios from 'axios';
+
 
 export default function Login() {
 
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const [user, setUser] = useState('');
+  const [userFocus, setUserFocus] = useState(false);
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [pwd, setPwd] = useState('');
+  const [pwdFocus, setPwdFocus] = useState(false);
 
-  function handleChange(e) {
-    const {name, value} = e.target
-    setFormData(prevFormData => {
-      return {
-        ...prevFormData,
-        [name]: value
-      }
-    })
-  }
+  const [errMsg, setErrMsg] = useState('');
 
-  
-  const handleSubmit = async (e) => {
+  useEffect(() => {
+    setErrMsg('');
+  }, [user, pwd]);
+
+
+  // async function checkEmailExists(email: string) {
+  //   try {
+  //     const response = await axios.get(`http://localhost:3000/check-email?email=${email}`);
+  //     return response.data.exists;
+  //   } catch (error) {
+  //     console.error('Error checking email:', error);
+  //     return false;
+  //   }
+  // }
+
+  async function handleSubmit(e) {
     e.preventDefault();
-    try{
-      console.log(formData)
-      const response = await axios.post('http://localhost:3000/login', formData);
-      console.log(response.data)
-      if (response.data.auth) {
-        setIsLoggedIn(true);
-        localStorage.setItem('token', response.data.token)
-        navigateToWorkout();
-      } else {
-        setIsLoggedIn(false);
-        alert(response.data.message);
-      }
-    }catch(error){
-      console.log(error);
+    // if button enabled with JS hack
+    const v1 = USER_REGEX.test(user);
+    const v2 = PWD_REGEX.test(pwd);
+    if (!v1 || !v2) {
+      setErrMsg("Invalid Entry");
+      return;
     }
+    try {
+      const response = await axios.post('http://localhost:3000/create-account',
+        JSON.stringify({
+          firstName: user,
+          password: pwd,
+        }),
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true
+        }
+      );
+      console.log(response.data);
+      setUser('');
+      setPwd('');
+      setMatchPwd('');
+    } catch (err) {
+      if (!err?.response) {
+        setErrMsg('No Server Response');
+      } else if (err.response?.status === 409) {
+        setErrMsg('Username Taken');
+      } else {
+        setErrMsg('Registration Failed');
+      }
+    }
+
+
   }
 
-  const navigate = useNavigate();
+  return (
+    <>
+      <section className='fixed w-full z-[1000]'>
+        <Navbar />
+      </section>
 
-  const navigateToWorkout = () => {
-      navigate('/workout');
-  };
+      <section className="relative w-full flex flex-col p-4 items-center justify-center h-screen bg-[url('.././images/background.jpg')] font-sans text-md bg-cover">
+        <form className='flex flex-col justify-evenly w-full max-w-sm bg-black bg-opacity-65 rounded text-white p-5' onSubmit={handleSubmit}>
 
-return (
-    <div className="background">
-      <form className='form' onSubmit={handleSubmit}>
-      <h1 className='text-2xl font-bold text-center mb-5'>Sign into your account</h1>
+          {errMsg && <p className='bg-pink-300 font-semibold p-2 mb-2 text-red-700' aria-live="assertive">{errMsg}</p>}
+          <h1 className='font-semibold text-2xl mb-5'>Sign In</h1>
+          <label htmlFor='username' className='text-lg'>
+            Username:
+          </label>
+          <input
+            className='text-black rounded-md pl-1 py-1.5'
+            type='text'
+            id='username'
+            autoComplete='off'
+            onChange={(e) => setUser(e.target.value)}
+            value={user}
+            required
+          />
 
-        <input className='form--input'
-            type="email" 
-            placeholder="Email address"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-        />
-        <input className='form--input'
-            type="password" 
-            placeholder="Password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-        />
-        <div className='flex items-center justify-center'>
-          <button className='submit mt-2'>
-              Sign in
+
+          <label htmlFor="password" className='text-lg'>
+            Password:
+          </label>
+          <input
+            className='text-black mb-1 rounded-md pl-1 py-1.5'
+            type="password"
+            id="password"
+            onChange={(e) => setPwd(e.target.value)}
+            value={pwd}
+            required
+          />
+
+          <button
+            disabled={!user || !pwd ? true : false}
+            className={user && pwd 
+              ? 'bg-white text-black font-medium py-2 rounded-lg w-full mt-4 mb-2'
+              : 'opacity-40 bg-white text-black font-medium py-2 rounded-lg w-full mt-4 mb-2'}>
+            Sign In
           </button>
-        </div>  
-      </form>
-      {isLoggedIn && <button>Checked if authenticated</button>}
-    </div>
+
+          <p className='text-md'>
+            Need an account?<br />
+            <span className="underline">
+              <a href="/register">Sign Up</a>
+            </span>
+          </p>
+        </form>
+      </section>
+    </>
+
   )
 }
