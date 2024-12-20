@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const corsOptions = require('./config/corsOptions');
@@ -31,13 +32,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 //   res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
 // });
 
-// //put auth routes here before verifyJWT
-// app.use('/auth/register', require('./routes/auth/register'));
-// app.use('/auth/login', require('./routes/auth/login'));
+//put auth routes here before verifyJWT
+app.use('/auth/register', require('./routes/auth/register'));
+app.use('/auth/login', require('./routes/auth/login'));
 // app.use('/auth/refresh', require('./routes/auth/refresh'));
 // app.use('/auth/logout', require('./routes/auth/logout'));
 
-// app.use(verifyJWT);
+app.use(verifyJWT);
 
 //put all api routes after verifyJWT
 
@@ -146,19 +147,21 @@ app.post("/create_exercises", verifyJWT, async (req, res) => {
 app.post('/login', async (req, res) => {
   const { email, password } = req.body
   console.log(req.body);
+  console.log(email);
+  console.log(password)
 
   try{
     const result = await pool.query('SELECT * FROM users WHERE user_email = $1', [email])
     console.log(result.rows)
     if(result.rows.length === 0){
-      res.json({
+      return res.json({
         auth: false, 
         success: false, 
         message: 'User not found'
       })
     }
     else if(result.rows[0].user_pass !== password){
-      res.json({
+      return res.json({
         auth: false, 
         success: false, 
         message: 'Invalid password'
@@ -170,7 +173,7 @@ app.post('/login', async (req, res) => {
         expiresIn: '1h'
       })
       console.log("Login: Token payload:", jwt.decode(token));
-      res.json({
+      return res.json({
         auth: true, 
         token: token, 
         success: true, 
