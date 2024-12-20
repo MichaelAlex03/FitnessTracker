@@ -1,6 +1,5 @@
 import { Route, Routes, BrowserRouter as Router, Navigate } from 'react-router-dom';
 import Login from './pages/Login'
-import Welcome from './pages/welcome';
 import Register from './pages/Register';
 import WorkoutPage from './pages/workout--page';
 import CreateWorkout from './pages/create--workout';

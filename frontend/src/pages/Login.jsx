@@ -3,10 +3,18 @@ import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icon
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar'
-import axios from 'axios';
+import axios from '../api/axios';
+
+const LOGIN_URL = '/auth/login';
 
 
 export default function Login() {
+
+  const navigate = useNavigate();
+
+  const navigateToWorkout = () => {
+    navigate('/workout');
+  };
 
   const [user, setUser] = useState('');
   const [userFocus, setUserFocus] = useState(false);
@@ -20,38 +28,19 @@ export default function Login() {
     setErrMsg('');
   }, [user, pwd]);
 
-
-  // async function checkEmailExists(email: string) {
-  //   try {
-  //     const response = await axios.get(`http://localhost:3000/check-email?email=${email}`);
-  //     return response.data.exists;
-  //   } catch (error) {
-  //     console.error('Error checking email:', error);
-  //     return false;
-  //   }
-  // }
-
   async function handleSubmit(e) {
     e.preventDefault();
-    // if button enabled with JS hack
-    const v1 = USER_REGEX.test(user);
-    const v2 = PWD_REGEX.test(pwd);
-    if (!v1 || !v2) {
-      setErrMsg("Invalid Entry");
-      return;
-    }
     try {
-      const response = await axios.post('http://localhost:3000/create-account',
-        JSON.stringify({
-          firstName: user,
-          password: pwd,
-        }),
+      const response = await axios.post(LOGIN_URL,
         {
-          headers: { 'Content-Type': 'application/json' },
-          withCredentials: true
+          user: user,
+          pwd: pwd,
         }
       );
-      console.log(response.data);
+      if (response.status === 200) {
+        console.log('goes in');
+        navigate("/workout");
+      }
       setUser('');
       setPwd('');
       setMatchPwd('');
@@ -61,6 +50,7 @@ export default function Login() {
       } else if (err.response?.status === 409) {
         setErrMsg('Username Taken');
       } else {
+        console.log(err.response.data.message)
         setErrMsg('Registration Failed');
       }
     }
@@ -107,7 +97,7 @@ export default function Login() {
 
           <button
             disabled={!user || !pwd ? true : false}
-            className={user && pwd 
+            className={user && pwd
               ? 'bg-white text-black font-medium py-2 rounded-lg w-full mt-4 mb-2'
               : 'opacity-40 bg-white text-black font-medium py-2 rounded-lg w-full mt-4 mb-2'}>
             Sign In
