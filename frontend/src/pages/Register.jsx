@@ -87,8 +87,8 @@ export default function Register() {
   }
 
   return (
-    <section className="w-full flex flex-col p-4 items-center justify-center h-screen bg-[#1e90ff] font-sans text-md">
-      <form className='flex flex-col justify-evenly w-full max-w-sm bg-black bg-opacity-40 text-white p-5' onSubmit={handleSubmit}>
+    <section className="w-full flex flex-col p-4 items-center justify-center h-screen bg-[url('.././images/background.jpg')] font-sans text-md bg-cover">
+      <form className='flex flex-col justify-evenly w-full max-w-sm bg-black bg-opacity-60 rounded text-white p-5' onSubmit={handleSubmit}>
 
         {errMsg && <p className='bg-pink-300 font-semibold p-2 mb-2 text-red-700' aria-live="assertive">{errMsg}</p>}
         <h1 className='font-semibold text-2xl mb-5'>Register</h1>

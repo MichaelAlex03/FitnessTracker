@@ -67,8 +67,8 @@ export default function WorkoutPage() {
 
     return (
         <div className="background">
-            <div className="relative content flex flex-col">
-                <h1 className="absolute top-5 left-5 text-2xl font-bold">My Workouts</h1>
+            <div className="relative content flex flex-col bg-black bg-opacity-75">
+                <h1 className="absolute top-5 left-5 text-2xl font-bold text-white">My Workouts</h1>
                 <button className=" absolute submit top-24 w-5/6" onClick={navigateToCreateWorkout}>Create a new workout</button>
                 <div className="flex flex-col items-center mt-24 w-full overflow-y-auto max-h-[450px]">
                 {workouts.map((workout) => (
