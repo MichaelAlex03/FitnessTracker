@@ -6,11 +6,9 @@ import axios from 'axios';
 
 export default function CreateWorkout() {
     const location = useLocation();
+    const userInfo = location.state
     const accessToken = location.state.accessToken;
     const userId = location.state.id;
-
-    console.log(accessToken);
-
 
     const navigate = useNavigate();
     const [workoutName, setWorkoutName] = useState('');
@@ -19,8 +17,10 @@ export default function CreateWorkout() {
     const [selectedExercise, setSelectedExercise] = useState('');
     const [selectedExercises, setSelectedExercises] = useState([]);
 
+    const [errMsg, setErrMsg] = useState('');
+
     const navigateToWorkoutPage = () => {
-        navigate('/workout');
+        navigate('/workout', { state: userInfo });
     };
 
     useEffect(() => {
@@ -31,7 +31,7 @@ export default function CreateWorkout() {
                         'authorization': `Bearer ${accessToken}`
                     }
                 });
-                setExercises(response.data);
+                setExercises(response.data.rows);
             } catch (error) {
                 console.error('Error fetching exercises:', error);
             }
@@ -66,50 +66,60 @@ export default function CreateWorkout() {
     async function handleCreateWorkout() {
         try {
 
-            const workoutResponse = await axios.post('http://localhost:3000/workouts', {
-                workout_name: workoutName,
+            const workoutResponse = await axios.post('http://localhost:3000/api/workouts', {
+                workoutName,
                 userId,
+                selectedExercises,
             }, {
                 headers: {
-                    'Authorization': `Bearer ${accessToken}`
+                    'authorization': `Bearer ${accessToken}`
                 }
             });
-            if (workoutResponse.data.success) {
-                const workout_id = workoutResponse.data.workout_id;
-
-                const exercisesData = selectedExercises.map(exercise => ({
-                    workout_id: workout_id,
-                    exercise_name: exercise,
-                    sets: 0
-                }));
-
-                console.log(exercisesData);
-                const exercisesResponse = await axios.post('http://localhost:3000/create_exercises', {
-                    exercises: exercisesData
-                }, {
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`
-                    }
-                });
-                if (exercisesResponse.data.success) {
-                    navigateToWorkoutPage();
-                } else {
-                    console.log('Error adding exercises to user_exercises table');
-                }
-            } else {
-                console.log('Error creating workout');
-            }
             console.log(workoutResponse)
-        } catch (error) {
-            console.error('Error creating workout:', error);
+            navigate('/workout', { state: userInfo });
+            // if (workoutResponse.data.success) {
+            //     const workout_id = workoutResponse.data.workout_id;
+
+            //     const exercisesData = selectedExercises.map(exercise => ({
+            //         workout_id: workout_id,
+            //         exercise_name: exercise,
+            //         sets: 0
+            //     }));
+
+            //     console.log(exercisesData);
+            //     const exercisesResponse = await axios.post('http://localhost:3000/create_exercises', {
+            //         exercises: exercisesData
+            //     }, {
+            //         headers: {
+            //             'Authorization': `Bearer ${accessToken}`
+            //         }
+            //     });
+            //     if (exercisesResponse.data.success) {
+            //         navigateToWorkoutPage();
+            //     } else {
+            //         console.log('Error adding exercises to user_exercises table');
+            //     }
+            // } else {
+            //     console.log('Error creating workout');
+            // }
+            // console.log(workoutResponse)
+        } catch (err) {
+            if (!err?.response) {
+                setErrMsg('No Server Response');
+            } else if (err.response?.status === 400 && !workoutName) {
+                setErrMsg('Did not enter a workout name')
+            } else if (err.response?.status === 400 && selectedExercises.length === 0) {
+                setErrMsg('Did not select an exercise')
+            } else {
+                setErrMsg('Workout creation failed');
+            }
         }
     }
-
-    console.log(selectedExercises)
 
     return (
         <div className="background">
             <div className="form xl:w-1/2 xl:h-2/3" >
+                {errMsg && <p className='bg-pink-300 font-semibold p-2 mb-2 text-red-700' aria-live="assertive">{errMsg}</p>}
                 <input className='form--input'
                     type="text"
                     placeholder="Workout Name"

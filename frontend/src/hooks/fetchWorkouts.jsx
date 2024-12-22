@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from '../api/axios';
 
-const fetchWorkouts = () => {
+const fetchWorkouts = (userId, accessToken) => {
 
     const [workouts, setWorkouts] = useState([]);
     const [error, setError] = useState(null)
@@ -9,12 +9,16 @@ const fetchWorkouts = () => {
     useEffect(() => {
         const fetchWorkouts = async () => {
             try {
-                const response = await axios.get(`http://localhost:3000/workouts${userId}`, {
+                const response = await axios.get(`/api/workouts/`, {
+                    params: {
+                        userId: userId,
+                    },
                     headers: {
-                        'Authorization': `Bearer ${accessToken}`
+                        'authorization': `Bearer ${accessToken}`
                     }
-                });
-                setWorkouts(response.data);
+            });
+                console.log(response);
+                setWorkouts(response.data.workouts);
             } catch (error) {
                 setError(error);
             }
