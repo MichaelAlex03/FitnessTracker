@@ -5,9 +5,6 @@ const getExercises = async (req, res) => {
     return res.status(200).json({ rows: result.rows });
 }
 
-const createWorkout = async (req, res) => {
-
-}
 
 module.exports = {
     getExercises,

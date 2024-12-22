@@ -20,10 +20,15 @@ const getAllExercises = async () => {
     return await db.query('SELECT * FROM exercises');
 }
 
+const createWorkout = async (workoutName, userId) => {
+    return await db.query('INSERT INTO workouts (workout_name, user_id) VALUES ($1, $2) RETURNING *', [workoutName, userId]);
+}
+
 module.exports = {
     findUser,
     updateUser,
     createUser,
     getAllExercises,
     getWorkouts,
+    createWorkout,
 }
