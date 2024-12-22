@@ -1,10 +1,10 @@
 import { Route, Routes, BrowserRouter as Router, Navigate } from 'react-router-dom';
 import Login from './pages/Login'
 import Register from './pages/Register';
-import WorkoutPage from './pages/workout--page';
-import CreateWorkout from './pages/create--workout';
-import WorkoutView from './pages/workout--view';
-import ExerciseHistory from './pages/exercise-history';
+import WorkoutPage from './pages/Workouts';
+import CreateWorkout from './pages/CreateWorkout';
+import WorkoutView from './pages/WorkoutView';
+import ExerciseHistory from './pages/History';
 
 
 
@@ -13,7 +13,6 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* <Route path="/" element={<Welcome />} /> */}
         <Route path="/" element={<div><Login /></div>} />
         <Route path="/register" element={<div><Register /></div>} />
         <Route path="/workout" element={<div><WorkoutPage /></div>} />

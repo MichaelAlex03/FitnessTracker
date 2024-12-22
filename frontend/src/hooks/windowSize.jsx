@@ -24,4 +24,4 @@ const windowSize = () => {
     return currentWindow;
 }
 
-export default windowSize
+export default windowSize;

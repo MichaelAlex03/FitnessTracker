@@ -5,6 +5,7 @@ import axios from '../api/axios';
 
 const LOGIN_URL = '/auth/login';
 
+
 export default function Login() {
 
   const navigate = useNavigate();
@@ -16,6 +17,9 @@ export default function Login() {
   const [pwdFocus, setPwdFocus] = useState(false);
 
   const [errMsg, setErrMsg] = useState('');
+
+  let accessToken = '';
+  let userId = '';
 
   useEffect(() => {
     setErrMsg('');
@@ -34,9 +38,17 @@ export default function Login() {
           withCredentials: true
         }
       );
+
+      userId = response.data.foundUser[0].id;
+      accessToken = response.data.accessToken;
+      const userInfo = {
+        id: userId,
+        accessToken: accessToken,
+      }
+
       if (response.status === 200) {
         console.log('goes in');
-        navigate("/workout");
+        navigate("/workout", { state: userInfo });
       }
       setUser('');
       setPwd('');
