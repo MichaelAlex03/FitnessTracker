@@ -60,8 +60,8 @@ app.get("/user_exercises/:id", verifyJWT, async (req, res) => {
   res.json({rows: result.rows, success: true});
 })
 
-app.get("/workouts", verifyJWT, async(req, res) => {
-  const userId = req.userId;
+app.get("/workouts/:id", verifyJWT, async(req, res) => {
+  const userId = req.params.id;
   console.log("Fetching workouts for userId:", userId);
   const result = await pool.query('SELECT * FROM workouts WHERE user_id = $1', [userId])
   res.json(result.rows)
@@ -122,8 +122,8 @@ app.post("/create_sets", verifyJWT, async (req, res) => {
 
 app.post("/workouts", verifyJWT, async (req, res) => {
   try{
-    const userId = req.userId;
-    const result = await pool.query('INSERT INTO workouts (workout_name, user_id) VALUES ($1, $2) RETURNING id', [req.body.workout_name, userId]);
+    const {workoutName, userId} = req.body
+    const result = await pool.query('INSERT INTO workouts (workout_name, user_id) VALUES ($1, $2) RETURNING id', [workoutName, userId]);
     res.send({success: true, user_id: userId, workout_id: result.rows[0].id});
   } catch (error) {
     console.error('Error inserting workout:', error);
