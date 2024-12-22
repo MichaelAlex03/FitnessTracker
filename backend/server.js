@@ -45,6 +45,7 @@ app.use(verifyJWT);
 
 //put all api routes after verifyJWT
 app.use('/api/exercises', require('./routes/api/exercises'));
+app.use('/api/workouts', require('./routes/api/workouts'));
 
 
 

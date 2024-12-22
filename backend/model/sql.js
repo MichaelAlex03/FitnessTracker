@@ -12,12 +12,12 @@ const createUser = async (user, pwd) => {
     return await db.query('INSERT INTO users (user_name, user_pass) VALUES( $1, $2)', [user, pwd]);
 }
 
-const getAllWorkouts = () => {
-    return db.execute(Select)
+const getWorkouts = (userId) => {
+    return db.query('SELECT * FROM workouts WHERE user_id = $1', [userId]);
 }
 
 const getAllExercises = async () => {
-    return await db.query('SELECT * FROM exercises')
+    return await db.query('SELECT * FROM exercises');
 }
 
 module.exports = {
@@ -25,4 +25,5 @@ module.exports = {
     updateUser,
     createUser,
     getAllExercises,
+    getWorkouts,
 }
