@@ -24,6 +24,17 @@ const createWorkout = async (workoutName, userId) => {
     return await db.query('INSERT INTO workouts (workout_name, user_id) VALUES ($1, $2) RETURNING *', [workoutName, userId]);
 }
 
+const createWorkoutExercises = async (workoutId, selectedExercises) => {
+    try {
+        selectedExercises.map(async (exercise) => {
+            await db.query('INSERT INTO user_exercises (exercise_name, workout_id) VALUES ($1, $2)', [exercise, workoutId])
+        });
+        return true;
+    } catch (err) {
+        return err;
+    }
+}
+
 module.exports = {
     findUser,
     updateUser,
@@ -31,4 +42,5 @@ module.exports = {
     getAllExercises,
     getWorkouts,
     createWorkout,
+    createWorkoutExercises,
 }
