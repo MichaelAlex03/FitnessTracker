@@ -16,8 +16,13 @@ const getAllWorkouts = () => {
     return db.execute(Select)
 }
 
+const getAllExercises = async () => {
+    return await db.query('SELECT * FROM exercises')
+}
+
 module.exports = {
     findUser,
     updateUser,
     createUser,
+    getAllExercises,
 }

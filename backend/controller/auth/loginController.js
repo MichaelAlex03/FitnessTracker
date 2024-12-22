@@ -1,7 +1,7 @@
 
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const pg = require('../../model/sql')
+const pg = require('../../model/sql');
 
 const handleLogin = async (req, res) => {
     const { user, pwd } = req.body;
@@ -17,7 +17,7 @@ const handleLogin = async (req, res) => {
         const accessToken = jwt.sign(
             { "username": foundUser.username },
             process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: '30s' }
+            { expiresIn: '1d' }
         );
         const refreshToken = jwt.sign(
             { "username": foundUser.user },
@@ -29,7 +29,7 @@ const handleLogin = async (req, res) => {
         console.log(result);
 
         res.cookie('jwt', refreshToken, { httpOnly: true, sameSite: 'None', secure: true, maxAge: 24 * 60 * 60 * 1000 });
-        res.status(200).json({ accessToken });
+        res.status(200).json({ accessToken, foundUser: foundUser.rows});
     } else {
         res.sendStatus(401);
     }
