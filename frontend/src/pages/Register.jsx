@@ -89,7 +89,7 @@ export default function Register() {
         <Navbar />
       </section>
 
-      <section className="relative w-full flex flex-col p-4 items-center justify-center h-screen bg-background  font-sans text-md bg-cover">
+      <section className="relative w-full flex flex-col p-4 items-center justify-center h-screen bg-background font-sans text-md">
         <form className='flex flex-col justify-evenly w-full max-w-sm bg-black bg-opacity-45 rounded text-white p-5' onSubmit={handleSubmit}>
 
           {errMsg && <p className='bg-pink-300 font-semibold p-2 mb-2 text-red-700' aria-live="assertive">{errMsg}</p>}
