@@ -16,10 +16,10 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "backend for workout tracker",
-  "main": "App.js",
+  "main": "server.js",
   "scripts": {
-    "start":  "node src/server.js",
-    "watch": "nodemone src/server.js",
+    "start": "node src/server.js",
+    "watch": "nodemon src/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Michael L",

@@ -15,4 +15,5 @@ const addExercisesToWorkout = async (req, res) => {
 
 module.exports = {
     getExercises,
+    addExercisesToWorkout,
 }
