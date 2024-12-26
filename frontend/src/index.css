@@ -30,11 +30,13 @@
 }
 
 @layer utilities{
+
     .bg-brownish{
         background-color: #f6e6cb;
     }
     .bg-background{
-        background-color: #b6c7aa;
+        background-color: #000000;
+        background-image: linear-gradient(315deg, #000000 0%, #7f8c8d 74%);
     }
     .max-height{
         max-height: 40vh;
@@ -42,4 +44,10 @@
     .text{
         color: #4a3c2c;
     }
+    @layer utilities {
+        .placeholder-style::placeholder {
+           padding: 12px 12px;
+           margin: 5px;
+        }
+      }
 }

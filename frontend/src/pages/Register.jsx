@@ -89,8 +89,8 @@ export default function Register() {
         <Navbar />
       </section>
 
-      <section className="relative w-full flex flex-col p-4 items-center justify-center h-screen bg-[url('.././images/background.jpg')] font-sans text-md bg-cover">
-        <form className='flex flex-col justify-evenly w-full max-w-sm bg-black bg-opacity-65 rounded text-white p-5' onSubmit={handleSubmit}>
+      <section className="relative w-full flex flex-col p-4 items-center justify-center h-screen bg-background  font-sans text-md bg-cover">
+        <form className='flex flex-col justify-evenly w-full max-w-sm bg-black bg-opacity-45 rounded text-white p-5' onSubmit={handleSubmit}>
 
           {errMsg && <p className='bg-pink-300 font-semibold p-2 mb-2 text-red-700' aria-live="assertive">{errMsg}</p>}
           <h1 className='font-semibold text-2xl mb-5'>Register</h1>
