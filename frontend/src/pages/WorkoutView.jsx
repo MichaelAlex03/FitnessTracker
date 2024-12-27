@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import Dropdown from '../components/Dropdown/Dropdown';
 import DropdownItem from '../components/DropdownItem/DropdownItem';
 
 export default function WorkoutView() {
 
-    const navigate = useNavigate();
+    const location = useLocation();
+    const userInfo = location.state
+    const accessToken = location.state.accessToken;
+    const userId = location.state.id;
 
-    const { id } = useParams();
+    const navigate = useNavigate();
     const [exercises, setExercises] = useState([]);
     const [exerciseSets, setExerciseSets] = useState([]);
     const [workouts, setWorkouts] = useState([]);
@@ -18,10 +21,7 @@ export default function WorkoutView() {
 
     useEffect(() => {
         const fetchExercises = async () => {
-            const token = localStorage.getItem("token");
-            if (!token) {
-                return;
-            }
+            
             try {
                 const response = await axios.get(`http://localhost:3000/user_exercises/${id}`, {
                     headers: {
@@ -51,7 +51,12 @@ export default function WorkoutView() {
     useEffect(() => {
         const fetchWorkouts = async () => {
             try {
-                const response = await axios.get('http://localhost:3000/exercises');
+                const response = await axios.get('http://localhost:3000/api/exercises',
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
                 setWorkouts(response.data);
             } catch (error) {
                 console.error('Error fetching exercises:', error);
@@ -160,7 +165,7 @@ export default function WorkoutView() {
     }
 
     return (
-        <div className="background">
+        <div className="w-full flex flex-col p-4 items-center justify-center h-screen bg-background">
             <div className="content xs:w-5/6 lg:w-1/2">
                 <div className='max-h-[100vh] overflow-y-auto flex flex-col items-center'>
                     {exercises.map((exercise) => {
@@ -185,14 +190,14 @@ export default function WorkoutView() {
                         );
                     })}
                 </div>
-                <button className='submit mt-2' onClick={toggleAdd}>Add Exercise</button>
+                <button className='submit mt-2' >Add Exercise</button>
                 <select className="submit rounded bg-gray-300">
                     {toggleAddExercise && workouts.map((workout) => (
                         <option key={workout.id} onClick={() => addExercise(workout)}>{workout.exercise_name}</option>
                     ))}
                 </select>
-                <button className='submit bg-background' onClick={finishWorkout}>Finish Workout</button>
-                <button className="submit bg-gray-300" onClick={navigateToWorkoutPage}>Return to Workouts</button>
+                <button className='submit bg-background'>Finish Workout</button>
+                <button className="submit bg-gray-300">Return to Workouts</button>
             </div>
         </div>
     )

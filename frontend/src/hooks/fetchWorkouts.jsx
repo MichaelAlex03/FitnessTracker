@@ -5,6 +5,8 @@ const fetchWorkouts = (userId, accessToken) => {
 
     const [workouts, setWorkouts] = useState([]);
     const [error, setError] = useState(null)
+    const [workoutId, setWorkoutId] = useState();
+    
 
     useEffect(() => {
         const fetchWorkouts = async () => {
@@ -17,7 +19,6 @@ const fetchWorkouts = (userId, accessToken) => {
                         'authorization': `Bearer ${accessToken}`
                     }
             });
-                console.log(response);
                 setWorkouts(response.data.workouts);
             } catch (error) {
                 setError(error);
@@ -27,7 +28,7 @@ const fetchWorkouts = (userId, accessToken) => {
         fetchWorkouts();
     }, [userId, accessToken]);
 
-    return { workouts, error };
+    return { workouts, error, setWorkouts };
 }
 
 export default fetchWorkouts;

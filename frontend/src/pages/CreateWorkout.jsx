@@ -64,12 +64,12 @@ export default function CreateWorkout() {
 
     async function handleCreateWorkout() {
         try {
-
-            const workoutResponse = await axios.post('http://localhost:3000/api/workouts', {
-                workoutName,
-                userId,
-                selectedExercises,
-            }, {
+            const workoutResponse = await axios.post('http://localhost:3000/api/workouts',
+                {
+                    workoutName,
+                    userId,
+                    selectedExercises,
+                }, {
                 headers: {
                     'authorization': `Bearer ${accessToken}`
                 }
@@ -77,35 +77,36 @@ export default function CreateWorkout() {
 
             const workoutId = workoutResponse.data.workoutId
 
-            if (workoutResponse.status === 201) {
-                const exerciseResponse = await axios.post('http://localhost:3000/api/exercises', {
+            const exerciseResponse = await axios.post('http://localhost:3000/api/exercises',
+                {
                     workoutId,
                     selectedExercises,
                 }, {
-                    headers: {
-                        'authorization': `Bearer ${accessToken}`
-                    }
-                });
-
-                if (exerciseResponse.status === 201){
-                    navigate('/workout', { state: userInfo });
+                headers: {
+                    'authorization': `Bearer ${accessToken}`
                 }
-            } 
+            });
+
+            navigate('/workout', { state: userInfo });
+
         } catch (err) {
             if (!err?.response) {
                 setErrMsg('No Server Response');
-            } else if (err.response?.status === 400 && !workoutName) {
+            }
+            else if (err.response?.status === 400 && !workoutName) {
                 setErrMsg('Did not enter a workout name')
-            } else if (err.response?.status === 400 && selectedExercises.length === 0) {
+            }
+            else if (err.response?.status === 400 && selectedExercises.length === 0) {
                 setErrMsg('Did not select an exercise')
-            } else {
+            }
+            else {
                 setErrMsg('Workout creation failed');
             }
         }
     }
 
     return (
-        <div className="background">
+        <div className="w-full flex flex-col p-4 items-center justify-center h-screen bg-background">
             <div className="form xl:w-1/2 xl:h-2/3" >
                 {errMsg && <p className='bg-pink-300 font-semibold p-2 mb-2 text-red-700' aria-live="assertive">{errMsg}</p>}
                 <input className='form--input'
