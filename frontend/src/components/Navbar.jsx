@@ -19,7 +19,7 @@ const Navbar = () => {
                     />
                 </button>
             </div>
-            <header className="text-white h-16 bg-black opacity-75"></header>
+            <header className="text-white h-16 bg-black"></header>
         </>
     )
 }

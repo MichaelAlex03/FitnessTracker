@@ -61,7 +61,6 @@ export default function CreateWorkout() {
         setWorkoutName(value)
     }
 
-    console.log(selectedExercises)
 
     async function handleCreateWorkout() {
         try {
@@ -75,34 +74,23 @@ export default function CreateWorkout() {
                     'authorization': `Bearer ${accessToken}`
                 }
             });
-            console.log(workoutResponse)
-            navigate('/workout', { state: userInfo });
-            // if (workoutResponse.data.success) {
-            //     const workout_id = workoutResponse.data.workout_id;
 
-            //     const exercisesData = selectedExercises.map(exercise => ({
-            //         workout_id: workout_id,
-            //         exercise_name: exercise,
-            //         sets: 0
-            //     }));
+            const workoutId = workoutResponse.data.workoutId
 
-            //     console.log(exercisesData);
-            //     const exercisesResponse = await axios.post('http://localhost:3000/create_exercises', {
-            //         exercises: exercisesData
-            //     }, {
-            //         headers: {
-            //             'Authorization': `Bearer ${accessToken}`
-            //         }
-            //     });
-            //     if (exercisesResponse.data.success) {
-            //         navigateToWorkoutPage();
-            //     } else {
-            //         console.log('Error adding exercises to user_exercises table');
-            //     }
-            // } else {
-            //     console.log('Error creating workout');
-            // }
-            // console.log(workoutResponse)
+            if (workoutResponse.status === 201) {
+                const exerciseResponse = await axios.post('http://localhost:3000/api/exercises', {
+                    workoutId,
+                    selectedExercises,
+                }, {
+                    headers: {
+                        'authorization': `Bearer ${accessToken}`
+                    }
+                });
+
+                if (exerciseResponse.status === 201){
+                    navigate('/workout', { state: userInfo });
+                }
+            } 
         } catch (err) {
             if (!err?.response) {
                 setErrMsg('No Server Response');
