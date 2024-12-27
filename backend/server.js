@@ -61,24 +61,8 @@ app.get("/user_exercises/:id", verifyJWT, async (req, res) => {
   res.json({rows: result.rows, success: true});
 })
 
-app.get("/workouts/:id", verifyJWT, async(req, res) => {
-  const userId = req.params.id;
-  console.log("Fetching workouts for userId:", userId);
-  const result = await pool.query('SELECT * FROM workouts WHERE user_id = $1', [userId])
-  res.json(result.rows)
-  console.log(result.rows)
-})
 
-app.get("/check-email", async (req, res) => {
-  const { email } = req.query;
-  try{
-    const result = await pool.query('SELECT 1 FROM users WHERE user_email = $1', [email]);
-    res.send({ exists: result.rows.length > 0 });
-  } catch (error) {
-    console.error('Error checking email:', error);
-    res.status(500).send({ success: false, message: 'Internal Server Error' });
-  }
-})
+
 
 app.get("/sets/:id", verifyJWT, async (req, res) => {
   try{
@@ -121,48 +105,8 @@ app.post("/create_sets", verifyJWT, async (req, res) => {
   }
 })
 
-app.post("/workouts", verifyJWT, async (req, res) => {
-  try{
-    const {workoutName, userId} = req.body
-    const result = await pool.query('INSERT INTO workouts (workout_name, user_id) VALUES ($1, $2) RETURNING id', [workoutName, userId]);
-    res.send({success: true, user_id: userId, workout_id: result.rows[0].id});
-  } catch (error) {
-    console.error('Error inserting workout:', error);
-    res.status(500).send({ success: false, message: 'Internal Server Error' });
-  }
-})
-
-app.post("/create_exercises", verifyJWT, async (req, res) => {
-  const {exercises } = req.body;
-  try{
-    const insertExercises = exercises.map(exercise => {
-      const { workout_id, exercise_name, sets } = exercise;
-      pool.query('INSERT INTO user_exercises ( exercise_name, workout_id, workout_sets) VALUES ($1, $2, $3)', 
-      [exercise_name, workout_id, sets]);
-    })
-    res.send({success: true})
-  } catch(error){
-    console.error('Error inserting exercise:', error);
-    res.status(500).send({ success: false, message: 'Internal Server Error' });
-  }
-})
 
 
-
-app.post('/create-account', async (req, res) => {
-  const { firstName, password } = req.body;
-  
-  console.log(firstName, password)
-
-  try {
-      const query = 'INSERT INTO users (first_name, last_name, user_email, user_pass) VALUES ($1, $2) RETURNING id';
-      const result = await pool.query(query, [firstName, password]);
-      res.status(201).json({success: true, message: 'User created successfully'});
-  } catch (error) {
-      console.error('Error inserting user:', error);
-      res.status(500).json({ success: false, message: 'Internal Server Error' });
-  }
-});
 
 
 app.patch("/user_sets", verifyJWT, async (req, res) => {
