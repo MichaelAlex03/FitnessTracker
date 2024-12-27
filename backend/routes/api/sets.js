@@ -6,6 +6,6 @@ const setsController = require('../../controller/api/setsController');
 router.route('/')
     .get()
     .post()
-    .delete()
+    .delete(setsController.removeAllSets)
 
 module.exports = router;

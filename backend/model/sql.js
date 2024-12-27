@@ -42,6 +42,18 @@ const createSet = async (exercise) => {
     )
 }
 
+const removeAllSets = async (workoutId) => {
+    return await db.query('DELETE FROM workout_sets WHERE workout_id = $1', [workoutId]);
+}
+
+const removeAllExercises = async (workoutId) => {
+    return await db.query('DELETE FROM user_exercises WHERE workout_id = $1', [workoutId]);
+}
+
+const removeWorkout = async (workoutId) => {
+    return await db.query('DELETE FROM workouts WHERE id = $1', [workoutId]);
+}
+
 module.exports = {
     findUser,
     updateUser,
@@ -50,4 +62,7 @@ module.exports = {
     getWorkouts,
     createWorkout,
     createWorkoutExercises,
+    removeAllSets,
+    removeAllExercises,
+    removeWorkout
 }

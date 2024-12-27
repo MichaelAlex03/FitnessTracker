@@ -1,5 +1,15 @@
 const pg = require('../../model/sql')
 
-const createSet = async (req, res) => {
-    
+const addSet = async (req, res) => {
+
+}
+
+const removeAllSets = async (req, res) => {
+    const { workoutId } = req.query;
+    await pg.removeAllSets(workoutId);
+    return res.status(200).json({'message': `sets deleted for workout ${workoutId}`});
+}
+
+module.exports = {
+    removeAllSets,
 }

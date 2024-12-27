@@ -5,6 +5,6 @@ const exerciseController = require('../../controller/api/exercisesController');
 router.route('/')
     .get(exerciseController.getExercises)
     .post(exerciseController.addExercisesToWorkout)
-    .delete()
+    .delete(exerciseController.deleteAllWorkoutExercises)
 
 module.exports = router;
