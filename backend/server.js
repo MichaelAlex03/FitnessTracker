@@ -46,6 +46,7 @@ app.use(verifyJWT);
 //put all api routes after verifyJWT
 app.use('/api/exercises', require('./routes/api/exercises'));
 app.use('/api/workouts', require('./routes/api/workouts'));
+app.use('/api/sets', require('./routes/api/sets'));
 
 
 
@@ -60,8 +61,6 @@ app.get("/user_exercises/:id", verifyJWT, async (req, res) => {
   const result = await pool.query('SELECT * FROM user_exercises WHERE workout_id = $1', [workout_id]);
   res.json({rows: result.rows, success: true});
 })
-
-
 
 
 app.get("/sets/:id", verifyJWT, async (req, res) => {
