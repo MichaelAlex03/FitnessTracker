@@ -12,9 +12,11 @@ const removeAllSets = async (req, res) => {
 
 const getWorkoutSets = async (req, res) => {
     const { workoutId } = req.params;
-    
+    const result = await pg.getWorkoutSets(workoutId);
+    return res.status(200).json({ sets: result.rows });
 }
 
 module.exports = {
     removeAllSets,
+    getWorkoutSets
 }

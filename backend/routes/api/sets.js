@@ -9,6 +9,6 @@ router.route('/')
     .delete(setsController.removeAllSets)
 
 router.route('/:workoutId')
-    .get()
+    .get(setsController.getWorkoutSets)
 
 module.exports = router;
