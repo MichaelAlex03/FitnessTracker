@@ -50,29 +50,6 @@ app.use('/api/sets', require('./routes/api/sets'));
 
 
 
-app.get("/exercises", async (req, res) => {
-    const result = await pool.query('SELECT * FROM exercises')
-    res.json(result.rows)
-    console.log(result.rows)
-})
-
-app.get("/user_exercises/:id", verifyJWT, async (req, res) => {
-  const workout_id = req.params.id;
-  const result = await pool.query('SELECT * FROM user_exercises WHERE workout_id = $1', [workout_id]);
-  res.json({rows: result.rows, success: true});
-})
-
-
-app.get("/sets/:id", verifyJWT, async (req, res) => {
-  try{
-    const result = await pool.query('SELECT * FROM workout_sets WHERE workout_id = $1', [req.params.id]);
-    console.log("sets: " + JSON.stringify(result.rows));
-    res.json({rows: result.rows, success: true})
-  }catch (error) {
-    console.error('Error getting set data:', error);
-    res.status(500).send({ success: false, message: 'Internal Server Error' });
-  }
-})
 
 app.get("/exercise_history/:id/:exercise_name", verifyJWT, async(req, res) => {
   const userId = req.userId
@@ -129,38 +106,6 @@ app.patch("/user_sets", verifyJWT, async (req, res) => {
   }
 })
 
-app.delete('/workout_sets/:id', async (req, res) => {
-  const workout_id = req.params.id;
-  try{
-    await pool.query('DELETE FROM workout_sets WHERE workout_id = $1' , [workout_id]);
-    res.status(200).send({success: true, message: 'sets deleted'});
-  }catch(error){
-    console.error('Error inserting user:', error);
-    res.status(500).send({ success: false, message: 'Internal Server Error' });
-  }
-})
-
-app.delete('/workout_exercises/:id', async (req, res) => {
-  const workout_id = req.params.id;
-  try{
-    await pool.query('DELETE FROM user_exercises WHERE workout_id = $1' , [workout_id]);
-    res.status(200).send({success: true, message: 'exercises deleted'});
-  }catch(error){
-    console.error('Error inserting user:', error);
-    res.status(500).send({ success: false, message: 'Internal Server Error' });
-  }
-})
-
-app.delete('/workouts/:id', async (req, res) => {
-  const workout_id = req.params.id;
-  try{
-    await pool.query('DELETE FROM workouts WHERE id = $1' , [workout_id]);
-    res.status(200).send({success: true, message: 'workouts deleted'});
-  }catch(error){
-    console.error('Error inserting user:', error);
-    res.status(500).send({ success: false, message: 'Internal Server Error' });
-  }
-})
 
 app.delete('/set/:id', async (req, res) => {
   const setId = req.params.id
