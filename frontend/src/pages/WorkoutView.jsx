@@ -9,7 +9,9 @@ export default function WorkoutView() {
     const location = useLocation();
     const userInfo = location.state
     const accessToken = location.state.accessToken;
-    const userId = location.state.id;
+    const userId = location.state.userId;
+    const workoutId = location.state.workoutId
+
 
     const navigate = useNavigate();
     const [exercises, setExercises] = useState([]);
@@ -20,32 +22,30 @@ export default function WorkoutView() {
     const options = ["Delete Exercise", "View Exercise History"];
 
     useEffect(() => {
-        const fetchExercises = async () => {
-            
+        const fetchExerciseInfo = async () => {
+
             try {
-                const response = await axios.get(`http://localhost:3000/user_exercises/${id}`, {
+                const exerciseData = await axios.get(`http://localhost:3000/api/exercises/${workoutId}`, {
                     headers: {
-                        'Authorization': `Bearer ${token}`
+                        'Authorization': `Bearer ${accessToken}`
                     }
                 });
-                console.log(response.data.success);
-                if (response.data.success) {
-                    const setsData = await axios.get(`http://localhost:3000/sets/${id}`, {
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                        }
-                    });
-                    setExerciseSets(setsData.data.rows);
-                    console.log(setsData.data.rows);
-                    console.log(id);
-                }
-                setExercises(response.data.rows);
+
+                const setsData = await axios.get(`http://localhost:3000/api/sets/${workoutId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+
+                setExercises(exerciseData.data.exercises);
+                setExerciseSets(setsData.data.sets);
+
             } catch (error) {
                 console.error('Error fetching exercises:', error);
             }
         };
 
-        fetchExercises();
+        fetchExerciseInfo();
     }, []);
 
     useEffect(() => {

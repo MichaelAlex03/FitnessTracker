@@ -17,7 +17,7 @@ function App() {
         <Route path="/register" element={<div><Register /></div>} />
         <Route path="/workout" element={<div><WorkoutPage /></div>} />
         <Route path="/create-workout" element={<div><CreateWorkout /></div>} />
-        <Route path="/workout--view/:id" element={<div><WorkoutView /></div>} />
+        <Route path="/workoutView" element={<div><WorkoutView /></div>} />
         <Route path="/workout-history/:id/:exerciseName" element={<div><ExerciseHistory /></div>} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>

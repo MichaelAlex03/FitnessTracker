@@ -23,7 +23,12 @@ export default function WorkoutPage() {
     };
 
     const navigateToWorkoutView = (id) => {
-        navigate(`/workout--view/${id}`, { state: userInfo });
+        const newUserInfo = {
+            userId,
+            accessToken,
+            workoutId: id
+        }
+        navigate(`/workoutView`, { state: newUserInfo});
     };
 
     const navigateToWelcome = () => {
