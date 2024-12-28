@@ -8,9 +8,7 @@ const updateUser = async (refreshToken, user) => {
     return await db.query('UPDATE users SET refresh_token = $1 WHERE user_name = $2', [refreshToken, user])
 }
 
-const createUser = async (user, pwd) => {
-    return await db.query('INSERT INTO users (user_name, user_pass) VALUES( $1, $2)', [user, pwd]);
-}
+//---------------------------- Get Routes Queries ------------------------------//
 
 const getWorkouts = (userId) => {
     return db.query('SELECT * FROM workouts WHERE user_id = $1', [userId]);
@@ -22,6 +20,16 @@ const getAllExercises = async () => {
 
 const getWorkoutExercises = async (workoutId) => {
     return await db.query('SELECT * FROM user_exercises WHERE workout_id = $1', [workoutId]);
+}
+
+const getWorkoutSets = async (workoutId) => {
+    return await db.query('SELECT * FROM workout_sets WHERE workout_id = $1', [workoutId]);
+}
+
+//---------------------------- Post Routes Queries ------------------------------//
+
+const createUser = async (user, pwd) => {
+    return await db.query('INSERT INTO users (user_name, user_pass) VALUES( $1, $2)', [user, pwd]);
 }
 
 const createWorkout = async (workoutName, userId) => {
@@ -46,6 +54,8 @@ const createSet = async (exercise) => {
     )
 }
 
+//---------------------------- Delete Routes Queries ------------------------------//
+
 const removeAllSets = async (workoutId) => {
     return await db.query('DELETE FROM workout_sets WHERE workout_id = $1', [workoutId]);
 }
@@ -58,6 +68,8 @@ const removeWorkout = async (workoutId) => {
     return await db.query('DELETE FROM workouts WHERE id = $1', [workoutId]);
 }
 
+//Exports
+
 module.exports = {
     findUser,
     updateUser,
@@ -69,5 +81,6 @@ module.exports = {
     removeAllSets,
     removeAllExercises,
     removeWorkout,
-    getWorkoutExercises
+    getWorkoutExercises,
+    getWorkoutSets
 }

@@ -8,4 +8,7 @@ router.route('/')
     .post()
     .delete(setsController.removeAllSets)
 
+router.route('/:workoutId')
+    .get()
+
 module.exports = router;
