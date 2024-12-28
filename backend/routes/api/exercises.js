@@ -7,4 +7,7 @@ router.route('/')
     .post(exerciseController.addExercisesToWorkout)
     .delete(exerciseController.deleteAllWorkoutExercises)
 
+router.route('/:workoutId')
+    .get(exerciseController.getWorkoutExercises)
+
 module.exports = router;

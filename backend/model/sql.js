@@ -20,6 +20,10 @@ const getAllExercises = async () => {
     return await db.query('SELECT * FROM exercises');
 }
 
+const getWorkoutExercises = async (workoutId) => {
+    return await db.query('SELECT * FROM user_exercises WHERE workout_id = $1', [workoutId]);
+}
+
 const createWorkout = async (workoutName, userId) => {
     return await db.query('INSERT INTO workouts (workout_name, user_id) VALUES ($1, $2) RETURNING *', [workoutName, userId]);
 }
@@ -64,5 +68,6 @@ module.exports = {
     createWorkoutExercises,
     removeAllSets,
     removeAllExercises,
-    removeWorkout
+    removeWorkout,
+    getWorkoutExercises
 }
