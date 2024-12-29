@@ -18,9 +18,11 @@ export default function WorkoutView() {
     const [exerciseSets, setExerciseSets] = useState([]);
     const [workouts, setWorkouts] = useState([]);
     const [toggleAddExercise, setToggleAddExercise] = useState(false);
+    const [refreshKey, setRefreshKey] = useState(0);
 
     const options = ["Delete Exercise", "View Exercise History"];
 
+    //Retrieves exercises for the workout
     useEffect(() => {
         const fetchExerciseInfo = async () => {
 
@@ -31,15 +33,7 @@ export default function WorkoutView() {
                     }
                 });
 
-                const setsData = await axios.get(`http://localhost:3000/api/sets/${workoutId}`, {
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`
-                    }
-                });
-
                 setExercises(exerciseData.data.exercises);
-                setExerciseSets(setsData.data.sets);
-
             } catch (error) {
                 console.error('Error fetching exercises:', error);
             }
@@ -48,24 +42,23 @@ export default function WorkoutView() {
         fetchExerciseInfo();
     }, []);
 
+    //Retrieves sets for the workout
     useEffect(() => {
-        const fetchWorkouts = async () => {
+        const fetchSets = async () => {
             try {
-                const response = await axios.get('http://localhost:3000/api/exercises',
-                    {
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                        }
-                    });
-                setWorkouts(response.data);
+                const setsData = await axios.get(`http://localhost:3000/api/sets/${workoutId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+                setExerciseSets(setsData.data.sets);
             } catch (error) {
-                console.error('Error fetching exercises:', error);
+                console.error('Error fetching sets:', error);
             }
-        };
+        }
+        fetchSets();
+    }, [refreshKey])
 
-        fetchWorkouts();
-
-    }, [toggleAddExercise]);
 
     const renderSets = (sets) => {
         return sets.map((set, index) => (
@@ -97,21 +90,14 @@ export default function WorkoutView() {
     }
 
     const addSet = async (exercise) => {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            return;
-        }
 
         try {
             const response = await axios.post('http://localhost:3000/create_sets', {
-                exercise_name: exercise.exercise_name,
-                exercise_id: exercise.id,
-                workout_id: id,
-                reps: 0,
-                weight: 0
+                exercise,
+                workout_id: workoutId,
             }, {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${accessToken}`
                 }
             });
 
