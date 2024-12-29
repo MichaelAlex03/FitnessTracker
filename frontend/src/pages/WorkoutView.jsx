@@ -18,11 +18,11 @@ export default function WorkoutView() {
     const [exerciseSets, setExerciseSets] = useState([]);
     const [workouts, setWorkouts] = useState([]);
     const [toggleAddExercise, setToggleAddExercise] = useState(false);
-    const [refreshKey, setRefreshKey] = useState(0);
+    const [refreshSet, setRefreshSet] = useState(0);
 
     const options = ["Delete Exercise", "View Exercise History"];
 
-    //Retrieves exercises for the workout
+    /* Retrieves exercises for the workout */
     useEffect(() => {
         const fetchExerciseInfo = async () => {
 
@@ -42,7 +42,7 @@ export default function WorkoutView() {
         fetchExerciseInfo();
     }, []);
 
-    //Retrieves sets for the workout
+    /* Retrieves sets for the workout */
     useEffect(() => {
         const fetchSets = async () => {
             try {
@@ -57,7 +57,7 @@ export default function WorkoutView() {
             }
         }
         fetchSets();
-    }, [refreshKey])
+    }, [refreshSet]);
 
 
     const renderSets = (sets) => {
@@ -101,11 +101,7 @@ export default function WorkoutView() {
                 }
             });
 
-            console.log('Server response:', response.data);
-
-            if (response.data.success) {
-                setExerciseSets(prevSets => [...prevSets, response.data.newSet]);
-            }
+            setRefreshSet(prevRefreshSet => prevRefreshSet + 1)
 
         } catch (error) {
             console.error('Error adding set', error);
