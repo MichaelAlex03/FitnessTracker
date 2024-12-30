@@ -75,6 +75,10 @@ const removeWorkout = async (workoutId) => {
     return await db.query('DELETE FROM workouts WHERE id = $1', [workoutId]);
 }
 
+const deleteSet = async (setId) => {
+    return await db.query('DELETE FROM workout_sets WHERE id = $1', [setId]);
+}
+
 //Exports
 
 module.exports = {
@@ -90,5 +94,6 @@ module.exports = {
     removeWorkout,
     getWorkoutExercises,
     getWorkoutSets,
-    addSet
+    addSet,
+    deleteSet
 }

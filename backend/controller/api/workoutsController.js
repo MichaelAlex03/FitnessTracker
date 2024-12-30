@@ -17,7 +17,7 @@ const createWorkout = async (req, res) => {
 }
 
 const deleteWorkout = async (req, res) => {
-    const { workoutId } = req.query;
+    const { workoutId } = req.params;
     await pg.removeWorkout(workoutId);
     return res.status(200).json({'message': `workout ${workoutId} deleted`});
 }
