@@ -6,6 +6,9 @@ router.route('/')
     .post(setsController.createSet)
     .delete(setsController.removeAllSets)
 
+router.route('/userExercises/:userId/:exerciseName')
+    .get()
+
 router.route('/getAllSets/:workoutId')
     .get(setsController.getWorkoutSets)
     

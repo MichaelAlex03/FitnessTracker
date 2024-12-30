@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import Dropdown from '../components/Dropdown/Dropdown';
 import DropdownItem from '../components/DropdownItem/DropdownItem';
@@ -31,7 +31,7 @@ export default function WorkoutView() {
             try {
                 const exerciseData = await axios.get(`http://localhost:3000/api/exercises/getWorkoutExercises/${workoutId}`, {
                     headers: {
-                        'Authorization': `Bearer ${accessToken}`
+                        'authorization': `Bearer ${accessToken}`
                     }
                 });
 
@@ -50,7 +50,7 @@ export default function WorkoutView() {
             try {
                 const setsData = await axios.get(`http://localhost:3000/api/sets/getAllSets/${workoutId}`, {
                     headers: {
-                        'Authorization': `Bearer ${accessToken}`
+                        'authorization': `Bearer ${accessToken}`
                     }
                 });
                 setExerciseSets(setsData.data.sets);
@@ -99,7 +99,7 @@ export default function WorkoutView() {
                 workoutId,
             }, {
                 headers: {
-                    'Authorization': `Bearer ${accessToken}`
+                    'authorization': `Bearer ${accessToken}`
                 }
             });
 
@@ -116,7 +116,7 @@ export default function WorkoutView() {
         try {
             const response = await axios.delete(`http://localhost:3000/api/sets/deleteSet/${setId}`, {
                 headers: {
-                    'Authorization': `Bearer ${accessToken}`
+                    'authorization': `Bearer ${accessToken}`
                 }
             });
 
@@ -145,20 +145,26 @@ export default function WorkoutView() {
 
     }
 
+    /* Handles dropdown menu onClick */
     const handleOptionClick = async (option, exercise) => {
+        const historyInfo = {
+            exercise,
+            userId,
+            accessToken,
+        }
         if (option === 'View Exercise History') {
-            navigate('/workoutHistory', { state: exercise });
+            navigate('/workoutHistory', { state: historyInfo });
         }
         else if (option === 'Delete Exercise') {
             try {
                 await axios.delete(`http://localhost:3000/api/exercises/delete/${exercise.id}`, {
                     headers: {
-                        'Authorization': `Bearer ${accessToken}`
+                        'authorization': `Bearer ${accessToken}`
                     }
                 });
                 setRefreshExercise(prevRefreshExercise => prevRefreshExercise - 1);
             } catch (err) {
-                console.log('error deleting exercise');
+                console.log(err);
             }
         }
     }

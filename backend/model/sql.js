@@ -26,6 +26,11 @@ const getWorkoutSets = async (workoutId) => {
     return await db.query('SELECT * FROM workout_sets WHERE workout_id = $1', [workoutId]);
 }
 
+const getAllSetsForExercise = async(userId, exerciseName) => {
+    return await db.query(
+        'SELECT workout_sets FROM workouts JOIN user_exercises ON workouts.id = user_exercises.workout_id JOIN workout_sets ON user_exercises.id = workout_sets.exercise_id WHERE workouts.user_id = $1 AND user_exercises.exercise_name = $2', [userId, exerciseName])
+}
+
 //---------------------------- Post Routes Queries ------------------------------//
 
 const createUser = async (user, pwd) => {
@@ -96,6 +101,7 @@ module.exports = {
     updateUser,
     createUser,
     getAllExercises,
+    getAllSetsForExercise,
     getWorkouts,
     createWorkout,
     createWorkoutExercises,

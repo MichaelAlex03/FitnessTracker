@@ -1,11 +1,17 @@
 import {useEffect, useState} from 'react'
-import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 
 
 export default function History() {
 
-  const{ id, exerciseName } = useParams();
+  const location = useLocation();
+  const historyInfo = location.state;
+  const exerciseName = historyInfo.exercise.exercise_name;
+  const userId = historyInfo.userId;
+  const accessToken = historyInfo.accessToken
+  const decodedExercise = decodeURIComponent(exerciseName);
+  console.log(decodedExercise)
 
   const [exerciseHistory, setExerciseHistory] = useState([]);
 
@@ -15,9 +21,10 @@ export default function History() {
       const fetchExerciseHistory = async () => {
 
         try {
-          const result = await axios.get(`http://localhost:3000/exercise_history/${id}/${exerciseName}`, {
+          console.log(userId)
+          const result = await axios.get(`http://localhost:3000/api/sets/userExercises/${userId}/${exerciseName}`, {
             headers: {
-              'Authorization': `Bearer ${localStorage.getItem("token")}`
+              'authorization': `Bearer ${accessToken}`
             }
           })
           console.log(result.data.result);
@@ -32,7 +39,7 @@ export default function History() {
   },[]);
 
   return (
-    <div className='background'>
+    <div className='w-full flex flex-col p-4 items-center justify-center h-screen bg-background'>
         <div className='absolute top-10'>
             <h1  className='text-3xl font-bold mb-2 text'>Previous Sets for {exerciseName}</h1>
             <div className='bg-white rounded-lg'>
