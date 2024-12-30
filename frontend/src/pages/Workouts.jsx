@@ -19,7 +19,7 @@ export default function WorkoutPage() {
     const { workouts, setWorkouts, error } = fetchWorkouts(userId, accessToken);
 
     const navigateToCreateWorkout = () => {
-        navigate('/create-workout', { state: userInfo });
+        navigate('/createWorkout', { state: userInfo });
     };
 
     const navigateToWorkoutView = (id) => {

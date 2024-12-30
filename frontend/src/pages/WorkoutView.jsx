@@ -19,15 +19,17 @@ export default function WorkoutView() {
     const [workouts, setWorkouts] = useState([]);
     const [toggleAddExercise, setToggleAddExercise] = useState(false);
     const [refreshSet, setRefreshSet] = useState(0);
+    const [refreshExercise, setRefreshExercise] = useState(0);
 
     const options = ["Delete Exercise", "View Exercise History"];
+
 
     /* Retrieves exercises for the workout */
     useEffect(() => {
         const fetchExercises = async () => {
 
             try {
-                const exerciseData = await axios.get(`http://localhost:3000/api/exercises/${workoutId}`, {
+                const exerciseData = await axios.get(`http://localhost:3000/api/exercises/getWorkoutExercises/${workoutId}`, {
                     headers: {
                         'Authorization': `Bearer ${accessToken}`
                     }
@@ -40,7 +42,7 @@ export default function WorkoutView() {
         };
 
         fetchExercises();
-    }, []);
+    }, [refreshExercise]);
 
     /* Retrieves sets for the workout */
     useEffect(() => {
@@ -109,7 +111,7 @@ export default function WorkoutView() {
     }
 
     const removeSet = async (setId) => {
-        
+
         console.log(setId)
         try {
             const response = await axios.delete(`http://localhost:3000/api/sets/deleteSet/${setId}`, {
@@ -141,6 +143,24 @@ export default function WorkoutView() {
             set.id === setId ? { ...set, exercise_weight: Number(value) } : set
         ));
 
+    }
+
+    const handleOptionClick = async (option, exercise) => {
+        if (option === 'View Exercise History') {
+            navigate('/workoutHistory', { state: exercise });
+        }
+        else if (option === 'Delete Exercise') {
+            try {
+                await axios.delete(`http://localhost:3000/api/exercises/delete/${exercise.id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+                setRefreshExercise(prevRefreshExercise => prevRefreshExercise - 1);
+            } catch (err) {
+                console.log('error deleting exercise');
+            }
+        }
     }
 
     return (

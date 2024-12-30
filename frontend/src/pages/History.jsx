@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
 
-function ExerciseHistory() {
+export default function History() {
 
   const{ id, exerciseName } = useParams();
 
@@ -50,5 +50,3 @@ function ExerciseHistory() {
     </div>
   )
 }
-
-export default ExerciseHistory
