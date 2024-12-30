@@ -32,7 +32,7 @@ const deleteExercise = async (req, res) => {
         console.log(result)
         if (result == True) return res.status(200).json({ 'message': 'exercise deleted!' });
     } catch (err) {
-        return res.status(500).json({ 'message': 'pls fix me' });
+        return res.status(500).json({ 'message': err.message });
     }
 }
 
