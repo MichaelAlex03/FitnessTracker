@@ -65,21 +65,7 @@ app.get("/exercise_history/:id/:exercise_name", verifyJWT, async(req, res) => {
   }
 })
 
-app.post("/create_sets", verifyJWT, async (req, res) => {
-  
-  const userId = req.userId
 
-  try{
-      const result = await pool.query('INSERT INTO workout_sets (exercise_id, exercise_reps, exercise_weight, workout_id, exercise_name, user_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', 
-        [req.body.exercise_id, req.body.reps, req.body.weight, req.body.workout_id, req.body.exercise_name, userId]);
-
-        console.log('New set created:', result.rows[0]); 
-        res.status(201).json({ success: true, newSet: result.rows[0] });
-  } catch(error){
-    console.error('Error inserting set', error);
-    res.status(500).send({ success: false, message: 'Internal Server Error' });
-  }
-})
 
 
 
