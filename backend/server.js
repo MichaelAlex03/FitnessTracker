@@ -93,16 +93,6 @@ app.patch("/user_sets", verifyJWT, async (req, res) => {
 })
 
 
-app.delete('/set/:id', async (req, res) => {
-  const setId = req.params.id
-  try {
-    await pool.query('DELETE FROM workout_sets WHERE id = $1', [setId]);
-    res.status(200).send({success: true, message: 'set deleted'});
-  } catch (error) {
-    console.error('Error deleting set:', error);
-    res.status(500).send({ success: false, message: 'Internal Server Error' });
-  }
-})
 
 app.delete('/user_exercises/:id', async (req, res) => {
   const exerciseId = req.params.id;
