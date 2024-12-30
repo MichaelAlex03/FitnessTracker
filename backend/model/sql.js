@@ -48,9 +48,16 @@ const createWorkoutExercises = async (workoutId, selectedExercises) => {
     }
 }
 
+//This function used when workout is initially created. addSet is used for all future set creations
 const createSet = async (exercise) => {
     return await db.query('INSERT INTO workout_sets (exercise_id, exercise_reps, exercise_weight, workout_id) VALUES ($1, $2, $3, $4)',
         [exercise.rows[0].id, 0, 0, exercise.rows[0].workout_id]
+    )
+}
+
+const addSet = async (exercise, workoutId) => {
+    return await db.query('INSERT INTO workout_sets (exercise_id, exercise_reps, exercise_weight, workout_id) VALUES ($1, $2, $3, $4)',
+        [exercise.id, 0, 0, workoutId]
     )
 }
 
@@ -82,5 +89,6 @@ module.exports = {
     removeAllExercises,
     removeWorkout,
     getWorkoutExercises,
-    getWorkoutSets
+    getWorkoutSets,
+    addSet
 }
