@@ -24,7 +24,7 @@ export default function WorkoutView() {
 
     /* Retrieves exercises for the workout */
     useEffect(() => {
-        const fetchExerciseInfo = async () => {
+        const fetchExercises = async () => {
 
             try {
                 const exerciseData = await axios.get(`http://localhost:3000/api/exercises/${workoutId}`, {
@@ -39,14 +39,14 @@ export default function WorkoutView() {
             }
         };
 
-        fetchExerciseInfo();
+        fetchExercises();
     }, []);
 
     /* Retrieves sets for the workout */
     useEffect(() => {
         const fetchSets = async () => {
             try {
-                const setsData = await axios.get(`http://localhost:3000/api/sets/${workoutId}`, {
+                const setsData = await axios.get(`http://localhost:3000/api/sets/getAllSets/${workoutId}`, {
                     headers: {
                         'Authorization': `Bearer ${accessToken}`
                     }
@@ -92,9 +92,9 @@ export default function WorkoutView() {
     const addSet = async (exercise) => {
 
         try {
-            const response = await axios.post('http://localhost:3000/create_sets', {
+            const response = await axios.post('http://localhost:3000/api/sets', {
                 exercise,
-                workout_id: workoutId,
+                workoutId,
             }, {
                 headers: {
                     'Authorization': `Bearer ${accessToken}`
@@ -109,22 +109,19 @@ export default function WorkoutView() {
     }
 
     const removeSet = async (setId) => {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            return;
-        }
-
+        
+        console.log(setId)
         try {
-            const response = await axios.delete(`http://localhost:3000/set/${setId}`);
+            const response = await axios.delete(`http://localhost:3000/api/sets/deleteSet/${setId}`, {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            });
 
-            console.log('Server response:', response.data);
-
-            if (response.data.success) {
-                setExerciseSets(prevSets => prevSets.filter(set => set.id !== setId));
-            }
+            setRefreshSet(prevRefreshSet => prevRefreshSet - 1)
 
         } catch (error) {
-            console.error('Error adding set', error);
+            console.error('Error removing set', error);
         }
     }
 
