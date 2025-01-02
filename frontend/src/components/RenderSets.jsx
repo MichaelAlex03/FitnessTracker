@@ -1,25 +1,6 @@
-import { useState, useEffect } from 'react'
-import axios from '../api/axios';
 
-export default function renderSets({ sets, accessToken, handleAddSet, handleDeleteSet}) {
 
-    const handleRepsChange = (e, setId) => {
-        const { value } = e.target;
-        console.log(e.target);
-        console.log(setId);
-        setExerciseSets(prevSets => prevSets.map(set =>
-            set.id === setId ? { ...set, exercise_reps: Number(value) } : set
-        ));
-
-    }
-
-    const handleWeightChange = (e, setId) => {
-        const { value } = e.target;
-        setExerciseSets(prevSets => prevSets.map(set =>
-            set.id === setId ? { ...set, exercise_weight: Number(value) } : set
-        ));
-
-    }
+const RenderSets = ({ sets, handleDeleteSet, handleWeightChange, handleRepsChange}) => {
 
     return sets.map((set, index) => (
         <div key={set.id} className="flex flex-wrap items-center gap-2 mb-5">
@@ -48,3 +29,5 @@ export default function renderSets({ sets, accessToken, handleAddSet, handleDele
         </div>
     ));
 }
+
+export default RenderSets;

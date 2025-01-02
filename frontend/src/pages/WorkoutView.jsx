@@ -10,8 +10,10 @@ export default function WorkoutView() {
     const location = useLocation();
     const userInfo = location.state
     const accessToken = location.state.accessToken;
-    const userId = location.state.userId;
+    const userId = location.state.id;
     const workoutId = location.state.workoutId
+
+    console.log(userInfo)
 
 
     const navigate = useNavigate();
@@ -20,9 +22,6 @@ export default function WorkoutView() {
     const [workouts, setWorkouts] = useState([]);
     const [toggleAddExercise, setToggleAddExercise] = useState(false);
     const [refreshSet, setRefreshSet] = useState(0);
-    const [addSet, setAddSet] = useState(0);
-    const [deleteSet, setDeleteSet] = useState(0);
-    const [setId, setSetId] = useState(0);
     const [refreshExercise, setRefreshExercise] = useState(0);
 
     const options = ["Delete Exercise", "View Exercise History"];
@@ -66,7 +65,7 @@ export default function WorkoutView() {
     }, [refreshSet]);
 
 
-    const handleAddSet = async(exercise) => {
+    const handleAddSet = async (exercise) => {
         try {
             await axios.post('http://localhost:3000/api/sets', {
                 exercise,
@@ -91,6 +90,35 @@ export default function WorkoutView() {
         } catch (error) {
             console.error("Failed to delete set:", error);
         }
+    }
+
+    const handleFinishWorkout = async () => {
+        try {
+            await axios.patch('http://localhost:3000/api/sets', {
+                exerciseSets,
+            }, {
+                headers: { 'authorization': `Bearer ${accessToken}` },
+            });
+            navigate('/workout', { state: userInfo });
+
+        } catch (err) {
+            console.log(err.message)
+        }
+    }
+
+    const handleRepsChange = (e, setId) => {
+        const { value } = e.target;
+        setExerciseSets(prevSets => prevSets.map(set =>
+            set.id === setId ? { ...set, exercise_reps: Number(value) } : set
+        ));
+
+    }
+
+    const handleWeightChange = (e, setId) => {
+        const { value } = e.target;
+        setExerciseSets(prevSets => prevSets.map(set =>
+            set.id === setId ? { ...set, exercise_weight: Number(value) } : set
+        ));
     }
 
 
@@ -140,8 +168,8 @@ export default function WorkoutView() {
                                 </div>
                                 <RenderSets
                                     sets={exerciseSetsFiltered}
-                                    accessToken={accessToken}
-                                    handleAddSet={handleAddSet}
+                                    handleRepsChange={handleRepsChange}
+                                    handleWeightChange={handleWeightChange}
                                     handleDeleteSet={handleDeleteSet}
                                 />
                                 <button className="submit mt-4 p-1" onClick={() => handleAddSet(exercise)}>Add Set</button>
@@ -155,7 +183,7 @@ export default function WorkoutView() {
                         <option key={workout.id} onClick={() => addExercise(workout)}>{workout.exercise_name}</option>
                     ))}
                 </select>
-                <button className='submit'>Finish Workout</button>
+                <button className='submit' onClick={handleFinishWorkout}>Finish Workout</button>
                 <button className="submit bg-gray-300">Return to Workouts</button>
             </div>
         </div>

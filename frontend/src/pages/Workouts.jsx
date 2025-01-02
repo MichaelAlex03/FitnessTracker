@@ -16,19 +16,21 @@ export default function WorkoutPage() {
     const navigate = useNavigate();
 
     //Retrieves workouts for given id. Reruns everytime userId changes or accessToken changes
-    const { workouts, setWorkouts, error } = fetchWorkouts(userId, accessToken);
+    const { workouts, setWorkouts } = fetchWorkouts(userId, accessToken);
+
+    console.log(workouts)
 
     const navigateToCreateWorkout = () => {
         navigate('/createWorkout', { state: userInfo });
     };
 
-    const navigateToWorkoutView = (id) => {
+    const navigateToWorkoutView = (workoutId) => {
         const newUserInfo = {
-            userId,
+            id: userId,
             accessToken,
-            workoutId: id
+            workoutId
         }
-        navigate(`/workoutView`, { state: newUserInfo});
+        navigate(`/workoutView`, { state: newUserInfo });
     };
 
     const navigateToWelcome = () => {
@@ -38,7 +40,7 @@ export default function WorkoutPage() {
     async function removeWorkout(workoutId) {
         try {
 
-            const deleteSets = await axios.delete('http://localhost:3000/api/sets', {
+            await axios.delete('http://localhost:3000/api/sets', {
                 params: {
                     workoutId,
                 },
@@ -47,7 +49,7 @@ export default function WorkoutPage() {
                 }
             });
 
-            const deleteExercises = await axios.delete('http://localhost:3000/api/exercises', {
+            await axios.delete('http://localhost:3000/api/exercises', {
                 params: {
                     workoutId,
                 },
@@ -56,7 +58,7 @@ export default function WorkoutPage() {
                 }
             });
 
-            const deleteWorkout = await axios.delete('http://localhost:3000/api/workouts', {
+            await axios.delete('http://localhost:3000/api/workouts', {
                 params: {
                     workoutId,
                 },
