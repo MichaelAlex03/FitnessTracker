@@ -11,7 +11,6 @@ export default function History() {
   const userId = historyInfo.userId;
   const accessToken = historyInfo.accessToken
   const decodedExercise = decodeURIComponent(exerciseName);
-  console.log(decodedExercise)
 
   const [exerciseHistory, setExerciseHistory] = useState([]);
 
@@ -27,8 +26,8 @@ export default function History() {
               'authorization': `Bearer ${accessToken}`
             }
           })
-          console.log(result.data.result);
-          setExerciseHistory(result.data.result);
+
+          setExerciseHistory(result.data.sets.rows);
 
         } catch (error) {
           console.log("failed to retrieve sets");

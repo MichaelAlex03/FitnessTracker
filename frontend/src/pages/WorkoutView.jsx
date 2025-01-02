@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import Dropdown from '../components/Dropdown/Dropdown';
 import DropdownItem from '../components/DropdownItem/DropdownItem';
+import RenderSets from '../components/RenderSets';
 
 export default function WorkoutView() {
 
@@ -19,6 +20,9 @@ export default function WorkoutView() {
     const [workouts, setWorkouts] = useState([]);
     const [toggleAddExercise, setToggleAddExercise] = useState(false);
     const [refreshSet, setRefreshSet] = useState(0);
+    const [addSet, setAddSet] = useState(0);
+    const [deleteSet, setDeleteSet] = useState(0);
+    const [setId, setSetId] = useState(0);
     const [refreshExercise, setRefreshExercise] = useState(0);
 
     const options = ["Delete Exercise", "View Exercise History"];
@@ -62,39 +66,9 @@ export default function WorkoutView() {
     }, [refreshSet]);
 
 
-    const renderSets = (sets) => {
-        return sets.map((set, index) => (
-            <div key={set.id} className="flex flex-wrap items-center gap-2 mb-5">
-                <label htmlFor="sets" className="mr-1">Set</label>
-                <button name="sets" className="w-5 rounded-md bg-white font-bold p-0 mr-3">{index + 1}</button>
-
-                <label htmlFor="reps" className="mr-1"> Reps </label>
-                <input type="text"
-                    name="reps"
-                    className="w-10 rounded-md mr-3 pl-1"
-                    value={set.exercise_reps}
-                    onChange={(e) => handleRepsChange(e, set.id)}
-                />
-
-                <label htmlFor="weight" className="mr-1"> Weight </label>
-                <input type="text"
-                    name="weight"
-                    className="w-10 rounded-md pl-1"
-                    value={set.exercise_weight}
-                    onChange={(e) => handleWeightChange(e, set.id)}
-                />
-
-                <button className="submit delete ml-auto hover:bg-blue-600" onClick={() => removeSet(set.id)}>
-                    <img src="../images/trash.webp" alt="trash" />
-                </button>
-            </div>
-        ));
-    }
-
-    const addSet = async (exercise) => {
-
+    const handleAddSet = async(exercise) => {
         try {
-            const response = await axios.post('http://localhost:3000/api/sets', {
+            await axios.post('http://localhost:3000/api/sets', {
                 exercise,
                 workoutId,
             }, {
@@ -102,48 +76,23 @@ export default function WorkoutView() {
                     'authorization': `Bearer ${accessToken}`
                 }
             });
-
             setRefreshSet(prevRefreshSet => prevRefreshSet + 1)
-
         } catch (error) {
             console.error('Error adding set', error);
         }
     }
 
-    const removeSet = async (setId) => {
-
-        console.log(setId)
+    const handleDeleteSet = async (setId) => {
         try {
-            const response = await axios.delete(`http://localhost:3000/api/sets/deleteSet/${setId}`, {
-                headers: {
-                    'authorization': `Bearer ${accessToken}`
-                }
+            await axios.delete(`http://localhost:3000/api/sets/deleteSet/${setId}`, {
+                headers: { 'authorization': `Bearer ${accessToken}` },
             });
-
-            setRefreshSet(prevRefreshSet => prevRefreshSet - 1)
-
+            setRefreshSet(prevRefreshSet => prevRefreshSet + 1)
         } catch (error) {
-            console.error('Error removing set', error);
+            console.error("Failed to delete set:", error);
         }
     }
 
-    const handleRepsChange = (e, setId) => {
-        const { value } = e.target;
-        console.log(e.target);
-        console.log(setId);
-        setExerciseSets(prevSets => prevSets.map(set =>
-            set.id === setId ? { ...set, exercise_reps: Number(value) } : set
-        ));
-
-    }
-
-    const handleWeightChange = (e, setId) => {
-        const { value } = e.target;
-        setExerciseSets(prevSets => prevSets.map(set =>
-            set.id === setId ? { ...set, exercise_weight: Number(value) } : set
-        ));
-
-    }
 
     /* Handles dropdown menu onClick */
     const handleOptionClick = async (option, exercise) => {
@@ -189,8 +138,13 @@ export default function WorkoutView() {
                                         </>
                                         } />
                                 </div>
-                                {renderSets(exerciseSetsFiltered)}
-                                <button className="submit mt-4 p-1" onClick={() => addSet(exercise)}>Add Set</button>
+                                <RenderSets
+                                    sets={exerciseSetsFiltered}
+                                    accessToken={accessToken}
+                                    handleAddSet={handleAddSet}
+                                    handleDeleteSet={handleDeleteSet}
+                                />
+                                <button className="submit mt-4 p-1" onClick={() => handleAddSet(exercise)}>Add Set</button>
                             </div>
                         );
                     })}
@@ -201,7 +155,7 @@ export default function WorkoutView() {
                         <option key={workout.id} onClick={() => addExercise(workout)}>{workout.exercise_name}</option>
                     ))}
                 </select>
-                <button className='submit bg-background'>Finish Workout</button>
+                <button className='submit'>Finish Workout</button>
                 <button className="submit bg-gray-300">Return to Workouts</button>
             </div>
         </div>
