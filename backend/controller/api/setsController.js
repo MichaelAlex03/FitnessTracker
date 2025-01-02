@@ -22,7 +22,7 @@ const deleteSet = async (req, res) => {
     }
 }
 
-const getUserSets = async (req, res) => {
+const getExerciseSets = async (req, res) => {
     const { userId, exerciseName } = req.params;
     try {
         const sets = await pg.getAllSetsForExercise(userId, exerciseName);
@@ -50,5 +50,6 @@ module.exports = {
     removeAllSets,
     getWorkoutSets,
     createSet,
-    deleteSet
+    deleteSet,
+    getExerciseSets
 }

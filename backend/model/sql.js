@@ -28,7 +28,7 @@ const getWorkoutSets = async (workoutId) => {
 
 const getAllSetsForExercise = async(userId, exerciseName) => {
     return await db.query(
-        'SELECT workout_sets FROM workouts JOIN user_exercises ON workouts.id = user_exercises.workout_id JOIN workout_sets ON user_exercises.id = workout_sets.exercise_id WHERE workouts.user_id = $1 AND user_exercises.exercise_name = $2', [userId, exerciseName])
+        'SELECT workout_sets.* FROM workouts JOIN user_exercises ON workouts.id = user_exercises.workout_id JOIN workout_sets ON user_exercises.id = workout_sets.exercise_id WHERE workouts.user_id = $1 AND user_exercises.exercise_name = $2', [userId, exerciseName])
 }
 
 //---------------------------- Post Routes Queries ------------------------------//

@@ -7,7 +7,7 @@ router.route('/')
     .delete(setsController.removeAllSets)
 
 router.route('/userExercises/:userId/:exerciseName')
-    .get()
+    .get(setsController.getExerciseSets)
 
 router.route('/getAllSets/:workoutId')
     .get(setsController.getWorkoutSets)

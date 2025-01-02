@@ -51,22 +51,6 @@ app.use('/api/sets', require('./routes/api/sets'));
 
 
 
-app.get("/exercise_history/:id/:exercise_name", verifyJWT, async(req, res) => {
-  const userId = req.userId
-
-  const exercise_name = req.params.exercise_name;
-
-  try{
-    const result = await pool.query('SELECT * FROM workout_sets WHERE exercise_name = $1 AND user_id = $2', [exercise_name, userId]);
-    res.json({result: result.rows, success: true});
-  }catch (error) {
-    console.error('Error getting exercise history:', error);
-    res.status(500).send({ success: false, message: 'Internal Server Error' });
-  }
-})
-
-
-
 
 
 
