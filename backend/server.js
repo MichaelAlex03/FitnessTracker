@@ -50,11 +50,6 @@ app.use('/api/sets', require('./routes/api/sets'));
 
 
 
-
-
-
-
-
 app.patch("/user_sets", verifyJWT, async (req, res) => {
 
   const {sets } = req.body;
