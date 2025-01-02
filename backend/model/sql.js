@@ -5,7 +5,6 @@ const findUser = async (user) => {
 }
 
 const updateUser = async (user, refreshToken) => {
-    console.log('hiii' + refreshToken);
     return await db.query('UPDATE users SET refresh_token = $1 WHERE user_name = $2', [refreshToken, user])
 }
 
