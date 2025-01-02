@@ -50,29 +50,6 @@ app.use('/api/sets', require('./routes/api/sets'));
 
 
 
-app.patch("/user_sets", verifyJWT, async (req, res) => {
-
-  const {sets } = req.body;
-  try{
-    const updatePromises = sets.map(set => {
-      const { exercise_reps, exercise_weight, id } = set;
-      console.log(id);
-      return pool.query(
-        'UPDATE workout_sets SET exercise_reps = $1, exercise_weight = $2 WHERE id = $3',
-        [exercise_reps, exercise_weight, id]
-      );
-    });
-
-    await Promise.all(updatePromises);
-    res.send({success: true});
-  }catch(error){
-    console.error('Error posting data:', error);
-    res.status(500).send({ success: false, message: 'Internal Server Error' });
-  }
-})
-
-
-
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
   });

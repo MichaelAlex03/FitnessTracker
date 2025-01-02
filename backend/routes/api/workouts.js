@@ -3,8 +3,10 @@ const router = express.Router();
 const workoutsController = require('../../controller/api/workoutsController');
 
 router.route('/')
-    .get(workoutsController.getWorkouts)
     .post(workoutsController.createWorkout)
     .delete(workoutsController.deleteWorkout)
+
+router.route('/:userId')
+    .get(workoutsController.getWorkouts)
 
 module.exports = router;

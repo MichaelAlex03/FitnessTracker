@@ -26,7 +26,7 @@ const getExerciseSets = async (req, res) => {
     const { userId, exerciseName } = req.params;
     try {
         const sets = await pg.getAllSetsForExercise(userId, exerciseName);
-        return res.status(200).json({ 'message': 'sets retrieved!', sets});
+        return res.status(200).json({ 'message': 'sets retrieved!', sets });
     } catch (err) {
         return res.status(500).json({ 'message': err.message });
     }
@@ -44,6 +44,15 @@ const getWorkoutSets = async (req, res) => {
     return res.status(200).json({ sets: result.rows });
 }
 
+const updateSets = async (req, res) => {
+    const { exerciseSets } = req.body;
+    try {
+        await pg.updateSets(exerciseSets);
+        return res.status(200).json({ 'message': 'sets updated!' });
+    } catch (err) {
+        return res.status(500).json({ 'message': err.message });
+    }
+}
 
 
 module.exports = {
@@ -51,5 +60,6 @@ module.exports = {
     getWorkoutSets,
     createSet,
     deleteSet,
-    getExerciseSets
+    getExerciseSets,
+    updateSets,
 }

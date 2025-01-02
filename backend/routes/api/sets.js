@@ -5,6 +5,7 @@ const setsController = require('../../controller/api/setsController');
 router.route('/')
     .post(setsController.createSet)
     .delete(setsController.removeAllSets)
+    .patch(setsController.updateSets)
 
 router.route('/userExercises/:userId/:exerciseName')
     .get(setsController.getExerciseSets)

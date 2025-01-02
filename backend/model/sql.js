@@ -1,16 +1,24 @@
 const db = require('.././config/dbConn');
 
-const findUser = async (user) => {
-    return await db.query('SELECT * FROM users WHERE user_name = $1', [user])
-}
-
 const updateUser = async (user, refreshToken) => {
     return await db.query('UPDATE users SET refresh_token = $1 WHERE user_name = $2', [refreshToken, user])
 }
 
+const updateSets = async (sets) => {
+    sets.map(set => {
+        return db.query(
+            'UPDATE workout_sets SET exercise_reps = $1, exercise_weight = $2 WHERE id = $3', [set.exercise_reps, set.exercise_weight, set.id]
+        );
+    });
+}
+
 //---------------------------- Get Routes Queries ------------------------------//
+const findUser = async (user) => {
+    return await db.query('SELECT * FROM users WHERE user_name = $1', [user])
+}
 
 const getWorkouts = (userId) => {
+    console.log(userId)
     return db.query('SELECT * FROM workouts WHERE user_id = $1', [userId]);
 }
 
@@ -26,10 +34,27 @@ const getWorkoutSets = async (workoutId) => {
     return await db.query('SELECT * FROM workout_sets WHERE workout_id = $1', [workoutId]);
 }
 
-const getAllSetsForExercise = async(userId, exerciseName) => {
+const getAllSetsForExercise = async (userId, exerciseName) => {
     return await db.query(
-        'SELECT workout_sets.* FROM workouts JOIN user_exercises ON workouts.id = user_exercises.workout_id JOIN workout_sets ON user_exercises.id = workout_sets.exercise_id WHERE workouts.user_id = $1 AND user_exercises.exercise_name = $2', [userId, exerciseName])
-}
+        `
+        SELECT 
+            workout_sets.*
+        FROM 
+            workouts
+        JOIN 
+            user_exercises 
+            ON workouts.id = user_exercises.workout_id
+        JOIN 
+            workout_sets 
+            ON user_exercises.id = workout_sets.exercise_id
+        WHERE 
+            workouts.user_id = $1 
+            AND user_exercises.exercise_name = $2
+        `,
+        [userId, exerciseName]
+    );
+};
+
 
 //---------------------------- Post Routes Queries ------------------------------//
 
@@ -112,5 +137,6 @@ module.exports = {
     getWorkoutSets,
     addSet,
     deleteSet,
-    deleteExercise
+    deleteExercise,
+    updateSets
 }
