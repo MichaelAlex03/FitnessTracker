@@ -1,11 +1,13 @@
 import { View, Text } from 'react-native'
+import { Stack } from 'expo-router'
 import React from 'react'
 
 const authLayout = () => {
   return (
-    <View>
-      <Text>authLayout</Text>
-    </View>
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name='Login' />
+      <Stack.Screen name='Register' />
+    </Stack>
   )
 }
 
