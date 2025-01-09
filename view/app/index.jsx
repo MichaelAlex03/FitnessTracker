@@ -1,4 +1,4 @@
-import { Text, View, Pressable, TouchableOpacity} from "react-native";
+import { Text, View, Pressable, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import CustomButton from '../components/CustomButton'
@@ -11,16 +11,18 @@ export default function Index() {
       <View>
         <Text className="text-white text-3xl font-bold">Welcome To <Text className="text-secondary-200">FitTrackr</Text></Text>
       </View>
-      <CustomButton
-        title='Login'
-        handlePress={() => router.push("/Login")}
-        containerStyles="w-3/4 mt-7"
-      />
-      <CustomButton
-        title='Sign Up'
-        handlePress={() => router.push("/Register")}
-        containerStyles="w-3/4 mt-7"
-      />
+      <View className="w-3/4 items-center">
+        <CustomButton
+          title='Login'
+          handlePress={() => router.push("/Login")}
+          containerStyles="w-3/4 mt-7"
+        />
+        <CustomButton
+          title='Sign Up'
+          handlePress={() => router.push("/Register")}
+          containerStyles="w-3/4 mt-7"
+        />
+      </View>
     </SafeAreaView>
   );
 }

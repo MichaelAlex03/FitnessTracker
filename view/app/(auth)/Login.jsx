@@ -65,7 +65,7 @@ const Login = () => {
   return (
     <SafeAreaView className='bg-primary h-full'>
       <ScrollView>
-        <View className='w-full justify-center min-h-[85vh] px-4 my-6'>
+        <View className='w-full items-center justify-center min-h-[85vh] px-4 my-6'>
           <Text className='text-[30px] text-white font-bold mt-10 font-psemibold'>Welcome to FitTrackr 👋</Text>
           <Text className='text-gray-100 mt-2'>Please login with your details here</Text>
 
