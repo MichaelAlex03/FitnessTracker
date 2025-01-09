@@ -1,8 +1,11 @@
 import { View, Text, ScrollView } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { Link } from "expo-router";
+
 import CustomButton from '../../components/CustomButton'
 import FormField from '../../components/FormField'
+
 
 import { AntDesign } from '@expo/vector-icons';
 
@@ -84,8 +87,8 @@ const Register = () => {
     <SafeAreaView className='bg-primary h-full'>
       <ScrollView>
         <View className='w-full items-center justify-center min-h-[85vh] px-4 my-6'>
-          <Text className='text-[30px] text-white font-bold mt-10 font-psemibold'>Create New Account 👋</Text>
-          <Text className='text-sm text-gray-100 mt-2'>Please enter details to create a new account</Text>
+          <Text className='text-[27px] sm:text-[30px] text-white font-bold mt-10 font-psemibold'>Create New Account 👋</Text>
+          <Text className='text-[12px] sm:-text:sm text-gray-100 mt-2'>Please enter details to create a new account</Text>
 
           <FormField
             title='Username'
@@ -116,15 +119,18 @@ const Register = () => {
           {pwdFocus && !validPwd &&
             <View className='flex-row items-start justify-start gap-2 mt-2 w-full md:w-1/2 '>
               <AntDesign name="exclamationcircle" size={12} color="red" className='mt-[2px]' />
-              <View className='w-3/4 md:w-1/2 flex-col'>
+              <View className='w-5/6 md:w-4/5 flex-col'>
                 <Text className='text-red-500 rounded-md'>
                   8 to 24 characters.
                 </Text>
                 <Text className='text-red-500 rounded-md'>
-                  Must include uppercase and lowercase letters a number and a special character.
+                  Must include uppercase and lowercase letters
                 </Text>
                 <Text className='text-red-500 rounded-md'>
-                  Allowed special characters: ! @ # % 
+                  a number and a special character.
+                </Text>
+                <Text className='text-red-500 rounded-md'>
+                  Allowed special characters: ! @ # %
                 </Text>
               </View>
             </View>
@@ -138,7 +144,7 @@ const Register = () => {
             handleFocus={() => setMatchFocus(true)}
             handleBlur={() => setMatchFocus(false)}
           />
-          {matchPwd.length >= 1 && !validMatch &&
+          {matchPwd && !validMatch && matchFocus &&
             <View className='flex-row items-center justify-start w-full md:w-1/2'>
               <AntDesign name="exclamationcircle" size={12} color="red" />
               <Text className=' p-2 rounded-md text-red-500'>
@@ -148,11 +154,18 @@ const Register = () => {
           }
 
           <CustomButton
-            title="Sign In"
+            title="Create Account"
             handlePress={() => { }}
             containerStyles={'mt-7'}
             isLoading={isSubmitting}
           />
+
+          <View className='justify-center pt-5 flex-row gap-2'>
+            <Text className='text-lg text-gray-100 font-pregular'>Have an account already?</Text>
+            <Link href={'/Login'} className='text-lg font-psemibold text-secondary'>
+              Sign In
+            </Link>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>

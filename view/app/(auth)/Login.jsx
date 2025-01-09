@@ -1,6 +1,9 @@
 import { View, Text, ScrollView } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { Link } from "expo-router";
+
+
 import CustomButton from '../../components/CustomButton'
 import FormField from '../../components/FormField'
 
@@ -85,10 +88,16 @@ const Login = () => {
 
           <CustomButton
             title="Sign In"
-            handlePress={() => {}}
+            handlePress={() => { }}
             containerStyles={'mt-7'}
             isLoading={isSubmitting}
           />
+          <View className='justify-center pt-5 flex-row gap-2'>
+            <Text className='text-lg text-gray-100 font-pregular'>Don't have an account?</Text>
+            <Link href={'/Register'} className='text-lg font-psemibold text-secondary'>
+              Sign Up
+            </Link>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
