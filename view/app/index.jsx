@@ -22,6 +22,11 @@ export default function Index() {
           handlePress={() => router.push("/Register")}
           containerStyles="w-3/4 mt-7"
         />
+        <CustomButton
+          title='Workouts'
+          handlePress={() => router.push("/Workouts")}
+          containerStyles="w-3/4 mt-7"
+        />
       </View>
     </SafeAreaView>
   );
