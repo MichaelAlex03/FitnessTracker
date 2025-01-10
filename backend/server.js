@@ -9,6 +9,7 @@ const pool = require('./config/dbConn');
 const verifyJWT = require('./middleware/verifyJWT');
 const credentials = require('./middleware/credentials');
 const PORT = process.env.PORT || 3000;
+const IP = process.env.IP
 
 const app = express();
 
@@ -51,6 +52,6 @@ app.use('/api/sets', require('./routes/api/sets'));
 
 
 app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Server running on http://${IP}:${PORT}`);
   });
   
