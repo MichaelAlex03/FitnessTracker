@@ -1,9 +1,12 @@
 import { View, Text, TextInput, TouchableOpacity, Image } from 'react-native'
 import React, { useState } from 'react'
 import { icons } from '../constants'
+import { API_URL } from '@env'
 
 const FormField = ({ title, value, placeholder, handleChangeText, otherStyles, handleFocus, handleBlur, ...props }) => {
     const [showPassword, setShowPassword] = useState(false)
+
+    console.log(API_URL)
 
     return (
         <View className={`space-y-2 ${otherStyles} w-full md:w-1/2`}>
