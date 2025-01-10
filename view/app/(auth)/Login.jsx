@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Link, router } from "expo-router";
 import axios from '../../api/axios'
-import { IP } from '@env'
 
 
 import CustomButton from '../../components/CustomButton'
@@ -34,7 +33,7 @@ const Login = () => {
   async function handleSubmit(e) {
     e.preventDefault();
     try {
-      const response = await axios.post(`http://${IP}:3000/auth/login`,
+      const response = await axios.post(`http://${process.env.EXPO_PUBLIC_IP}:3000/auth/login`,
         {
           user: user,
           pwd: pwd,
@@ -62,9 +61,10 @@ const Login = () => {
         setErrMsg('No Server Response');
       } else if (err.response?.status === 409) {
         setErrMsg('Username Taken');
+      } else if (err.response?.status === 400) {
+        setErrMsg('Username and Password required');
       } else {
-        console.log(err.response.data.message)
-        setErrMsg('Registration Failed');
+        setErrMsg('Username or Password is incorrect');
       }
     }
   }
@@ -76,7 +76,7 @@ const Login = () => {
           <Text className='text-[30px] text-white font-bold mt-10 font-psemibold'>Welcome to FitTrackr 👋</Text>
           <Text className='text-gray-100 mt-2'>Please login with your details here</Text>
 
-          <Text className='bg-pink-300 font-semibold p-2 mb-2 text-red-700'>{errMsg}</Text>
+          {errMsg && <Text className='font-semibold p-2 mt-2 text-red-700'>{errMsg}</Text>}
           <FormField
             title='Username'
             value={user}
