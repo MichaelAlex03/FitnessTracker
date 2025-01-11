@@ -6,6 +6,7 @@ const CustomButton = ({
   containerStyles,
   textStyles,
   isLoading,
+  ...props
 }) => {
   return (
     <TouchableOpacity
@@ -14,7 +15,7 @@ const CustomButton = ({
       className={`bg-secondary w-full md:w-1/2 rounded-xl min-h-[62px] flex flex-row justify-center items-center ${containerStyles}${
         isLoading ? "opacity-50" : ""
       }`}
-      disabled={isLoading}
+      disabled={props.disabled}
     >
       <Text className={`text-primary font-psemibold text-lg ${textStyles} text-white`} >
         {title}

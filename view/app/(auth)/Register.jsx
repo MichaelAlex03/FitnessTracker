@@ -1,7 +1,8 @@
 import { View, Text, ScrollView } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
+import axios from '../../api/axios'
 
 import CustomButton from '../../components/CustomButton'
 import FormField from '../../components/FormField'
@@ -44,44 +45,50 @@ const Register = () => {
     setErrMsg('');
   }, [user, pwd, matchPwd])
 
-  // async function handleSubmit(e) {
-  //   e.preventDefault();
-  //   try {
-  //     const response = await axios.post(LOGIN_URL,
-  //       {
-  //         user: user,
-  //         pwd: pwd,
-  //       },
-  //       {
-  //         headers: { 'Content-Type': 'application/json' },
-  //         withCredentials: true
-  //       }
-  //     );
+  async function handleSubmit(e) {
+    e.preventDefault();
+    // if button enabled with JS hack
+    const v1 = USER_REGEX.test(user);
+    const v2 = PWD_REGEX.test(pwd);
+    if (!v1 || !v2) {
+      setErrMsg("Invalid Entry");
+      return;
+    }
+    try {
+      const response = await axios.post(`http://${process.env.EXPO_PUBLIC_IP}:3000/auth/register`,
+        {
+          user: user,
+          pwd: pwd,
+        },
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true,
+        }
+      );
 
-  //     userId = response.data.foundUser[0].id;
-  //     accessToken = response.data.accessToken;
-  //     const userInfo = {
-  //       id: userId,
-  //       accessToken: accessToken,
-  //     }
+      console.log(response.status)
 
-  //     if (response.status === 200) {
-  //       console.log('goes in');
-  //       navigate("/workout", { state: userInfo });
-  //     }
-  //     setUser('');
-  //     setPwd('');
-  //     setMatchPwd('');
-  //   } catch (err) {
-  //     if (!err?.response) {
-  //       setErrMsg('No Server Response');
-  //     } else if (err.response?.status === 409) {
-  //       setErrMsg('Username Taken');
-  //     } else {
-  //       console.log(err.response.data.message)
-  //       setErrMsg('Registration Failed');
-  //     }
-  //   }
+      if (response.status === 201) {
+        router.push('/Login');
+        setUser('');
+        setPwd('');
+        setMatchPwd('');
+      }
+    } catch (err) {
+      if (!err?.response) {
+        setErrMsg('No Server Response');
+      } else if (err.response?.status === 409) {
+        setErrMsg('Username Taken');
+      } else if (err.response?.status === 400) {
+        setErrMsg('Username and Password are required');
+      } else {
+        setErrMsg('Registration Failed');
+      }
+    }
+
+
+  }
+
 
   return (
     <SafeAreaView className='bg-primary h-full'>
@@ -89,7 +96,7 @@ const Register = () => {
         <View className='w-full items-center justify-center min-h-[85vh] px-4 my-6'>
           <Text className='text-[27px] sm:text-[30px] text-white font-bold mt-10 font-psemibold'>Create New Account 👋</Text>
           <Text className='text-[12px] sm:-text:sm text-gray-100 mt-2'>Please enter details to create a new account</Text>
-
+          {errMsg && <Text className='font-semibold p-2 mt-2 text-red-700'>{errMsg}</Text>}
           <FormField
             title='Username'
             value={user}
@@ -106,7 +113,6 @@ const Register = () => {
               </Text>
             </View>
           }
-
 
           <FormField
             title='Password'
@@ -144,7 +150,7 @@ const Register = () => {
             handleFocus={() => setMatchFocus(true)}
             handleBlur={() => setMatchFocus(false)}
           />
-          {matchPwd && !validMatch && matchFocus &&
+          {matchPwd && !validMatch &&
             <View className='flex-row items-center justify-start w-full md:w-1/2'>
               <AntDesign name="exclamationcircle" size={12} color="red" />
               <Text className=' p-2 rounded-md text-red-500'>
@@ -155,9 +161,12 @@ const Register = () => {
 
           <CustomButton
             title="Create Account"
-            handlePress={() => { }}
-            containerStyles={'mt-7'}
+            handlePress={handleSubmit}
+            containerStyles={validName && validPwd && validMatch
+              ? 'mt-7 mb-2'
+              : 'opacity-40 mt-7 mb-2'}
             isLoading={isSubmitting}
+            disabled={!validName || !validPwd || !validMatch ? true : false}
           />
 
           <View className='justify-center pt-5 flex-row gap-2'>
