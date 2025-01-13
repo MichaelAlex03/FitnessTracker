@@ -12,6 +12,6 @@ FitTrackr is a user-friendly workout application that allows users to create, ma
 
 ## Technologies Used
 
-- Frontend: React, Tailwind CSS, Javascript
+- Frontend: React Native, Tailwind CSS, Javascript
 - Backend: NodeJs, ExpressJs
 - Database: PostgreSQL
