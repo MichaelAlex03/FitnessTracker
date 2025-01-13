@@ -1,11 +1,10 @@
 require('dotenv').config();
 const express = require('express');
+const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const corsOptions = require('./config/corsOptions');
-const jwt = require('jsonwebtoken');
 const { logger } = require('./middleware/logEvents');
 const path = require('path');
-const pool = require('./config/dbConn');
 const verifyJWT = require('./middleware/verifyJWT');
 const credentials = require('./middleware/credentials');
 const PORT = process.env.PORT || 3000;
@@ -27,6 +26,9 @@ app.use(express.json());
 
 // Cross Origin Resource Sharing
 app.use(cors(corsOptions));
+
+
+app.use(cookieParser());
 
 //serve static files
 app.use(express.static(path.join(__dirname, 'public')));
