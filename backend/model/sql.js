@@ -17,6 +17,10 @@ const findUser = async (user) => {
     return await db.query('SELECT * FROM users WHERE user_name = $1', [user])
 }
 
+const findRefreshToken = async (refreshToken) => {
+    return await db.query('SELECT * FROM users WHERE refresh_token = $1', [refreshToken])
+}
+
 const getWorkouts = (userId) => {
     console.log(userId)
     return db.query('SELECT * FROM workouts WHERE user_id = $1', [userId]);
@@ -123,6 +127,7 @@ const deleteExercise = async (exerciseId) => {
 
 module.exports = {
     findUser,
+    findRefreshToken,
     updateUser,
     createUser,
     getAllExercises,
