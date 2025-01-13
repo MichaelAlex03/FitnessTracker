@@ -31,16 +31,12 @@ app.use(cors(corsOptions));
 //serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-//server front end through backend will build frontend and place here in backend
-// app.get('/', (req, res) => {
-//   res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
-// });
 
 //put auth routes here before verifyJWT
 app.use('/auth/register', require('./routes/auth/register'));
 app.use('/auth/login', require('./routes/auth/login'));
-// app.use('/auth/refresh', require('./routes/auth/refresh'));
-// app.use('/auth/logout', require('./routes/auth/logout'));
+app.use('/auth/refresh', require('./routes/auth/refresh'));
+app.use('/auth/logout', require('./routes/auth/logout'));
 
 app.use(verifyJWT);
 
