@@ -2,8 +2,6 @@
 
 FitTrackr is a user-friendly workout application designed to help users create, manage, and edit workouts with ease. Whether you are a fitness guru or just starting your fitness journey, FitTrackr provides a streamlined way to record your workouts, track progress, and stay motivated. 
 
----
-
 ## Features
 
 ### **Create Workouts**
@@ -24,8 +22,6 @@ FitTrackr features a clean and intuitive design, ensuring that tracking your wor
 - Efficient
 - Enjoyable
 
----
-
 ## Technologies Used
 
 ### **Frontend**
@@ -39,8 +35,6 @@ FitTrackr features a clean and intuitive design, ensuring that tracking your wor
 
 ### **Database**
 - **PostgreSQL**: For managing and storing user data, workouts, and exercise details efficiently.
-
----
 
 ## Installation and Setup
 
