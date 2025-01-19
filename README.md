@@ -55,8 +55,8 @@ FitTrackr features a clean and intuitive design, ensuring that tracking your wor
    npm install
 
 3. Setup Database
-   - Create a new PostgreSQL database
-   - Create .env file with your database credentials
+- Create a new PostgreSQL database
+- Create .env file with your database credentials
    ```bash
       DB_HOST=your_database_host
       DB_PORT=your_database_port
