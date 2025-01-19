@@ -64,4 +64,14 @@ FitTrackr features a clean and intuitive design, ensuring that tracking your wor
       DB_PASSWORD=your_database_password
       DB_NAME=your_database_name
 
+4. Run the backend server
+   ```bash
+   cd/backend
+   npm run server
+   
+5. Run the React Native app
+   ```bash
+   cd/view
+   npx run expo
+
 
