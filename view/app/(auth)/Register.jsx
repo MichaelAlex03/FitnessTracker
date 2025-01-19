@@ -12,6 +12,7 @@ import { AntDesign } from '@expo/vector-icons';
 
 const USER_REGEX = /^[a-zA-Z][a-zA-Z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
+const REGISTER_URL = '/auth/register';
 
 const Register = () => {
 
@@ -55,7 +56,7 @@ const Register = () => {
       return;
     }
     try {
-      const response = await axios.post(`http://${process.env.EXPO_PUBLIC_IP}:3000/auth/register`,
+      const response = await axios.post(REGISTER_URL,
         {
           user: user,
           pwd: pwd,
@@ -66,7 +67,7 @@ const Register = () => {
         }
       );
 
-      console.log(response.status)
+      setAuth(user, pwd, accessToken)
 
       if (response.status === 201) {
         router.push('/Login');

@@ -2,6 +2,7 @@ import { View, Text, ScrollView } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Link, router } from "expo-router";
+import useAuth from '@/hooks/useAuth';
 import axios from '../../api/axios'
 
 
@@ -12,6 +13,8 @@ const LOGIN_URL = '/auth/login';
 
 
 const Login = () => {
+
+  const { setAuth } = useAuth();
 
   const [user, setUser] = useState('');
   const [userFocus, setUserFocus] = useState(false);
@@ -33,7 +36,7 @@ const Login = () => {
   async function handleSubmit(e) {
     e.preventDefault();
     try {
-      const response = await axios.post(`http://${process.env.EXPO_PUBLIC_IP}:3000/auth/login`,
+      const response = await axios.post(LOGIN_URL,
         {
           user: user,
           pwd: pwd,
@@ -44,14 +47,8 @@ const Login = () => {
         }
       );
 
-      userId = response.data.foundUser[0].id;
-      accessToken = response.data.accessToken;
-      const userInfo = {
-        id: userId,
-        accessToken: accessToken,
-      }
       if (response.status === 200) {
-        router.push('/Workouts');
+        router.replace('/Workouts');
       }
       setUser('');
       setPwd('');

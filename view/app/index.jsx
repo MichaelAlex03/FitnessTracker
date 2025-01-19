@@ -14,12 +14,12 @@ export default function Index() {
       <View className="w-3/4 items-center">
         <CustomButton
           title='Login'
-          handlePress={() => router.push("/Login")}
+          handlePress={() => router.replace("/Login")}
           containerStyles="w-3/4 mt-7"
         />
         <CustomButton
           title='Sign Up'
-          handlePress={() => router.push("/Register")}
+          handlePress={() => router.replace("/Register")}
           containerStyles="w-3/4 mt-7"
         />
       </View>
