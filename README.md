@@ -51,13 +51,16 @@ FitTrackr features a clean and intuitive design, ensuring that tracking your wor
    cd FitTrackr
 
 2. Install dependencies
+   ```bash
    npm install
 
 3. Setup Database
-DB_HOST=your_database_host
-DB_PORT=your_database_port
-DB_USER=your_database_user
-DB_PASSWORD=your_database_password
-DB_NAME=your_database_name
+- Create a new PostgreSQL database
+```bash
+   DB_HOST=your_database_host
+   DB_PORT=your_database_port
+   DB_USER=your_database_user
+   DB_PASSWORD=your_database_password
+   DB_NAME=your_database_name
 
 
