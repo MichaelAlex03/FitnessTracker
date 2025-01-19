@@ -1,17 +1,58 @@
-# FitnessTracker
+# FitTrackr
 
-## Overview
+FitTrackr is a user-friendly workout application designed to help users create, manage, and edit workouts with ease. Whether you are a fitness guru or just starting your fitness journey, FitTrackr provides a streamlined way to record your workouts, track progress, and stay motivated. 
 
-FitTrackr is a user-friendly workout application that allows users to create, manage, and edit your workouts with ease. Weather your a fitness guru or just starting on your fitness journey, FitTrackr provides a streamlined way to record your workouts, view your progress, and stay motivated!
+---
 
 ## Features
 
-- Create Workouts: Easily create custom workouts tailored to your preferences by adding exercises with the ability to view sets, reps, and weight
-- Edit Workouts: Modify your workouts with ease! Easily delete or add sets as well as addding and deleting exercises within your workout.
-- User-Friendly Interface: A clean and intuitive design ensures that tracking your workouts is simple and efficient.
+### **Create Workouts**
+Easily create custom workouts tailored to your fitness goals. Add exercises with detailed information including:
+- Sets
+- Reps
+- Weight
+
+### **Edit Workouts**
+Modify your workouts effortlessly:
+- Add or delete sets
+- Add or remove exercises
+- Adjust details for exercises (e.g., sets, reps, weight)
+
+### **User-Friendly Interface**
+FitTrackr features a clean and intuitive design, ensuring that tracking your workouts is:
+- Simple
+- Efficient
+- Enjoyable
+
+---
 
 ## Technologies Used
 
-- Frontend: React Native, Tailwind CSS, Javascript
-- Backend: NodeJs, ExpressJs
-- Database: PostgreSQL
+### **Frontend**
+- **React Native**: For building a cross-platform mobile application with a smooth user experience.
+- **Tailwind CSS**: For styling the app with a utility-first approach to create a clean and responsive UI.
+- **JavaScript**: For logic and interactivity.
+
+### **Backend**
+- **Node.js**: For building a fast and scalable server-side application.
+- **Express.js**: For handling routing and API endpoints.
+
+### **Database**
+- **PostgreSQL**: For managing and storing user data, workouts, and exercise details efficiently.
+
+---
+
+## Installation and Setup
+
+### Prerequisites
+- Node.js installed on your machine
+- PostgreSQL installed and configured
+- A package manager (npm or yarn)
+
+### Setup Instructions
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/yourusername/FitTrackr.git
+   cd FitTrackr
+
