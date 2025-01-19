@@ -1,20 +1,21 @@
-import { View, Text, ScrollView } from 'react-native'
+import { View, Text, ScrollView, Pressable } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Link, router } from "expo-router";
-import useAuth from '@/hooks/useAuth';
 import axios from '../../api/axios'
 
 
 import CustomButton from '../../components/CustomButton'
 import FormField from '../../components/FormField'
+import useAuth from '@/hooks/useAuth';
+import CheckBox from '@react-native-community/checkbox';
 
 const LOGIN_URL = '/auth/login';
 
 
 const Login = () => {
 
-  const { setAuth } = useAuth();
+  const { setIsLoggedIn, setAuth } = useAuth();
 
   const [user, setUser] = useState('');
   const [userFocus, setUserFocus] = useState(false);
@@ -25,8 +26,7 @@ const Login = () => {
   const [errMsg, setErrMsg] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  let accessToken = '';
-  let userId = '';
+  const [persist, setPersist] = useState(false);
 
   useEffect(() => {
     setErrMsg('');
@@ -47,12 +47,14 @@ const Login = () => {
         }
       );
 
+      setAuth(user, pwd, response.data.accessToken)
+      setIsLoggedIn(true)
+
       if (response.status === 200) {
         router.replace('/Workouts');
       }
       setUser('');
       setPwd('');
-      setMatchPwd('');
     } catch (err) {
       if (!err?.response) {
         setErrMsg('No Server Response');
@@ -88,12 +90,25 @@ const Login = () => {
             otherStyles={'mt-7'}
           />
 
+
+
           <CustomButton
             title="Sign In"
             handlePress={handleSubmit}
             containerStyles={'mt-7'}
             isLoading={isSubmitting}
           />
+
+          <View className='flex-row items-center gap-2 mt-4'>
+            <Pressable
+              onPress={() => setPersist(!persist)}
+              className={`${persist ? 'bg-sky-500' : 'bg-white'} w-[20px] h-[20px] border border-gray-100 items-center justify-center`}
+            >
+              {persist && <Text className='text-white text-sm'>✔</Text>}
+            </Pressable>
+            <Text className='text-white'>Trust this device</Text>
+          </View>
+
           <View className='justify-center pt-5 flex-row gap-2'>
             <Text className='text-lg text-gray-100 font-pregular'>Don't have an account?</Text>
             <Link href={'/Register'} className='text-lg font-psemibold text-secondary'>
@@ -101,6 +116,7 @@ const Login = () => {
             </Link>
           </View>
         </View>
+
       </ScrollView>
     </SafeAreaView>
   )

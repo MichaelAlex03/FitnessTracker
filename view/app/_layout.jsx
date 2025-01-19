@@ -3,6 +3,8 @@ import { AuthProvider } from "@/context/AuthProvider";
 import '../index.css'
 
 export default function RootLayout() {
+
+
   return (
     <AuthProvider>
       <Stack>

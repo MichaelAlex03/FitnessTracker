@@ -1,4 +1,4 @@
-import { View, Text, ScrollView } from 'react-native'
+import { View, Text, ScrollView, TextInput } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Link, router } from "expo-router";
@@ -29,6 +29,7 @@ const Register = () => {
   const [matchFocus, setMatchFocus] = useState(false);
 
   const [errMsg, setErrMsg] = useState('');
+  
 
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -66,8 +67,6 @@ const Register = () => {
           withCredentials: true,
         }
       );
-
-      setAuth(user, pwd, accessToken)
 
       if (response.status === 201) {
         router.push('/Login');
@@ -169,6 +168,7 @@ const Register = () => {
             isLoading={isSubmitting}
             disabled={!validName || !validPwd || !validMatch ? true : false}
           />
+
 
           <View className='justify-center pt-5 flex-row gap-2'>
             <Text className='text-lg text-gray-100 font-pregular'>Have an account already?</Text>

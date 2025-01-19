@@ -1,6 +1,7 @@
 import { View, Text, Image } from 'react-native'
-import { Tabs } from 'expo-router'
-import React from 'react'
+import { Redirect, Tabs, router } from 'expo-router'
+import React, { useEffect } from 'react'
+import useAuth from '@/hooks/useAuth';
 
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Feather from '@expo/vector-icons/Feather';
@@ -22,6 +23,11 @@ const TabIcon = ({ icon, color, name, focused }) => {
 }
 
 const TabsLayout = () => {
+
+    const { auth, loggedIn } = useAuth();
+
+    if (!loggedIn && !auth?.user) return <Redirect href={'/Login'}/>
+
     return (
         <Tabs
             screenOptions={{
