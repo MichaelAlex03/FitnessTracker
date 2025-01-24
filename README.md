@@ -36,6 +36,10 @@ FitTrackr features a clean and intuitive design, ensuring that tracking your wor
 ### **Database**
 - **PostgreSQL**: For managing and storing user data, workouts, and exercise details efficiently.
 
+### **Cloud Services**
+- **AWS RDS**: To host and manage postgreSQL database ensuring reliable data storage and efficient
+scalability.
+
 ## Installation and Setup
 
 ### Prerequisites
