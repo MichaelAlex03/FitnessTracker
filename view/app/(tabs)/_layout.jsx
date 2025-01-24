@@ -26,7 +26,7 @@ const TabsLayout = () => {
 
     const { auth, loggedIn } = useAuth();
 
-    if (!loggedIn && !auth?.user) return <Redirect href={'/Login'}/>
+    if (!loggedIn && !auth?.user) return <Redirect href={'/Login'} replace />
 
     return (
         <Tabs

@@ -14,7 +14,7 @@ import CustomButton from '@/components/CustomButton'
 const Profile = () => {
 
   const handleLogout = () => {
-    router.push('/Login')
+    router.replace('/Login')
   }
 
   const handleUpdate = () => {

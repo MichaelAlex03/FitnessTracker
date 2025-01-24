@@ -99,16 +99,6 @@ const Login = () => {
             isLoading={isSubmitting}
           />
 
-          <View className='flex-row items-center gap-2 mt-4'>
-            <Pressable
-              onPress={() => setPersist(!persist)}
-              className={`${persist ? 'bg-sky-500' : 'bg-white'} w-[20px] h-[20px] border border-gray-100 items-center justify-center`}
-            >
-              {persist && <Text className='text-white text-sm'>✔</Text>}
-            </Pressable>
-            <Text className='text-white'>Trust this device</Text>
-          </View>
-
           <View className='justify-center pt-5 flex-row gap-2'>
             <Text className='text-lg text-gray-100 font-pregular'>Don't have an account?</Text>
             <Link href={'/Register'} className='text-lg font-psemibold text-secondary'>
