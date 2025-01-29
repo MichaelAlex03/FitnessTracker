@@ -9,13 +9,15 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import FormField from '@/components/FormField'
 import CustomButton from '@/components/CustomButton'
 import useAuth from '@/hooks/useAuth';
+import fetchUserInfo from '@/hooks/fetchUserInfo';
 
 const Profile = () => {
 
-  const { auth } = useAuth();
-  
-
   const [errMsg, setErrMsg] = useState('');
+  const [refresh, setRefresh] = useState(0);
+
+  const { auth } = useAuth();
+  const { userInfo } = fetchUserInfo(refresh, auth?.name, auth?.accessToken)
 
   const handleLogout = () => {
     router.replace('/Login')

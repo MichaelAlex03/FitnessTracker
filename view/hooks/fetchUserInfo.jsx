@@ -2,7 +2,7 @@ import { View, Text } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { axiosPrivate } from '@/api/axios'
 
-const fetchUserInfo = (refresh, name) => {
+const fetchUserInfo = (refresh, name, accessToken) => {
 
     const API_URL = `/api/user/${name}`
 
@@ -18,7 +18,7 @@ const fetchUserInfo = (refresh, name) => {
             }
         }
         fetchUser();
-    }, [refresh])
+    }, [refresh, accessToken])
 
     return userInfo;
 }
