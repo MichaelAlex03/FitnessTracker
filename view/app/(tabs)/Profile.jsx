@@ -1,5 +1,5 @@
 import { View, Text, ScrollView } from 'react-native'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Avatar } from "react-native-elements";
 import { router } from 'expo-router';
@@ -13,7 +13,9 @@ import useAuth from '@/hooks/useAuth';
 const Profile = () => {
 
   const { auth } = useAuth();
-  console.log(auth)
+  
+
+  const [errMsg, setErrMsg] = useState('');
 
   const handleLogout = () => {
     router.replace('/Login')
@@ -22,6 +24,7 @@ const Profile = () => {
   const handleUpdate = () => {
 
   }
+
 
   return (
     <SafeAreaView className="bg-primary flex-1">
@@ -78,7 +81,7 @@ const Profile = () => {
           <CustomButton
             title={'Update'}
             containerStyles={'mt-auto'}
-            handlePress={() => { }}
+            handlePress={handleUpdate}
           />
         </View>
       </ScrollView>
