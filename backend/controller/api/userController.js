@@ -1,16 +1,17 @@
 const pg = require('../../model/sql')
 
-const getUserInfo = (req, res) => {
+const getUserInfo = async (req, res) => {
     const { id } = req.params;
-    
+
     try {
-        const userInfo = pg.
+        const userInfo = await pg.findUserbyId(id);
+        res.sendStatus(200).json({ userInfo });
     } catch (error) {
         res.sendStatus(500);
     }
 }
 
-const updateUserInfo = (req, res) => {
+const updateUserInfo = async (req, res) => {
 
 }
 
