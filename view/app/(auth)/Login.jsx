@@ -47,7 +47,7 @@ const Login = () => {
         }
       );
 
-      setAuth(user, pwd, response.data.accessToken)
+      setAuth({ user, pwd, accessToken: response.data.accessToken })
       setIsLoggedIn(true)
 
       if (response.status === 200) {
@@ -89,8 +89,6 @@ const Login = () => {
             handleChangeText={(e) => setPwd(e)}
             otherStyles={'mt-7'}
           />
-
-
 
           <CustomButton
             title="Sign In"

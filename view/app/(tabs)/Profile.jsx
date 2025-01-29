@@ -8,10 +8,12 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 import FormField from '@/components/FormField'
 import CustomButton from '@/components/CustomButton'
-
-
+import useAuth from '@/hooks/useAuth';
 
 const Profile = () => {
+
+  const { auth } = useAuth();
+  console.log(auth)
 
   const handleLogout = () => {
     router.replace('/Login')
@@ -22,43 +24,43 @@ const Profile = () => {
   }
 
   return (
-    <SafeAreaView className="bg-primary h-full">
-      <ScrollView contentContainerStyle={{ height: '100%' }}>
-        <View className='w-full p-8 h-full'>
+    <SafeAreaView className="bg-primary flex-1">
+      <ScrollView contentContainerStyle={{ flex: 1 }}>
+        <View className='flex-1 p-8 items-center justify-center'>
 
           {/*Profile Tab Heading*/}
-          <View>
+          <View className='w-full'>
 
-            <View className='flex-row'>
-              <Text className='text-white text-4xl font-bold mr-auto'>Profile</Text>
+            <View className='flex-row justify-between'>
+              <Text className='text-white text-4xl font-bold'>Profile</Text>
 
               <View className='flex-row items-center'>
                 <Text className='text-white text-lg mr-2'>Logout</Text>
-                <MaterialIcons name="logout" size={24} color="white" onPress={handleLogout}/>
+                <MaterialIcons name="logout" size={24} color="white" onPress={handleLogout} />
               </View>
             </View>
 
             {/*Profile icon w/ name*/}
-            <View className='flex-row items-center mt-7'>
+            <View className='items-center mt-7 gap-2'>
               <Avatar
                 rounded
                 size={"medium"}
                 icon={{ name: 'user', type: 'font-awesome' }}
                 onPress={() => console.log("Works!")}
                 activeOpacity={0.7}
-                containerStyle={{ backgroundColor: 'gray', marginRight: 10}}
+                containerStyle={{ backgroundColor: 'gray' }}
               />
-              <Text className='text-white text-xl'>Michael Lleverino</Text>
+              <Text className='text-white text-2xl font-bold'>{auth?.user}</Text>
             </View>
 
           </View>
 
           {/*Profile Tab Content*/}
-          <View className='mt-6'>
+          <View className='flex-1 items-center mt-10'>
 
             <FormField
-              title={'Name'}
-              otherStyles={'mt-4'}
+              title={'Current Name'}
+              placeholder={auth?.user}
             />
 
             <FormField
@@ -67,17 +69,17 @@ const Profile = () => {
             />
 
             <FormField
-              title={'Change Password'}
+              title={'Current Email'}
               otherStyles={'mt-4'}
             />
 
           </View>
 
           <CustomButton
-              title={'Update'}
-              containerStyles={'mt-auto'}
-              handlePress={() => {}}
-            />
+            title={'Update'}
+            containerStyles={'mt-auto'}
+            handlePress={() => { }}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>
