@@ -18,7 +18,7 @@ const findUser = async (user) => {
 };
 
 const findUserbyId = async (userId) => {
-    return await db.query('SELECT * FROM users WHERE id = $1', [userId]);
+    return await db.query('SELECT user_name, user_email FROM users WHERE id = $1', [userId]);
 };
 
 const findRefreshToken = async (refreshToken) => {
