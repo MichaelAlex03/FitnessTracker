@@ -17,8 +17,8 @@ const findUser = async (user) => {
     return await db.query('SELECT * FROM users WHERE user_name = $1', [user]);
 };
 
-const findUserbyId = async (userId) => {
-    return await db.query('SELECT user_name, user_email FROM users WHERE id = $1', [userId]);
+const findUserSecure = async (user) => {
+    return await db.query('SELECT user_name, user_email FROM users WHERE user_name = $1', [user]);
 };
 
 const findRefreshToken = async (refreshToken) => {
@@ -131,7 +131,7 @@ const deleteExercise = async (exerciseId) => {
 
 module.exports = {
     findUser,
-    findUserbyId,
+    findUserSecure,
     findRefreshToken,
     updateUser,
     createUser,
