@@ -2,12 +2,13 @@ const pg = require('../../model/sql')
 
 const getUserInfo = async (req, res) => {
     const { userName } = req.params;
+    console.log(userName)
 
     try {
         const userInfo = await pg.findUserSecure(userName);
-        res.sendStatus(200).json({ userInfo });
+        return res.status(200).json({ userInfo });
     } catch (error) {
-        res.sendStatus(500);
+        return res.sendStatus(500);
     }
 }
 
