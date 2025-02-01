@@ -22,7 +22,7 @@ const fetchUserInfo = (refresh, name, accessToken) => {
         }
         fetchUser();
     }, [refresh, accessToken])
-    return { userInfo };
+    return { userInfo, setUserInfo };
 }
 
 export default fetchUserInfo

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Avatar } from "react-native-elements";
 import { router } from 'expo-router';
+import axios from '@/api/axios';
 
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
@@ -10,7 +11,6 @@ import FormField from '@/components/FormField'
 import CustomButton from '@/components/CustomButton'
 import useAuth from '@/hooks/useAuth';
 import fetchUserInfo from '@/hooks/fetchUserInfo';
-import useRefreshToken from '@/hooks/useRefreshToken';
 
 const Profile = () => {
  
@@ -19,11 +19,16 @@ const Profile = () => {
   const [refreshs, setRefresh] = useState(0);
 
   const { auth } = useAuth();
-  const { userInfo } = fetchUserInfo(refreshs, auth?.user, auth?.accessToken)
+  const { userInfo, setUserInfo } = fetchUserInfo(refreshs, auth?.user, auth?.accessToken)
+
+  const [newPass, setNewPass] = useState('');
 
   console.log('User Info' + JSON.stringify(userInfo))
 
-  const handleLogout = () => {
+  const LOGOUT_URL = '/auth/logout'
+
+  const handleLogout = async () => {
+    await axios.get(LOGOUT_URL);
     router.replace('/Login')
   }
 
@@ -31,7 +36,7 @@ const Profile = () => {
 
   }
 
-
+console.log(newPass)
   return (
     <SafeAreaView className="bg-primary flex-1">
       <ScrollView contentContainerStyle={{ flex: 1 }}>
@@ -76,11 +81,15 @@ const Profile = () => {
             <FormField
               title={'Change Password'}
               otherStyles={'mt-4'}
+              value={newPass}
+              handleChangeText={setNewPass}
             />
 
             <FormField
               title={'Current Email'}
               otherStyles={'mt-4'}
+              value={userInfo?.user_email}
+              handleChangeText={(text) => setUserInfo({...userInfo, user_email: text})}
             />
 
           </View>
