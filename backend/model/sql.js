@@ -1,7 +1,15 @@
 const db = require('.././config/dbConn');
 
+
+
 const updateUser = async (user, refreshToken) => {
     return await db.query('UPDATE users SET refresh_token = $1 WHERE user_name = $2', [refreshToken, user]);
+};
+
+//---------------------------- Patch Routes Queries ------------------------------//
+
+const updateUserProfile = async (name, pwd, email) => {
+    return await db.query('UPDATE users SET user_pass = $2, user_email = $3 WHERE user_name = $1', [name, pwd, email]);
 };
 
 const updateSets = async (sets) => {
@@ -134,6 +142,7 @@ module.exports = {
     findUserSecure,
     findRefreshToken,
     updateUser,
+    updateUserProfile,
     createUser,
     getAllExercises,
     getAllSetsForExercise,
