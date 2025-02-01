@@ -18,15 +18,12 @@ const Login = () => {
   const { setIsLoggedIn, setAuth } = useAuth();
 
   const [user, setUser] = useState('');
-  const [userFocus, setUserFocus] = useState(false);
 
   const [pwd, setPwd] = useState('');
-  const [pwdFocus, setPwdFocus] = useState(false);
 
   const [errMsg, setErrMsg] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const [persist, setPersist] = useState(false);
 
   useEffect(() => {
     setErrMsg('');

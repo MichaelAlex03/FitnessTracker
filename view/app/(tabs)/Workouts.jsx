@@ -1,4 +1,4 @@
-import { View, Text, ScrollView } from 'react-native'
+import { Text, ScrollView } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
@@ -7,7 +7,7 @@ const Workouts = () => {
     <SafeAreaView>
       <Text>Workouts</Text>
       <ScrollView>
-        
+
       </ScrollView>
     </SafeAreaView>
   )

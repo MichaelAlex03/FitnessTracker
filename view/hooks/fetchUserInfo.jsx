@@ -1,5 +1,4 @@
-import { View, Text } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import useAxiosPrivate from './useAxiosPrivate'
 
 const fetchUserInfo = (refresh, name, accessToken) => {
@@ -7,8 +6,6 @@ const fetchUserInfo = (refresh, name, accessToken) => {
     const axiosPrivate = useAxiosPrivate();
 
     const API_URL = `/api/user/${name}`
-    console.log(API_URL)
-
     const [userInfo, setUserInfo] = useState({});
 
     useEffect(() => {

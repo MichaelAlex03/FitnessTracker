@@ -4,7 +4,6 @@ import '../index.css'
 
 export default function RootLayout() {
 
-
   return (
     <AuthProvider>
       <Stack>

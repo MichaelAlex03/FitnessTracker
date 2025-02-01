@@ -1,6 +1,5 @@
-import { View, Text, Image } from 'react-native'
-import { Redirect, Tabs, router } from 'expo-router'
-import React, { useEffect } from 'react'
+import { View, Image } from 'react-native'
+import { Redirect, Tabs } from 'expo-router'
 import useAuth from '@/hooks/useAuth';
 
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';

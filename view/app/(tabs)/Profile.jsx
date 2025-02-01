@@ -1,9 +1,9 @@
-import { View, Text, ScrollView } from 'react-native'
+import { View, Text, ScrollView, Alert } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Avatar } from "react-native-elements";
 import { router } from 'expo-router';
-import axios from '@/api/axios';
+import axios, { axiosPrivate } from '@/api/axios';
 
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
@@ -11,32 +11,52 @@ import FormField from '@/components/FormField'
 import CustomButton from '@/components/CustomButton'
 import useAuth from '@/hooks/useAuth';
 import fetchUserInfo from '@/hooks/fetchUserInfo';
+import useAxiosPrivate from '../../hooks/useAxiosPrivate'
+
+const UPDATE_URL = '/api/user'
+const LOGOUT_URL = '/auth/logout'
 
 const Profile = () => {
- 
 
-  const [errMsg, setErrMsg] = useState('');
-  const [refreshs, setRefresh] = useState(0);
+  const axiosPrivate = useAxiosPrivate();
 
-  const { auth } = useAuth();
-  const { userInfo, setUserInfo } = fetchUserInfo(refreshs, auth?.user, auth?.accessToken)
+  const [refresh, setRefresh] = useState(0);
 
-  const [newPass, setNewPass] = useState('');
+  const { auth, setAuth } = useAuth();
+  const { userInfo, setUserInfo } = fetchUserInfo(refresh, auth?.user, auth?.accessToken)
 
-  console.log('User Info' + JSON.stringify(userInfo))
-
-  const LOGOUT_URL = '/auth/logout'
 
   const handleLogout = async () => {
-    await axios.get(LOGOUT_URL);
+    try {
+      await axios.get(LOGOUT_URL);
+    } catch (error) {
+      Alert.alert('Failed logout', 'Failed to logout');
+    }
     router.replace('/Login')
   }
 
-  const handleUpdate = () => {
+  const handleUpdate = async () => {
+
+    const { user_email } = userInfo
+    const updateData = {
+      name: auth?.user,
+      pwd: auth?.pwd,
+      email: user_email,
+    }
+
+    try {
+      await axiosPrivate.patch(UPDATE_URL, {
+        updateData
+      })
+      Alert.alert('Success', 'User Profile Updated')
+      setRefresh(refresh + 1);
+    } catch (error) {
+      Alert.alert('Failed Update', 'Failed to update user info')
+    }
+
 
   }
 
-console.log(newPass)
   return (
     <SafeAreaView className="bg-primary flex-1">
       <ScrollView contentContainerStyle={{ flex: 1 }}>
@@ -81,15 +101,15 @@ console.log(newPass)
             <FormField
               title={'Change Password'}
               otherStyles={'mt-4'}
-              value={newPass}
-              handleChangeText={setNewPass}
+              value={auth?.pwd}
+              handleChangeText={(text) => setAuth({ ...auth, pwd: text })}
             />
 
             <FormField
               title={'Current Email'}
               otherStyles={'mt-4'}
               value={userInfo?.user_email}
-              handleChangeText={(text) => setUserInfo({...userInfo, user_email: text})}
+              handleChangeText={(text) => setUserInfo({ ...userInfo, user_email: text })}
             />
 
           </View>
