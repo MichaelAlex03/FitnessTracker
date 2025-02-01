@@ -10,14 +10,18 @@ import FormField from '@/components/FormField'
 import CustomButton from '@/components/CustomButton'
 import useAuth from '@/hooks/useAuth';
 import fetchUserInfo from '@/hooks/fetchUserInfo';
+import useRefreshToken from '@/hooks/useRefreshToken';
 
 const Profile = () => {
+ 
 
   const [errMsg, setErrMsg] = useState('');
-  const [refresh, setRefresh] = useState(0);
+  const [refreshs, setRefresh] = useState(0);
 
   const { auth } = useAuth();
-  const { userInfo } = fetchUserInfo(refresh, auth?.name, auth?.accessToken)
+  const { userInfo } = fetchUserInfo(refreshs, auth?.user, auth?.accessToken)
+
+  console.log('User Info' + JSON.stringify(userInfo))
 
   const handleLogout = () => {
     router.replace('/Login')
@@ -32,6 +36,7 @@ const Profile = () => {
     <SafeAreaView className="bg-primary flex-1">
       <ScrollView contentContainerStyle={{ flex: 1 }}>
         <View className='flex-1 p-8 items-center justify-center'>
+
 
           {/*Profile Tab Heading*/}
           <View className='w-full'>
