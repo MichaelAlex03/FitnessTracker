@@ -1,29 +1,26 @@
 import { useState, useEffect } from 'react';
-import useAuth from './useAuth';
 import useAxiosPrivate from './useAxiosPrivate';
 
 const WORKOUT_URL = '/api/workouts'
 
-const fetchWorkouts = () => {
+const fetchWorkouts = (id) => {
 
     const axiosPrivate = useAxiosPrivate();
     const [workouts, setWorkouts] = useState([]);
 
-    const { auth, setAuth } = useAuth();
-    console.log('Auth' , auth)
-
     useEffect(() => {
         const getWorkouts = async () => {
             try {
-                const response = await axiosPrivate.get(WORKOUT_URL + `/${auth.user}`)
-                console.log(response)
+                const response = await axiosPrivate.get(`${WORKOUT_URL}/${id}`)
+                console.log('Workouts', response.data.workouts)
+                setWorkouts(response.data.workouts)
             } catch (error) {
                 console.error(error)
             }
         }
         getWorkouts();
-    })
-    return workouts
+    }, [])
+    return { workouts } 
 }
 
 export default fetchWorkouts;

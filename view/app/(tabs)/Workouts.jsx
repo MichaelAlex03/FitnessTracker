@@ -8,24 +8,10 @@ import useAuth from '@/hooks/useAuth'
 const Workouts = () => {
   const [refresh, setRefresh] = useState(0);
 
-  const { auth, setAuth } = useAuth();
-  const { userInfo, setUserInfo } = fetchUserInfo(refresh, auth?.user, auth?.accessToken);
-
-  useEffect(() => {
-    if (!auth?.id && userInfo?.id) {
-      Promise.resolve().then(() => {
-        setAuth((prevAuth) => ({
-          ...prevAuth,
-          id: userInfo.id,
-        }));
-      });
-    }
-  }, []); 
-
-  fetchWorkouts()
-
-
-
+  const { auth } = useAuth();
+  
+  const { workouts } = fetchWorkouts(auth.userId);
+  console.log('Workout in workout screen' , workouts)
 
 
   return (
