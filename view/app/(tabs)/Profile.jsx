@@ -24,6 +24,11 @@ const Profile = () => {
 
   const { auth, setAuth } = useAuth();
   const { userInfo, setUserInfo } = fetchUserInfo(refresh, auth?.user, auth?.accessToken)
+  console.log(auth)
+  console.log(userInfo)
+
+  
+  
 
 
   const handleLogout = async () => {
