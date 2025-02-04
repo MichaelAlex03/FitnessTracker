@@ -26,16 +26,15 @@ const findUser = async (user) => {
 };
 
 const findUserSecure = async (user) => {
-    return await db.query('SELECT user_name, user_email FROM users WHERE user_name = $1', [user]);
+    return await db.query('SELECT user_name, user_email, id FROM users WHERE user_name = $1', [user]);
 };
 
 const findRefreshToken = async (refreshToken) => {
     return await db.query('SELECT * FROM users WHERE refresh_token = $1', [refreshToken]);
 };
 
-const getWorkouts = (userId) => {
-    console.log(userId)
-    return db.query('SELECT * FROM workouts WHERE user_id = $1', [userId]);
+const getWorkouts = (userName) => {
+    return db.query('SELECT * FROM workouts WHERE user_name = $1', [userName]);
 };
 
 const getAllExercises = async () => {

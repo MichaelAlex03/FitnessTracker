@@ -1,9 +1,10 @@
 const pg = require('../../model/sql');
 
 const getWorkouts = async (req, res) => {
-    const { userId } = req.params;
-    console.log(req.params)
-    const workouts = await pg.getWorkouts(userId);
+    const { userName } = req.params;
+    console.log(userName)
+    const workouts = await pg.getWorkouts(userName);
+    console.log(workouts)
     return res.status(200).json({ workouts: workouts.rows });
 }
 

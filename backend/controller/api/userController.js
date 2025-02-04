@@ -6,6 +6,7 @@ const getUserInfo = async (req, res) => {
 
     try {
         const userInfo = await pg.findUserSecure(userName);
+        console.log(userInfo)
         return res.status(200).json({ userInfo });
     } catch (error) {
         return res.sendStatus(500);
