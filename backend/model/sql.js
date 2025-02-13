@@ -34,7 +34,7 @@ const findRefreshToken = async (refreshToken) => {
 };
 
 const getWorkouts = (id) => {
-    return db.query('SELECT * FROM workouts WHERE id = $1', [id]);
+    return db.query('SELECT * FROM workouts WHERE user_id = $1', [id]);
 };
 
 const getAllExercises = async () => {
