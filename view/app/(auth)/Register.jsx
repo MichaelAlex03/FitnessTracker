@@ -106,9 +106,9 @@ const Register = () => {
             handleBlur={() => setUserFocus(false)}
           />
           {userFocus && user && !validName &&
-            <View className='flex-row items-start justify-start gap-2 mt-2 w-full md:w-1/2'>
-              <AntDesign name="exclamationcircle" size={12} color="red" className='mt-[2px]' />
-              <Text className='text-red-500 rounded-md'>
+            <View className='flex-row items-start justify-start gap-2 mt-2 w-full md:w-1/2 bg-black p-2 rounded-lg'>
+              <AntDesign name="exclamationcircle" size={12} color="white" className='mt-[2px]' />
+              <Text className='text-white rounded-md'>
                 4 to 24 characters. Must begin with a letter. Letters, numbers, underscores, hyphens allowed.
               </Text>
             </View>
@@ -123,19 +123,19 @@ const Register = () => {
             handleBlur={() => setPwdFocus(false)}
           />
           {pwdFocus && !validPwd &&
-            <View className='flex-row items-start justify-start gap-2 mt-2 w-full md:w-1/2 '>
-              <AntDesign name="exclamationcircle" size={12} color="red" className='mt-[2px]' />
+            <View className='flex-row items-start justify-start gap-2 mt-2 w-full md:w-1/2 bg-black p-2 rounded-lg'>
+              <AntDesign name="exclamationcircle" size={12} color="white" className='mt-[2px]' />
               <View className='w-5/6 md:w-4/5 flex-col'>
-                <Text className='text-red-500 rounded-md'>
+                <Text className='text-white rounded-md'>
                   8 to 24 characters.
                 </Text>
-                <Text className='text-red-500 rounded-md'>
+                <Text className='text-white rounded-md'>
                   Must include uppercase and lowercase letters
                 </Text>
-                <Text className='text-red-500 rounded-md'>
+                <Text className='text-white rounded-md'>
                   a number and a special character.
                 </Text>
-                <Text className='text-red-500 rounded-md'>
+                <Text className='text-white rounded-md'>
                   Allowed special characters: ! @ # %
                 </Text>
               </View>
@@ -150,10 +150,10 @@ const Register = () => {
             handleFocus={() => setMatchFocus(true)}
             handleBlur={() => setMatchFocus(false)}
           />
-          {matchPwd && !validMatch &&
-            <View className='flex-row items-center justify-start w-full md:w-1/2'>
-              <AntDesign name="exclamationcircle" size={12} color="red" />
-              <Text className=' p-2 rounded-md text-red-500'>
+          {matchPwd && !validMatch && matchFocus &&
+            <View className='flex-row items-center justify-start gap-2 mt-2 w-full md:w-1/2 bg-black p-2 rounded-lg'>
+              <AntDesign name="exclamationcircle" size={12} color="white" />
+              <Text className=' p-2 rounded-md text-white'>
                 Does not match the password
               </Text>
             </View>
