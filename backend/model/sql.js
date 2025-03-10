@@ -1,91 +1,141 @@
-const db = require('.././config/dbConn');
-
-
+const supabase = require('../config/dbConn');
 
 const updateUser = async (user, refreshToken) => {
-    return await db.query('UPDATE users SET refresh_token = $1 WHERE user_name = $2', [refreshToken, user]);
+    const { data, error } = await supabase
+        .from('users')
+        .update({ refresh_token: refreshToken })
+        .eq('user_name', user);
+    if (error) throw error;
+    return data;
 };
 
 //---------------------------- Patch Routes Queries ------------------------------//
 
 const updateUserProfile = async (name, pwd, email) => {
-    return await db.query('UPDATE users SET user_pass = $2, user_email = $3 WHERE user_name = $1', [name, pwd, email]);
+    const { data, error } = await supabase
+        .from('users')
+        .update({ user_pass: pwd, user_email: email })
+        .eq('user_name', name);
+    if (error) throw error;
+    return data;
 };
 
 const updateSets = async (sets) => {
-    sets.map(set => {
-        return db.query(
-            'UPDATE workout_sets SET exercise_reps = $1, exercise_weight = $2 WHERE id = $3', [set.exercise_reps, set.exercise_weight, set.id]
-        );
+    sets.map(async set => {
+        const { data, error } = await supabase
+            .from('workout_sets')
+            .update({ exercise_reps: set.exercise_reps, exercise_weight: set.exercise_weight })
+            .eq('id', set.id);
+        if (error) throw error;
+        return data;
     });
 };
 
 //---------------------------- Get Routes Queries ------------------------------//
 const findUser = async (user) => {
-    return await db.query('SELECT * FROM users WHERE user_name = $1', [user]);
+    const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('user_name', user);
+    if (error) throw error;
+    return data;
 };
 
 const findUserSecure = async (user) => {
-    return await db.query('SELECT user_name, user_email, id FROM users WHERE user_name = $1', [user]);
+    const { data, error } = await supabase
+        .from('users')
+        .select('user_name, user_email, id')
+        .eq('user_name', user);
+    if (error) throw error;
+    return data;
 };
 
 const findRefreshToken = async (refreshToken) => {
-    return await db.query('SELECT * FROM users WHERE refresh_token = $1', [refreshToken]);
+    const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('refresh_token', refreshToken);
+    if (error) throw error;
+    return data;
 };
 
-const getWorkouts = (id) => {
-    return db.query('SELECT * FROM workouts WHERE user_id = $1', [id]);
+const getWorkouts = async (id) => {
+    const { data, error } = await supabase
+        .from('workouts')
+        .select('*')
+        .eq('user_id', id);
+    if (error) throw error;
+    return data;
 };
 
 const getAllExercises = async () => {
-    return await db.query('SELECT * FROM exercises');
+    const { data, error } = await supabase
+        .from('exercises')
+        .select('*');
+    if (error) throw error;
+    return data;
 };
 
 const getWorkoutExercises = async (workoutId) => {
-    return await db.query('SELECT * FROM user_exercises WHERE workout_id = $1', [workoutId]);
+    const { data, error } = await supabase
+        .from('user_exercises')
+        .select('*')
+        .eq('workout_id', workoutId);
+    if (error) throw error;
+    return data;
 };
 
 const getWorkoutSets = async (workoutId) => {
-    return await db.query('SELECT * FROM workout_sets WHERE workout_id = $1', [workoutId]);
+    const { data, error } = await supabase
+        .from('workout_sets')
+        .select('*')
+        .eq('workout_id', workoutId);
+    if (error) throw error;
+    return data;
 };
 
 const getAllSetsForExercise = async (userId, exerciseName) => {
-    return await db.query(
-        `
-        SELECT 
-            workout_sets.*
-        FROM 
-            workouts
-        JOIN 
-            user_exercises 
-            ON workouts.id = user_exercises.workout_id
-        JOIN 
-            workout_sets 
-            ON user_exercises.id = workout_sets.exercise_id
-        WHERE 
-            workouts.user_id = $1 
-            AND user_exercises.exercise_name = $2
-        `,
-        [userId, exerciseName]
-    );
+    const { data, error } = await supabase
+        .from('workout_sets')
+        .select(`
+            workout_sets.*,
+            workouts!inner(user_id),
+            user_exercises!inner(exercise_name)
+        `)
+        .eq('workouts.user_id', userId)
+        .eq('user_exercises.exercise_name', exerciseName);
+    if (error) throw error;
+    return data;
 };
-
 
 //---------------------------- Post Routes Queries ------------------------------//
 
 const createUser = async (user, pwd) => {
-    return await db.query('INSERT INTO users (user_name, user_pass) VALUES( $1, $2)', [user, pwd]);
+    const { data, error } = await supabase
+        .from('users')
+        .insert([{ user_name: user, user_pass: pwd }]);
+    if (error) throw error;
+    return data;
 };
 
 const createWorkout = async (workoutName, userId) => {
-    return await db.query('INSERT INTO workouts (workout_name, user_id) VALUES ($1, $2) RETURNING *', [workoutName, userId]);
+    const { data, error } = await supabase
+        .from('workouts')
+        .insert([{ workout_name: workoutName, user_id: userId }])
+        .single();
+    if (error) throw error;
+    return data;
 };
 
 const createWorkoutExercises = async (workoutId, selectedExercises) => {
     try {
         selectedExercises.map(async (exercise) => {
-            const ex = await db.query('INSERT INTO user_exercises (exercise_name, workout_id) VALUES ($1, $2) RETURNING *', [exercise, workoutId]);
-            createSet(ex);
+            const { data, error } = await supabase
+                .from('user_exercises')
+                .insert([{ exercise_name: exercise, workout_id: workoutId }])
+                .single();
+            if (error) throw error;
+            await createSet(data);
         });
         return true;
     } catch (err) {
@@ -95,39 +145,73 @@ const createWorkoutExercises = async (workoutId, selectedExercises) => {
 
 //This function used when workout is initially created. addSet is used for all future set creations
 const createSet = async (exercise) => {
-    return await db.query('INSERT INTO workout_sets (exercise_id, exercise_reps, exercise_weight, workout_id) VALUES ($1, $2, $3, $4)',
-        [exercise.rows[0].id, 0, 0, exercise.rows[0].workout_id]
-    );
+    const { data, error } = await supabase
+        .from('workout_sets')
+        .insert([{ exercise_id: exercise.id, exercise_reps: 0, exercise_weight: 0, workout_id: exercise.workout_id }]);
+    if (error) throw error;
+    return data;
 };
 
 const addSet = async (exercise, workoutId) => {
-    return await db.query('INSERT INTO workout_sets (exercise_id, exercise_reps, exercise_weight, workout_id) VALUES ($1, $2, $3, $4)',
-        [exercise.id, 0, 0, workoutId]
-    );
+    const { data, error } = await supabase
+        .from('workout_sets')
+        .insert([{ exercise_id: exercise.id, exercise_reps: 0, exercise_weight: 0, workout_id: workoutId }]);
+    if (error) throw error;
+    return data;
 };
 
 //---------------------------- Delete Routes Queries ------------------------------//
 
 const removeAllSets = async (workoutId) => {
-    return await db.query('DELETE FROM workout_sets WHERE workout_id = $1', [workoutId]);
+    const { data, error } = await supabase
+        .from('workout_sets')
+        .delete()
+        .eq('workout_id', workoutId);
+    if (error) throw error;
+    return data;
 };
 
 const removeAllExercises = async (workoutId) => {
-    return await db.query('DELETE FROM user_exercises WHERE workout_id = $1', [workoutId]);
+    const { data, error } = await supabase
+        .from('user_exercises')
+        .delete()
+        .eq('workout_id', workoutId);
+    if (error) throw error;
+    return data;
 };
 
 const removeWorkout = async (workoutId) => {
-    return await db.query('DELETE FROM workouts WHERE id = $1', [workoutId]);
+    const { data, error } = await supabase
+        .from('workouts')
+        .delete()
+        .eq('id', workoutId);
+    if (error) throw error;
+    return data;
 };
 
 const deleteSet = async (setId) => {
-    return await db.query('DELETE FROM workout_sets WHERE id = $1', [setId]);
+    const { data, error } = await supabase
+        .from('workout_sets')
+        .delete()
+        .eq('id', setId);
+    if (error) throw error;
+    return data;
 };
 
 const deleteExercise = async (exerciseId) => {
     try {
-        await db.query('DELETE FROM workout_sets WHERE exercise_id = $1', [exerciseId]); //need to delete sets before exercise since they are linked to exercise
-        await db.query('DELETE FROM user_exercises WHERE id = $1', [exerciseId]);
+        const { data: setsData, error: setsError } = await supabase
+            .from('workout_sets')
+            .delete()
+            .eq('exercise_id', exerciseId);
+        if (setsError) throw setsError;
+
+        const { data: exerciseData, error: exerciseError } = await supabase
+            .from('user_exercises')
+            .delete()
+            .eq('id', exerciseId);
+        if (exerciseError) throw exerciseError;
+
         return true;
     } catch (err) {
         return err;

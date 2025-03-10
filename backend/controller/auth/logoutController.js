@@ -16,7 +16,7 @@ const handleLogout = async (req, res) => {
 
     //Delete refresh token in db
     const updatedRefresh = ''
-    const result = await pg.updateUser(founderUser.rows[0].user_name, updatedRefresh)
+    const result = await pg.updateUser(founderUser[0].user_name, updatedRefresh)
 
     res.clearCookie('jwt', refreshToken, { httpOnly: true, sameSite: 'None', secure: true });
 
