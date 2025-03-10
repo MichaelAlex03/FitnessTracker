@@ -10,23 +10,23 @@ CREATE TABLE users (
 CREATE TABLE workouts (
     id NOT NULL PRIMARY KEY,
     workout_name TEXT,
-    user_id FOREIGN KEY REFERENCES users(id),
+    user_id INT FOREIGN KEY REFERENCES users(id),
 );
 
 --User exercises table
 CREATE TABLE user_exercises (
     id NOT NULL PRIMARY KEY,
     exercise_name TEXT,
-    workout_id FOREIGN KEY REFERENCES workouts(id)
+    workout_id INT FOREIGN KEY REFERENCES workouts(id)
 );
 
 --Workout sets table
 CREATE TABLE workout_sets (
     id NOT NULL PRIMARY KEY,
-    exercise_id INT,
+    exercise_id INT FOREIGN KEY REFERENCES user_exercises(id),
     exercise_reps INT,
     exercise_weight INT,
-    workout_id FOREIGN KEY REFERENCES workouts(id)
+    workout_id INT FOREIGN KEY REFERENCES workouts(id)
 );
 
 --Exercises table (List of exercises to choose from)
