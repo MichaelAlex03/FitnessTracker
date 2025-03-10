@@ -16,7 +16,7 @@ const FormField = ({ title, value, placeholder, handleChangeText, otherStyles, h
                     placeholder={placeholder}
                     placeholderTextColor='#7b7b8b'
                     onChangeText={handleChangeText}
-                    secureTextEntry={(title === 'Password' || title === 'Confirm Password') && showPassword == false}
+                    secureTextEntry={(title === 'Password' || title === 'Confirm Password' || title === 'Change Password' ) && showPassword == false}
                     onFocus={handleFocus}
                     onBlur={handleBlur}
                     editable={title !== 'Current Name'}
@@ -24,7 +24,7 @@ const FormField = ({ title, value, placeholder, handleChangeText, otherStyles, h
                 />
 
                 <View className='w-24 items-end'>
-                    {(title === 'Password' || title === 'Confirm Password') && (
+                    {(title === 'Password' || title === 'Confirm Password' || title === 'Change Password' ) && (
                         <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                             <Image source={!showPassword ? icons.eye : icons.eyeHide} className="w-6 h-6" resizeMode="contain" />
                         </TouchableOpacity>

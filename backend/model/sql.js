@@ -1,7 +1,15 @@
 const db = require('.././config/dbConn');
 
+
+
 const updateUser = async (user, refreshToken) => {
     return await db.query('UPDATE users SET refresh_token = $1 WHERE user_name = $2', [refreshToken, user]);
+};
+
+//---------------------------- Patch Routes Queries ------------------------------//
+
+const updateUserProfile = async (name, pwd, email) => {
+    return await db.query('UPDATE users SET user_pass = $2, user_email = $3 WHERE user_name = $1', [name, pwd, email]);
 };
 
 const updateSets = async (sets) => {
@@ -18,16 +26,15 @@ const findUser = async (user) => {
 };
 
 const findUserSecure = async (user) => {
-    return await db.query('SELECT user_name, user_email FROM users WHERE user_name = $1', [user]);
+    return await db.query('SELECT user_name, user_email, id FROM users WHERE user_name = $1', [user]);
 };
 
 const findRefreshToken = async (refreshToken) => {
     return await db.query('SELECT * FROM users WHERE refresh_token = $1', [refreshToken]);
 };
 
-const getWorkouts = (userId) => {
-    console.log(userId)
-    return db.query('SELECT * FROM workouts WHERE user_id = $1', [userId]);
+const getWorkouts = (id) => {
+    return db.query('SELECT * FROM workouts WHERE user_id = $1', [id]);
 };
 
 const getAllExercises = async () => {
@@ -134,6 +141,7 @@ module.exports = {
     findUserSecure,
     findRefreshToken,
     updateUser,
+    updateUserProfile,
     createUser,
     getAllExercises,
     getAllSetsForExercise,

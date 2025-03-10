@@ -1,8 +1,9 @@
-import { View, Text, ScrollView } from 'react-native'
+import { View, Text, ScrollView, Alert } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Avatar } from "react-native-elements";
 import { router } from 'expo-router';
+import axios, { axiosPrivate } from '@/api/axios';
 
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
@@ -10,28 +11,62 @@ import FormField from '@/components/FormField'
 import CustomButton from '@/components/CustomButton'
 import useAuth from '@/hooks/useAuth';
 import fetchUserInfo from '@/hooks/fetchUserInfo';
+import useAxiosPrivate from '../../hooks/useAxiosPrivate'
+
+const UPDATE_URL = '/api/user'
+const LOGOUT_URL = '/auth/logout'
 
 const Profile = () => {
 
-  const [errMsg, setErrMsg] = useState('');
+  const axiosPrivate = useAxiosPrivate();
+
   const [refresh, setRefresh] = useState(0);
 
-  const { auth } = useAuth();
-  const { userInfo } = fetchUserInfo(refresh, auth?.name, auth?.accessToken)
+  const { auth, setAuth } = useAuth();
+  const { userInfo, setUserInfo } = fetchUserInfo(refresh, auth?.user, auth?.accessToken)
+  console.log(auth)
+  console.log(userInfo)
 
-  const handleLogout = () => {
+  
+  
+
+
+  const handleLogout = async () => {
+    try {
+      await axios.get(LOGOUT_URL);
+    } catch (error) {
+      Alert.alert('Failed logout', 'Failed to logout');
+    }
     router.replace('/Login')
   }
 
-  const handleUpdate = () => {
+  const handleUpdate = async () => {
+
+    const { user_email } = userInfo
+    const updateData = {
+      name: auth?.user,
+      pwd: auth?.pwd,
+      email: user_email,
+    }
+
+    try {
+      await axiosPrivate.patch(UPDATE_URL, {
+        updateData
+      })
+      Alert.alert('Success', 'User Profile Updated')
+      setRefresh(refresh + 1);
+    } catch (error) {
+      Alert.alert('Failed Update', 'Failed to update user info')
+    }
+
 
   }
-
 
   return (
     <SafeAreaView className="bg-primary flex-1">
       <ScrollView contentContainerStyle={{ flex: 1 }}>
         <View className='flex-1 p-8 items-center justify-center'>
+
 
           {/*Profile Tab Heading*/}
           <View className='w-full'>
@@ -71,11 +106,15 @@ const Profile = () => {
             <FormField
               title={'Change Password'}
               otherStyles={'mt-4'}
+              value={auth?.pwd}
+              handleChangeText={(text) => setAuth({ ...auth, pwd: text })}
             />
 
             <FormField
               title={'Current Email'}
               otherStyles={'mt-4'}
+              value={userInfo?.user_email}
+              handleChangeText={(text) => setUserInfo({ ...userInfo, user_email: text })}
             />
 
           </View>
