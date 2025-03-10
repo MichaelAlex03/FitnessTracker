@@ -12,6 +12,7 @@ import { AntDesign } from '@expo/vector-icons';
 
 const USER_REGEX = /^[a-zA-Z][a-zA-Z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
+const EMAIL_REGEX = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i
 const REGISTER_URL = '/auth/register';
 
 const Register = () => {
@@ -28,24 +29,34 @@ const Register = () => {
   const [validMatch, setValidMatch] = useState(false);
   const [matchFocus, setMatchFocus] = useState(false);
 
+  const [email, setEmail] = useState('');
+  const [emailFocus, setEmailFocus] = useState(false);
+  const [validEmail, setValidEmail] = useState(false);
+
   const [errMsg, setErrMsg] = useState('');
   
 
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  //Validates Name
   useEffect(() => {
     const result = USER_REGEX.test(user);
     setValidName(result);
   }, [user]);
 
+  //Validates password and confirm password
   useEffect(() => {
     setValidPwd(PWD_REGEX.test(pwd));
     setValidMatch(pwd === matchPwd);
-  }, [pwd, matchPwd])
+  }, [pwd, matchPwd]);
+
+  useEffect(() => {
+    setValidEmail(EMAIL_REGEX.test(email));
+  }, [email])
 
   useEffect(() => {
     setErrMsg('');
-  }, [user, pwd, matchPwd])
+  }, [user, pwd, matchPwd]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -59,8 +70,9 @@ const Register = () => {
     try {
       const response = await axios.post(REGISTER_URL,
         {
-          user: user,
-          pwd: pwd,
+          user,
+          pwd,
+          email
         },
         {
           headers: { 'Content-Type': 'application/json' },
@@ -110,6 +122,23 @@ const Register = () => {
               <AntDesign name="exclamationcircle" size={12} color="white" className='mt-[2px]' />
               <Text className='text-white rounded-md'>
                 4 to 24 characters. Must begin with a letter. Letters, numbers, underscores, hyphens allowed.
+              </Text>
+            </View>
+          }
+
+          <FormField
+            title='Email'
+            value={email}
+            handleChangeText={(e) => setEmail(e)}
+            otherStyles={'mt-7'}
+            handleFocus={() => setEmailFocus(true)}
+            handleBlur={() => setEmailFocus(false)} 
+          />
+          {emailFocus && email && !validEmail &&
+            <View className='flex-row items-start justify-start gap-2 mt-2 w-full md:w-1/2 bg-black p-2 rounded-lg'>
+              <AntDesign name="exclamationcircle" size={12} color="white" className='mt-[2px]' />
+              <Text className='text-white rounded-md'>
+              Your email address should follow the format: username@domain.com.
               </Text>
             </View>
           }
@@ -166,7 +195,7 @@ const Register = () => {
               ? 'mt-7 mb-2'
               : 'opacity-40 mt-7 mb-2'}
             isLoading={isSubmitting}
-            disabled={!validName || !validPwd || !validMatch ? true : false}
+            disabled={!validName || !validPwd || !validMatch || !email ? true : false}
           />
 
 

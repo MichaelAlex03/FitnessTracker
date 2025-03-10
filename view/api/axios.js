@@ -1,5 +1,5 @@
 import axios from 'axios';
-const BASE_URL = `http://${process.env.EXPO_PUBLIC_IP}:3000`
+const BASE_URL = `http://localhost:3000`
 
 export default axios.create({
     baseURL: BASE_URL,

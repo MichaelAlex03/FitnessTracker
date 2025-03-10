@@ -43,7 +43,7 @@ const Login = () => {
           withCredentials: true
         }
       );
-      
+
       setAuth({ user, pwd, accessToken: response.data.accessToken, userId: response.data.foundUser[0].id })
       setIsLoggedIn(true)
 
@@ -99,6 +99,12 @@ const Login = () => {
             <Link href={'/Register'} className='text-lg font-psemibold text-secondary'>
               Sign Up
             </Link>
+          </View>
+
+          <View>
+            <Text className='text-gray-100 text-lg mt-4'>
+              <Link href={'/'}>Forgot Password?</Link>
+            </Text>
           </View>
         </View>
 
