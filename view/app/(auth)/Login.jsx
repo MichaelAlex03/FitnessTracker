@@ -8,7 +8,6 @@ import axios from '../../api/axios'
 import CustomButton from '../../components/CustomButton'
 import FormField from '../../components/FormField'
 import useAuth from '@/hooks/useAuth';
-import CheckBox from '@react-native-community/checkbox';
 
 const LOGIN_URL = '/auth/login';
 
@@ -90,7 +89,7 @@ const Login = () => {
           <CustomButton
             title="Sign In"
             handlePress={handleSubmit}
-            containerStyles={'mt-7'}
+            containerStyles={'mt-7 bg-secondary'}
             isLoading={isSubmitting}
           />
 
@@ -103,7 +102,7 @@ const Login = () => {
 
           <View>
             <Text className='text-gray-100 text-lg mt-4'>
-              <Link href={'/'}>Forgot Password?</Link>
+              <Link href={'/'}>Forgot Password</Link>
             </Text>
           </View>
         </View>

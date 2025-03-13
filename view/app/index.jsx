@@ -15,12 +15,12 @@ export default function Index() {
         <CustomButton
           title='Login'
           handlePress={() => router.replace("/Login")}
-          containerStyles="w-3/4 mt-7"
+          containerStyles="w-3/4 mt-7 bg-secondary"
         />
         <CustomButton
           title='Sign Up'
           handlePress={() => router.replace("/Register")}
-          containerStyles="w-3/4 mt-7"
+          containerStyles="w-3/4 mt-7 bg-secondary"
         />
       </View>
     </SafeAreaView>

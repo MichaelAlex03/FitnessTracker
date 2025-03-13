@@ -19,7 +19,7 @@ const FormField = ({ title, value, placeholder, handleChangeText, otherStyles, h
                     secureTextEntry={(title === 'Password' || title === 'Confirm Password' || title === 'Change Password' ) && showPassword == false}
                     onFocus={handleFocus}
                     onBlur={handleBlur}
-                    editable={title !== 'Current Name'}
+                    disabled={!props.isEdit}
 
                 />
 

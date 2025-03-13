@@ -10,8 +10,7 @@ const Workouts = () => {
 
   const { auth } = useAuth();
   
-  const { workouts } = fetchWorkouts(auth.userId);
-  console.log('Workout in workout screen' , workouts)
+  // const { workouts } = fetchWorkouts(auth.userId);
 
 
   return (

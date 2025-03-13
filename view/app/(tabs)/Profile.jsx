@@ -1,9 +1,11 @@
-import { View, Text, ScrollView, Alert } from 'react-native'
+import { View, Text, ScrollView, Alert, StatusBar, TouchableOpacity, TextInput, Image } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Avatar } from "react-native-elements";
 import { router } from 'expo-router';
 import axios, { axiosPrivate } from '@/api/axios';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import * as ImagePicker from 'expo-image-picker';
 
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
@@ -21,14 +23,16 @@ const Profile = () => {
   const axiosPrivate = useAxiosPrivate();
 
   const [refresh, setRefresh] = useState(0);
+  const [profileImage, setProfileImage] = useState(null);
+  const [isEdit, setIsEdit] = useState(false);
 
   const { auth, setAuth } = useAuth();
-  const { userInfo, setUserInfo } = fetchUserInfo(refresh, auth?.user, auth?.accessToken)
+  // const { userInfo, setUserInfo } = fetchUserInfo(refresh, auth?.user, auth?.accessToken)
   console.log(auth)
-  console.log(userInfo)
+  // console.log(userInfo)
 
-  
-  
+
+
 
 
   const handleLogout = async () => {
@@ -74,60 +78,147 @@ const Profile = () => {
             <View className='flex-row justify-between'>
               <Text className='text-white text-4xl font-bold'>Profile</Text>
 
-              <View className='flex-row items-center'>
-                <Text className='text-white text-lg mr-2'>Logout</Text>
-                <MaterialIcons name="logout" size={24} color="white" onPress={handleLogout} />
-              </View>
+              {!isEdit ? <TouchableOpacity className='flex-row items-center gap-2' onPress={() => setIsEdit(true)}>
+                <FontAwesome name="edit" size={24} color="white" />
+                <Text className='text-white text-lg mr-2'>Edit</Text>
+              </TouchableOpacity> : null}
             </View>
 
-            {/*Profile icon w/ name*/}
-            <View className='items-center mt-7 gap-2'>
-              <Avatar
-                rounded
-                size={"medium"}
-                icon={{ name: 'user', type: 'font-awesome' }}
-                onPress={() => console.log("Works!")}
-                activeOpacity={0.7}
-                containerStyle={{ backgroundColor: 'gray' }}
-              />
-              <Text className='text-white text-2xl font-bold'>{auth?.user}</Text>
-            </View>
+            <ProfileImagePicker 
+              profileImage={profileImage}
+              setProfileImage={setProfileImage}
+            />
 
           </View>
 
           {/*Profile Tab Content*/}
-          <View className='flex-1 items-center mt-10'>
+          <View className='flex flex-col items-center mt-10 w-full gap-4 mb-10'>
 
-            <FormField
-              title={'Current Name'}
-              placeholder={auth?.user}
-            />
+            {/*Username field*/}
+            <View className='space-y-2 w-full md:w-1/2'>
+              <Text className='text-lg text-gray-100 font-pmedium mb-0.5'>Username</Text>
+              <View className='border-2 border-black-200 w-full h-16 px-4 bg-black-100 rounded-2xl flex flex-row items-center mt-1'>
+                <TextInput
+                  value={auth?.user}
+                  className={`flex-1 ${!isEdit ? 'text-gray-500' : 'text-white'}`}
+                  onChangeText={(val) => setAuth({ ...auth, user: val })}
+                  editable={isEdit}
+                />
+              </View>
+            </View>
 
-            <FormField
-              title={'Change Password'}
-              otherStyles={'mt-4'}
-              value={auth?.pwd}
-              handleChangeText={(text) => setAuth({ ...auth, pwd: text })}
-            />
+            <View className='space-y-2 w-full md:w-1/2'>
+              <Text className='text-lg text-gray-100 font-pmedium mb-0.5'>Email</Text>
+              <View className='border-2 border-black-200 w-full h-16 px-4 bg-black-100 rounded-2xl flex flex-row items-center mt-1'>
+                <TextInput
+                  value={auth?.pass}
+                  className={`flex-1 ${!isEdit ? 'text-gray-500' : 'text-white'}`}
+                  onChangeText={(val) => setAuth({ ...auth, pwd: val })}
+                  editable={isEdit}
+                />
+              </View>
+            </View>
 
-            <FormField
-              title={'Current Email'}
-              otherStyles={'mt-4'}
-              value={userInfo?.user_email}
-              handleChangeText={(text) => setUserInfo({ ...userInfo, user_email: text })}
-            />
+
+            <View className='space-y-2 w-full md:w-1/2'>
+              <Text className='text-lg text-gray-100 font-pmedium mb-0.5'>Phone</Text>
+              <View className='border-2 border-black-200 w-full h-16 px-4 bg-black-100 rounded-2xl flex flex-row items-center mt-1'>
+                <TextInput
+                  value={auth?.pass}
+                  className={`flex-1 ${!isEdit ? 'text-gray-500' : 'text-white'}`}
+                  onChangeText={(val) => setAuth({ ...auth, pwd: val })}
+                  editable={isEdit}
+                />
+              </View>
+            </View>
 
           </View>
 
-          <CustomButton
-            title={'Update'}
-            containerStyles={'mt-auto'}
-            handlePress={handleUpdate}
-          />
+
+          {isEdit ?
+            <View className='flex flex-col justify-center items-center w-full gap-4'>
+              <CustomButton
+                title={'Update'}
+                containerStyles={'mt-auto bg-secondary '}
+                handlePress={handleUpdate}
+              />
+
+              <CustomButton
+                title={'Cancel'}
+                containerStyles={'mt-auto bg-[#1E1E2D] border border-2 border-gray-100'}
+                handlePress={() => setIsEdit(false)}
+              />
+            </View> :
+            <CustomButton
+              title={'Sign Out'}
+              containerStyles={'mt-auto bg-secondary'}
+              handlePress={handleLogout}
+            />
+          }
+
         </View>
       </ScrollView>
+      <StatusBar className='bg-white' />
     </SafeAreaView>
   )
 }
 
 export default Profile
+
+
+const ProfileImagePicker = ({ profileImage, setProfileImage }) => {
+
+  const pickImage = async () => {
+
+    //Asks user for permission to access media library
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    //Store users name is a variable so when we are changing it, the username doesnt update on our screen as well
+
+    //If user denies access prompt alert
+    if (status !== 'granted') {
+      Alert.alert('Permission Required', 'Please allow access to your photo library to select a profile image.');
+      return;
+    }
+
+    //Open media library
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    //Sets image assuming process was not canceled
+    if (!result.canceled) {
+      setProfileImage(result.assets[0].uri);
+    }
+  }
+
+  return (
+    <View className="items-center mt-5 w-">
+      <TouchableOpacity onPress={pickImage} className="relative">
+        {profileImage ? (
+          <Image
+            source={{ uri: profileImage }}
+            className="w-28 h-28 rounded-full"
+          />
+        ) : (
+          <View className="w-24 h-24 rounded-full bg-gray-100 items-center justify-center">
+            <FontAwesome name="user" size={40} color="#CDCDE0" />
+          </View>
+        )}
+        
+        {/* Edit icon overlay */}
+        <View className="absolute bottom-0 right-0 bg-secondary p-2 rounded-full">
+          <FontAwesome name="camera" size={14} color="white" />
+        </View>
+      </TouchableOpacity>
+      
+      <Text className="text-gray-100 text-lg mt-2 font-pmedium">Tap to change profile picture</Text>
+    </View>
+  );
+
+
+
+}
