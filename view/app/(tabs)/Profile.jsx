@@ -17,27 +17,47 @@ import useAxiosPrivate from '../../hooks/useAxiosPrivate'
 
 const UPDATE_URL = '/api/user'
 const LOGOUT_URL = '/auth/logout'
+const PHONE_REGEX = /^[0-9]{3}-[0-9]{3}-[0-9]{4}$/
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 
 const Profile = () => {
 
   const axiosPrivate = useAxiosPrivate();
+  const { auth, setAuth } = useAuth();
 
   const [refresh, setRefresh] = useState(0);
   const [profileImage, setProfileImage] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
 
-  const { auth, setAuth } = useAuth();
-  // const { userInfo, setUserInfo } = fetchUserInfo(refresh, auth?.user, auth?.accessToken)
-  console.log(auth)
-  // console.log(userInfo)
+  //Fetch current user
+  const { userInfo } = fetchUserInfo(refresh, auth?.user, auth?.accessToken);
 
+  //Use useEffect to set state due to asnyc nature
+  useEffect(() => {
+    if (userInfo && userInfo.length > 0) {
+      setName(userInfo[0]?.user_name || '');
+      setEmail(userInfo[0]?.user_email || '');
+      setPhone(userInfo[0]?.user_phone || '');
+      console.log("Setting user info to state:", userInfo);
+    }
+  }, [userInfo]);
 
-
+  //Reset State when pressing cancel
+  const handleCancel = () => {
+    setName(userInfo[0]?.user_name || '');
+    setEmail(userInfo[0]?.user_email || '');
+    setPhone(userInfo[0]?.user_phone || '');
+    setIsEdit(false);
+  }
 
 
   const handleLogout = async () => {
     try {
       await axios.get(LOGOUT_URL);
+      Alert.alert('Signed Out', 'Sign out was succesful')
     } catch (error) {
       Alert.alert('Failed logout', 'Failed to logout');
     }
@@ -46,25 +66,42 @@ const Profile = () => {
 
   const handleUpdate = async () => {
 
-    const { user_email } = userInfo
+    //Validate phone number
+    console.log(!PHONE_REGEX.test(phone), "testttt")
+    if (!PHONE_REGEX.test(phone)) {
+      Alert.alert("Invalid Phone Number", "Phone number must follow XXX-XXX-XXXX format");
+      return;
+    }
+
+    //Validate email
+    if (!EMAIL_REGEX.test(email)) {
+      Alert.alert("Invalid Email", "Email is not a valid email");
+      return;
+    }
+
+
     const updateData = {
-      name: auth?.user,
-      pwd: auth?.pwd,
-      email: user_email,
+      name,
+      phone,
+      email,
+      prevName: auth?.user
     }
 
     try {
       await axiosPrivate.patch(UPDATE_URL, {
         updateData
-      })
-      Alert.alert('Success', 'User Profile Updated')
+      });
+      Alert.alert('Success', 'User Profile Updated');
+      setAuth({ ...auth, user: name })
       setRefresh(refresh + 1);
+      setIsEdit(false);
     } catch (error) {
       Alert.alert('Failed Update', 'Failed to update user info')
     }
 
 
   }
+
 
   return (
     <SafeAreaView className="bg-primary flex-1">
@@ -84,7 +121,7 @@ const Profile = () => {
               </TouchableOpacity> : null}
             </View>
 
-            <ProfileImagePicker 
+            <ProfileImagePicker
               profileImage={profileImage}
               setProfileImage={setProfileImage}
             />
@@ -99,9 +136,9 @@ const Profile = () => {
               <Text className='text-lg text-gray-100 font-pmedium mb-0.5'>Username</Text>
               <View className='border-2 border-black-200 w-full h-16 px-4 bg-black-100 rounded-2xl flex flex-row items-center mt-1'>
                 <TextInput
-                  value={auth?.user}
+                  value={name}
                   className={`flex-1 ${!isEdit ? 'text-gray-500' : 'text-white'}`}
-                  onChangeText={(val) => setAuth({ ...auth, user: val })}
+                  onChangeText={(val) => setName(val)}
                   editable={isEdit}
                 />
               </View>
@@ -111,9 +148,9 @@ const Profile = () => {
               <Text className='text-lg text-gray-100 font-pmedium mb-0.5'>Email</Text>
               <View className='border-2 border-black-200 w-full h-16 px-4 bg-black-100 rounded-2xl flex flex-row items-center mt-1'>
                 <TextInput
-                  value={auth?.pass}
+                  value={email}
                   className={`flex-1 ${!isEdit ? 'text-gray-500' : 'text-white'}`}
-                  onChangeText={(val) => setAuth({ ...auth, pwd: val })}
+                  onChangeText={(val) => setEmail(val)}
                   editable={isEdit}
                 />
               </View>
@@ -124,9 +161,9 @@ const Profile = () => {
               <Text className='text-lg text-gray-100 font-pmedium mb-0.5'>Phone</Text>
               <View className='border-2 border-black-200 w-full h-16 px-4 bg-black-100 rounded-2xl flex flex-row items-center mt-1'>
                 <TextInput
-                  value={auth?.pass}
+                  value={phone}
                   className={`flex-1 ${!isEdit ? 'text-gray-500' : 'text-white'}`}
-                  onChangeText={(val) => setAuth({ ...auth, pwd: val })}
+                  onChangeText={(val) => setPhone(val)}
                   editable={isEdit}
                 />
               </View>
@@ -146,7 +183,7 @@ const Profile = () => {
               <CustomButton
                 title={'Cancel'}
                 containerStyles={'mt-auto bg-[#1E1E2D] border border-2 border-gray-100'}
-                handlePress={() => setIsEdit(false)}
+                handlePress={handleCancel}
               />
             </View> :
             <CustomButton
@@ -208,13 +245,13 @@ const ProfileImagePicker = ({ profileImage, setProfileImage }) => {
             <FontAwesome name="user" size={40} color="#CDCDE0" />
           </View>
         )}
-        
+
         {/* Edit icon overlay */}
         <View className="absolute bottom-0 right-0 bg-secondary p-2 rounded-full">
           <FontAwesome name="camera" size={14} color="white" />
         </View>
       </TouchableOpacity>
-      
+
       <Text className="text-gray-100 text-lg mt-2 font-pmedium">Tap to change profile picture</Text>
     </View>
   );

@@ -12,7 +12,7 @@ const fetchUserInfo = (refresh, name, accessToken) => {
         const fetchUser = async () => {
             try {
                 const result = await axiosPrivate.get(API_URL);
-                setUserInfo(result.data.userInfo.rows[0])
+                setUserInfo(result.data.userInfo)
             } catch (error) {
                 console.error(error)
             }
