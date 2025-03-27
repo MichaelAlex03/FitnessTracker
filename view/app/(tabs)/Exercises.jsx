@@ -1,4 +1,4 @@
-import { View, Text, TextInput, FlatList, TouchableOpacity } from 'react-native'
+import { View, Text, TextInput, FlatList, TouchableOpacity, Modal } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -19,7 +19,7 @@ const Exercises = () => {
   //Exercise item to render
   const renderExercise = ({ item }) => {
     return (
-      <TouchableOpacity 
+      <TouchableOpacity
         className="bg-black-100 mx-4 mb-4 rounded-2xl p-4 border border-black-200 active:opacity-80"
         onPress={() => {
           setActiveExercise(item);
@@ -32,14 +32,14 @@ const Exercises = () => {
               {item.exercise_name}
             </Text>
             <Text className="text-gray-100 text-sm">
-              Compound Exercise • Full Body
+              {item.exercise_category}
             </Text>
           </View>
-          
+
           <View className="bg-secondary/20 p-2 rounded-xl">
-            <AntDesign 
-              name="right" 
-              size={20} 
+            <AntDesign
+              name="right"
+              size={20}
               color="#FF9C01" // Your secondary color
             />
           </View>
@@ -66,19 +66,19 @@ const Exercises = () => {
 
   //useEffect handling search
   useEffect(() => {
-    if (searchData.trim() === ''){
+    if (searchData.trim() === '') {
       setFilteredExercises(exercises); //If search is empty show all exercises
     }
 
     //if search does exist set filtered exercises to exercises that includes the current search data
-    const filtered = exercises.filter(exercise => 
+    const filtered = exercises.filter(exercise =>
       exercise.exercise_name.toLowerCase().startsWith(searchData.toLowerCase())
     );
     setFilteredExercises(filtered);
-  },[searchData])
+  }, [searchData])
 
   console.log(exercises)
- 
+
   return (
     <SafeAreaView className='bg-primary flex-1'>
       <View className='flex flex-row w-full items-center p-4'>
@@ -97,6 +97,49 @@ const Exercises = () => {
         renderItem={renderExercise}
         keyExtractor={item => item.id}
       />
+      {
+        modalVisible && (
+          <Modal
+            visible={modalVisible}
+            transparent={true}
+            animationType="slide"
+            onRequestClose={() => setModalVisible(false)}
+          >
+
+            <View className="flex-1 bg-black/50 justify-center items-center">
+
+              {/*Modal Content*/}
+              <View className="bg-black-100 w-[90%] rounded-2xl p-6 mx-4">
+                <View className="flex-row justify-between items-center mb-4">
+                  <Text className="text-white text-xl font-pmedium">
+                    {activeExercise?.exercise_name}
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => setModalVisible(false)}
+                    className="p-2"
+                  >
+                    <AntDesign name="close" size={24} color="white" />
+                  </TouchableOpacity>
+                </View>
+
+                <Text className="text-white text-lg font-pmedium mb-2">Instructions</Text>
+                <Text className="text-gray-100">
+                  {activeExercise?.exercise_instructions.split('\n').map((step, index) => (
+                    <View key={index} className="flex-row">
+                      <Text className="text-secondary font-pmedium mr-2">
+                        {index + 1}.
+                      </Text>
+                      <Text className="text-gray-100 flex-1">
+                        {step.trim()}
+                      </Text>
+                    </View>
+                  ))}
+                </Text>
+              </View>
+            </View>
+          </Modal>
+        )
+      }
     </SafeAreaView>
   )
 }
