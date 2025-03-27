@@ -31,7 +31,6 @@ const Exercises = () => {
             <Text className="text-white text-lg font-pmedium mb-1">
               {item.exercise_name}
             </Text>
-            {/* You can add more exercise details here if available */}
             <Text className="text-gray-100 text-sm">
               Compound Exercise • Full Body
             </Text>
@@ -79,9 +78,7 @@ const Exercises = () => {
   },[searchData])
 
   console.log(exercises)
-
-
-
+ 
   return (
     <SafeAreaView className='bg-primary flex-1'>
       <View className='flex flex-row w-full items-center p-4'>
@@ -99,9 +96,6 @@ const Exercises = () => {
         data={filteredExercises}
         renderItem={renderExercise}
         keyExtractor={item => item.id}
-        ListEmptyComponent={
-          <Text className="text-white text-center py-4">No exercises found</Text>
-        }
       />
     </SafeAreaView>
   )
