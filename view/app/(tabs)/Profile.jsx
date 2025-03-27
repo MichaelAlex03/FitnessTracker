@@ -32,7 +32,7 @@ const Profile = () => {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
 
-  //Fetch current user
+  //Fetch current user info
   const { userInfo } = fetchUserInfo(refresh, auth?.user, auth?.accessToken);
 
   //Use useEffect to set state due to asnyc nature
@@ -66,8 +66,13 @@ const Profile = () => {
 
   const handleUpdate = async () => {
 
+    //Check for any changes if not no need to make update call
+    if (name === userInfo[0]?.user_name && email === userInfo[0]?.user_email && phone === userInfo[0]?.user_phone){
+      Alert.alert("No changes made", "No fields were changed. Please make changes to update");
+      return;
+    }
+
     //Validate phone number
-    console.log(!PHONE_REGEX.test(phone), "testttt")
     if (!PHONE_REGEX.test(phone)) {
       Alert.alert("Invalid Phone Number", "Phone number must follow XXX-XXX-XXXX format");
       return;
