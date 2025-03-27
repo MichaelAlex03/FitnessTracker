@@ -14,14 +14,10 @@ const getUserInfo = async (req, res) => {
 }
 
 const updateUserInfo = async (req, res) => {
-    const { name, pwd, email } = req.body.updateData;
-
-    if (!pwd) return res.status(400).json({ message: 'Cannot leave password field blank' })
-
-    const hashedPass = await bcrypt.hash(pwd, 10);
+    const { prevName, name, phone, email } = req.body.updateData;
 
     try {
-        await pg.updateUserProfile(name, hashedPass, email)
+        await pg.updateUserProfile(prevName, name, phone, email)
         res.sendStatus(204);
     } catch (error) {
         res.sendStatus(500);

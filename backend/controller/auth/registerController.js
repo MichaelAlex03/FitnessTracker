@@ -2,16 +2,15 @@ const bcrypt = require('bcrypt');
 const pg = require('../../model/sql')
 
 const handleNewUser = async (req, res) => {
-    const { user, pwd, email } = req.body;
-    if (!user || !pwd || !email) return res.status(400).json({ message: 'All fields are required' });
+    const { user, pwd, email, phone } = req.body;
 
     //check for duplicate usernames in the db
     const duplicate = await pg.findUser(user);
     console.log(duplicate)
-    if (duplicate[0].user_name === user) return res.sendStatus(409); //conflict
+    if (duplicate[0]?.user_name === user) return res.status(409).json({message: "username already exists"}); //conflict
 
     //Check if email exists in the 
-    if (duplicate[0].user_email === email)
+    // if (duplicate[0].user_email === email)
 
     try {
         //encrypt password

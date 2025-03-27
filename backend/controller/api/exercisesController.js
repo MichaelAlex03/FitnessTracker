@@ -2,7 +2,8 @@ const pg = require('../../model/sql');
 
 const getExercises = async (req, res) => {
     const result = await pg.getAllExercises();
-    return res.status(200).json({ rows: result.rows });
+    console.log("RESULT", result)
+    return res.status(200).json({ exercises: result });
 }
 
 const addExercisesToWorkout = async (req, res) => {

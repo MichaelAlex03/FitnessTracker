@@ -11,12 +11,12 @@ const updateUser = async (user, refreshToken) => {
 
 //---------------------------- Patch Routes Queries ------------------------------//
 
-const updateUserProfile = async (name, pwd, email) => {
+const updateUserProfile = async (prevName, name, phone, email) => {
     const { data, error } = await supabase
         .from('users')
-        .update({ user_pass: pwd, user_email: email })
-        .eq('user_name', name);
-    if (error) throw error;
+        .update({ user_name: name, user_email: email, user_phone: phone })
+        .eq('user_name', prevName);
+    if (error) console.log(error);
     return data;
 };
 
@@ -33,6 +33,7 @@ const updateSets = async (sets) => {
 
 //---------------------------- Get Routes Queries ------------------------------//
 const findUser = async (user) => {
+    console.log(user)
     const { data, error } = await supabase
         .from('users')
         .select('*')
@@ -44,7 +45,7 @@ const findUser = async (user) => {
 const findUserSecure = async (user) => {
     const { data, error } = await supabase
         .from('users')
-        .select('user_name, user_email, id')
+        .select('user_name, user_email, id, user_phone')
         .eq('user_name', user);
     if (error) throw error;
     return data;
