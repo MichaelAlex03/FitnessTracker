@@ -5,7 +5,7 @@ const getWorkouts = async (req, res) => {
     const intId = parseInt(id)
     const workouts = await pg.getWorkouts(intId);
     console.log(workouts)
-    return res.status(200).json({ workouts: workouts?.rows });
+    return res.status(200).json({ workouts: workouts });
 }
 
 const createWorkout = async (req, res) => {
