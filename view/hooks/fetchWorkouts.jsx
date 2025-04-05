@@ -20,7 +20,7 @@ const fetchWorkouts = (id) => {
         }
         getWorkouts();
     }, [])
-    return { workouts } 
+    return workouts  
 }
 
 export default fetchWorkouts;

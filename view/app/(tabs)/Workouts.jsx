@@ -1,20 +1,45 @@
-import { Text, ScrollView, View, FlatList, Modal } from 'react-native'
+import { Text, ScrollView, View, FlatList, Modal, TextInput } from 'react-native'
 import React, { useState, useEffect } from 'react'
+import { Dropdown } from 'react-native-element-dropdown';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import fetchUserInfo from '@/hooks/fetchUserInfo'
 import fetchWorkouts from '@/hooks/fetchWorkouts'
 import useAuth from '@/hooks/useAuth'
 import { TouchableOpacity } from 'react-native'
+import useAxiosPrivate from '@/hooks/useAxiosPrivate'
+import { AntDesign } from '@expo/vector-icons';
 
+const EXERCISES_URL = '/api/exercises';
 
 export default function Workouts() {
   const [refresh, setRefresh] = useState(0);
   const [showCreateWorkout, setShowCreateWorkout] = useState(false);
   const [showWorkout, setShowWorkout] = useState(false);
+  const [exercises, setExercises] = useState([]);
+
+  const axiosPrivate = useAxiosPrivate();
 
   const { auth } = useAuth();
 
-  // const { workouts } = fetchWorkouts(auth.userId);
+  //Function to fetch exercises users can choose from
+  const fetchExercises = async () => {
+    try {
+      const response = await axiosPrivate.get(EXERCISES_URL);
+      setExercises(response.data.exercises);
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  //On mount retrieve the exercises the users can select from
+  useEffect(() => {
+    fetchExercises();
+  }, [])
+
+  console.log(exercises)
+
+  // const workouts  = fetchWorkouts(auth.userId);
+  // console.log(auth.userId)
   const workoutItem = () => {
 
   }
@@ -48,17 +73,56 @@ export default function Workouts() {
         )}
       />
       {
-        showCreateWorkout && <CreateWorkout showCreateWorkout={showCreateWorkout} setShowCreateWorkout={setShowCreateWorkout} />
+        showCreateWorkout &&
+        <CreateWorkout
+          showCreateWorkout={showCreateWorkout}
+          setShowCreateWorkout={setShowCreateWorkout}
+          exercises={exercises}
+        />
       }
       {
-        showWorkout && <WorkoutScreen showWorkout={showWorkout} setShowWorkout={setShowWorkout}/>
+        showWorkout && <WorkoutScreen showWorkout={showWorkout} setShowWorkout={setShowWorkout} />
       }
 
     </SafeAreaView>
   )
 }
 
-const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout }) => {
+const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises }) => {
+  const [selectedExercises, setSelectedExercises] = useState([]);
+  const [selectedExercise, setSelectedExercise] = useState('');
+  const [workoutName, setWorkoutName] = useState('');
+
+  const exerciseNames = exercises.map((ex, i) => ({
+    exerciseName: ex.exercise_name,
+    value: i.toString()
+  }));
+
+  const handleCreateWorkout = () => {
+    // Your code here
+  }
+
+  const exerciseItem = (name, key) => {
+    return (
+      <View key={key} className='bg-black-100 rounded-2xl p-4 border border-black-200 active:opacity-80 w-full flex flex-row'>
+        <Text className='text-white'>{name}</Text>
+
+        <TouchableOpacity onPress={() => handleRemoveExercise(key)}>
+          <AntDesign name="delete" size={20} color="#FF4D4F" />
+        </TouchableOpacity>
+      </View>
+    )
+  }
+
+  const handleAddExercise = () => {
+    
+  }
+
+  const handleRemoveExercise = () => {
+
+  }
+
+  console.log("Selected Ex", selectedExercises)
 
   return (
     <Modal
@@ -67,17 +131,100 @@ const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout }) => {
       animationType="slide"
       onRequestClose={() => setShowCreateWorkout(false)}
     >
-      <View className="flex-1 bg-black/50 justify-center items-center">
-        <Text>Test</Text>
-        <TouchableOpacity onPress={() => setShowCreateWorkout(false)}>
-          <Text className='text-white'>Close</Text>
-        </TouchableOpacity>
+      <View className="flex-1 bg-black/50 justify-center items-center p-6">
+        <View className='bg-primary w-full p-6 rounded-3xl'>
+          <Text className='text-white text-2xl font-bold mb-4 text-center'>Create a new workout</Text>
+
+          <Text className='text-white text-base mb-1'>Workout Name</Text>
+          <View className='border border-gray-600 w-full h-16 px-4 bg-black/20 rounded-2xl flex flex-row items-center mt-1 mb-6'>
+            <TextInput
+              value={workoutName}
+              onChangeText={(e) => setWorkoutName(e)}
+              placeholder="Enter workout name"
+              placeholderTextColor="#94a3b8"
+              className="text-white w-full"
+            />
+          </View>
+
+          <View className='mb-4 flex gap-4'>
+            {selectedExercises.length > 0 &&
+              selectedExercises.map((exercise, i) => {
+                return exerciseItem(exercise.exerciseName, i)
+              })
+            }
+          </View>
+
+          <Text className='text-white text-base mb-1'>Select Exercise</Text>
+          <View className='w-full mb-4'>
+            <Dropdown
+              data={exerciseNames}
+              value={selectedExercise}
+              maxHeight={300}
+              placeholder='Select an exercise'
+              labelField="exerciseName"
+              valueField="value"
+              onChange={(item) => {
+                setSelectedExercises([...selectedExercises, item]);
+                setSelectedExercise(item);
+              }}
+              style={{
+                backgroundColor: 'white',
+                borderRadius: 16,
+                paddingHorizontal: 16,
+                paddingVertical: 12,
+                borderWidth: 1,
+                borderColor: '#475569',
+                height: 50,
+              }}
+              containerStyle={{
+                backgroundColor: '#1e293b',
+                borderRadius: 16,
+                borderWidth: 1,
+                borderColor: '#475569',
+                marginTop: 8,
+              }}
+              placeholderStyle={{
+                color: 'black',
+                fontSize: 16,
+              }}
+              selectedTextStyle={{
+                color: 'black',
+                fontSize: 16,
+                fontWeight: '500',
+              }}
+              itemTextStyle={{
+                color: '#e2e8f0',
+                fontSize: 16,
+              }}
+              itemContainerStyle={{
+                paddingVertical: 5,
+                paddingHorizontal: 8,
+                borderRadius: 16,
+                borderBottomWidth: 1,
+                borderBottomColor: '#334155',
+              }}
+              activeColor="#334155"
+              iconStyle={{
+                width: 20,
+                height: 20,
+                tintColor: '#94a3b8',
+              }}
+            />
+          </View>
+
+          <TouchableOpacity
+            onPress={() => setShowCreateWorkout(false)}
+            className='bg-secondary p-4 rounded-2xl'
+          >
+            <Text className='text-white text-center font-bold'>Close</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </Modal>
-  )
-}
+  );
+};
 
-const WorkoutScreen = ({showWorkout, setShowWorkout}) => {
+const WorkoutScreen = ({ showWorkout, setShowWorkout }) => {
   return (
     <Modal
       visible={showWorkout}
