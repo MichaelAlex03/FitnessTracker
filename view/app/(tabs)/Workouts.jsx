@@ -102,12 +102,14 @@ const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises }) =
     // Your code here
   }
 
-  const exerciseItem = (name, key) => {
+
+  //Exercise item for the selected exercises list
+  const exerciseItem = (name, id) => {
     return (
-      <View key={key} className='bg-black-100 rounded-2xl p-4 border border-black-200 active:opacity-80 w-full flex flex-row'>
+      <View key={id} className='bg-black-100 rounded-2xl p-4 border border-black-200 active:opacity-80 w-full flex flex-row justify-between'>
         <Text className='text-white'>{name}</Text>
 
-        <TouchableOpacity onPress={() => handleRemoveExercise(key)}>
+        <TouchableOpacity onPress={() => handleRemoveExercise(name)}>
           <AntDesign name="delete" size={20} color="#FF4D4F" />
         </TouchableOpacity>
       </View>
@@ -115,11 +117,12 @@ const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises }) =
   }
 
   const handleAddExercise = () => {
-    
+
   }
 
-  const handleRemoveExercise = () => {
-
+  const handleRemoveExercise = (name) => {
+    const updatedExercises = selectedExercises.filter((exercise) => exercise.exerciseName !== name);
+    setSelectedExercises(updatedExercises)
   }
 
   console.log("Selected Ex", selectedExercises)
@@ -212,12 +215,22 @@ const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises }) =
             />
           </View>
 
-          <TouchableOpacity
-            onPress={() => setShowCreateWorkout(false)}
-            className='bg-secondary p-4 rounded-2xl'
-          >
-            <Text className='text-white text-center font-bold'>Close</Text>
-          </TouchableOpacity>
+          <View className='flex gap-5 mt-2'>
+            <TouchableOpacity
+              onPress={() => setShowCreateWorkout(false)}
+              className='bg-secondary rounded-2xl py-4 '
+            >
+              <Text className='text-white text-center font-bold'>Add Exercise</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => setShowCreateWorkout(false)}
+              className='bg-black py-4 rounded-2xl'
+            >
+              <Text className='text-white text-center font-bold'>Close</Text>
+            </TouchableOpacity>
+          </View>
+
         </View>
       </View>
     </Modal>
