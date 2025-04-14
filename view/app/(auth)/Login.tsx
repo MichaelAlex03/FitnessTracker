@@ -29,8 +29,7 @@ const Login = () => {
   }, [user, pwd]);
 
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  async function handleSubmit() {
     try {
       const response = await axios.post(LOGIN_URL,
         {
@@ -51,7 +50,7 @@ const Login = () => {
       }
       setUser('');
       setPwd('');
-    } catch (err) {
+    } catch (err: any) {
       if (!err?.response) {
         setErrMsg('No Server Response');
       } else if (err.response?.status === 409) {

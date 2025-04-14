@@ -2,7 +2,18 @@ import { View, Text, TextInput, TouchableOpacity, Image } from 'react-native'
 import React, { useState } from 'react'
 import { icons } from '../constants'
 
-const FormField = ({ title, value, placeholder, handleChangeText, otherStyles, handleFocus, handleBlur, ...props }) => {
+interface FormProps {
+    title: string,
+    value: string,
+    placeholder?: string,
+    handleChangeText: (text: string) => void,
+    otherStyles?: string,
+    handleFocus?: () => void,
+    handleBlur?: () => void,
+    isEdit?: boolean;
+}
+
+const FormField = ({ title, value, placeholder, handleChangeText, otherStyles, handleFocus, handleBlur, ...props }: FormProps) => {
     const [showPassword, setShowPassword] = useState(false)
 
 
@@ -16,15 +27,15 @@ const FormField = ({ title, value, placeholder, handleChangeText, otherStyles, h
                     placeholder={placeholder}
                     placeholderTextColor='#7b7b8b'
                     onChangeText={handleChangeText}
-                    secureTextEntry={(title === 'Password' || title === 'Confirm Password' || title === 'Change Password' ) && showPassword == false}
+                    secureTextEntry={(title === 'Password' || title === 'Confirm Password' || title === 'Change Password') && showPassword == false}
                     onFocus={handleFocus}
                     onBlur={handleBlur}
-                    disabled={!props.isEdit}
+                    editable={!props.isEdit}
 
                 />
 
                 <View className='w-24 items-end'>
-                    {(title === 'Password' || title === 'Confirm Password' || title === 'Change Password' ) && (
+                    {(title === 'Password' || title === 'Confirm Password' || title === 'Change Password') && (
                         <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                             <Image source={!showPassword ? icons.eye : icons.eyeHide} className="w-6 h-6" resizeMode="contain" />
                         </TouchableOpacity>
