@@ -38,18 +38,18 @@ const Profile = () => {
   //Use useEffect to set state due to asnyc nature
   useEffect(() => {
     if (userInfo && userInfo.length > 0) {
-      setName(userInfo[0]?.user_name || '');
-      setEmail(userInfo[0]?.user_email || '');
-      setPhone(userInfo[0]?.user_phone || '');
+      setName(userInfo[0].user_name);
+      setEmail(userInfo[0].user_email);
+      setPhone(userInfo[0].user_phone);
       console.log("Setting user info to state:", userInfo);
     }
   }, [userInfo]);
 
   //Reset State when pressing cancel
   const handleCancel = () => {
-    setName(userInfo[0]?.user_name || '');
-    setEmail(userInfo[0]?.user_email || '');
-    setPhone(userInfo[0]?.user_phone || '');
+    setName(userInfo[0].user_name);
+    setEmail(userInfo[0].user_email);
+    setPhone(userInfo[0].user_phone);
     setIsEdit(false);
   }
 
