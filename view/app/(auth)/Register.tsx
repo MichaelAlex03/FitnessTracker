@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Link, router } from "expo-router";
 import axios from '../../api/axios'
+import { AxiosError } from 'axios'
 
 import CustomButton from '../../components/CustomButton'
 import FormField from '../../components/FormField'
@@ -73,8 +74,7 @@ const Register = () => {
 
 
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  async function handleSubmit() {
 
     //Check for user fields and it validity
     if (!user) {
@@ -132,11 +132,12 @@ const Register = () => {
         setMatchPwd('');
       }
     } catch (err) {
-      if (!err?.response) {
+      const axiosError = err as AxiosError;
+      if (!axiosError?.response) {
         setErrMsg('No Server Response');
-      } else if (err.response?.status === 409) {
+      } else if (axiosError.response?.status === 409) {
         setErrMsg('Username Taken');
-      } else if (err.response?.status === 400) {
+      } else if (axiosError.response?.status === 400) {
         setErrMsg('Username and Password are required');
       } else {
         setErrMsg('Registration Failed');

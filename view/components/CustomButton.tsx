@@ -2,7 +2,7 @@ import { ActivityIndicator, Text, TouchableOpacity } from "react-native";
 
 interface ButtonProps {
   title: string,
-  handlePress: () => void,
+  handlePress: () => void | Promise<void>,
   containerStyles?: string,
   textStyles?: string,
   isLoading?: boolean,

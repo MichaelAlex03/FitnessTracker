@@ -6,18 +6,30 @@ import useAxiosPrivate from '@/hooks/useAxiosPrivate';
 
 const EXERCISES_URL = '/api/exercises'
 
+interface Exercise {
+  exercise_name: string,
+  exercise_category: string,
+  exercise_instructions: string,
+  id: string
+}
+
+interface ExerciseItem {
+  item: Exercise
+}
+
 const Exercises = () => {
 
   const axiosPrivate = useAxiosPrivate();
 
   const [searchData, setSearchData] = useState('');
-  const [exercises, setExercises] = useState([]);
-  const [filteredExercises, setFilteredExercises] = useState([])
+  const [exercises, setExercises] = useState<Exercise[]>([]);
+  const [filteredExercises, setFilteredExercises] = useState<Exercise[]>([])
   const [modalVisible, setModalVisible] = useState(false);
-  const [activeExercise, setActiveExercise] = useState(null);
+  const [activeExercise, setActiveExercise] = useState<Exercise | null>(null);
+
 
   //Exercise item to render
-  const renderExercise = ({ item }) => {
+  const renderExercise = ({ item }: ExerciseItem) => {
     return (
       <TouchableOpacity
         className="bg-black-100 mx-4 mb-4 rounded-2xl p-4 border border-black-200 active:opacity-80"

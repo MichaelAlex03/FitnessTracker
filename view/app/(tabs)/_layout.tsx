@@ -1,4 +1,4 @@
-import { View, Image } from 'react-native'
+import { View, Image, ImageSourcePropType } from 'react-native'
 import { Redirect, Tabs } from 'expo-router'
 import useAuth from '@/hooks/useAuth';
 
@@ -7,7 +7,12 @@ import Feather from '@expo/vector-icons/Feather';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { icons } from '../../constants'
 
-const TabIcon = ({ icon, color, name, focused }) => {
+interface TabIconProps {
+    icon: ImageSourcePropType,
+    color: string,
+}
+
+const TabIcon = ({ icon, color }: TabIconProps) => {
     return (
         <View className='items-center justify-center'>
             <Image
@@ -25,7 +30,7 @@ const TabsLayout = () => {
 
     const { auth, loggedIn } = useAuth();
 
-    if (!loggedIn && !auth?.user) return <Redirect href={'/Login'} replace />
+    if (!loggedIn && !auth?.user) return <Redirect href={'/Login'} />
 
     return (
         <Tabs
@@ -43,12 +48,10 @@ const TabsLayout = () => {
             <Tabs.Screen
                 name='Profile'
                 options={{
-                    tabBarIcon: ({ color, focused }) => (
+                    tabBarIcon: ({ color }) => (
                         <TabIcon
                             icon={icons.profile}
                             color={color}
-                            name="Profile"
-                            focused={focused}
                         />
                     )
                 }}

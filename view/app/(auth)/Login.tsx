@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Link, router } from "expo-router";
 import axios from '../../api/axios'
+import { AxiosError } from 'axios'
 
 
 import CustomButton from '../../components/CustomButton'
@@ -50,12 +51,13 @@ const Login = () => {
       }
       setUser('');
       setPwd('');
-    } catch (err: any) {
-      if (!err?.response) {
+    } catch (err) {
+      const axiosError = err as AxiosError;
+      if (!axiosError?.response) {
         setErrMsg('No Server Response');
-      } else if (err.response?.status === 409) {
+      } else if (axiosError.response?.status === 409) {
         setErrMsg('Username Taken');
-      } else if (err.response?.status === 400) {
+      } else if (axiosError.response?.status === 400) {
         setErrMsg('Username and Password required');
       } else {
         setErrMsg('Username or Password is incorrect');
