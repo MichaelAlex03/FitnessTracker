@@ -10,7 +10,7 @@ const handleLogin = async (req, res) => {
     console.log(user)
 
     const foundUser = await pg.findUser(user);
-    console.log(foundUser)
+    console.log("USERRRR" ,foundUser[0])
     if (foundUser[0]?.user_name === '') return res.sendStatus(401); //user not found
     console.log("Hereee")
     //evaluate password
@@ -31,7 +31,7 @@ const handleLogin = async (req, res) => {
         await pg.updateUser(user, refreshToken);
 
         res.cookie('jwt', refreshToken, { httpOnly: true, sameSite: 'None', maxAge: 24 * 60 * 60 * 1000 });
-        res.status(200).json({ accessToken, foundUser });
+        res.status(200).json({ accessToken, id: foundUser[0].id });
     } else {
         res.sendStatus(401);
     }
