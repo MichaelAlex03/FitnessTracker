@@ -3,7 +3,7 @@ import useAxiosPrivate from './useAxiosPrivate';
 
 const WORKOUT_URL = '/api/workouts'
 
-const fetchWorkouts = (id) => {
+const fetchWorkouts = (id: string) => {
 
     const axiosPrivate = useAxiosPrivate();
     const [workouts, setWorkouts] = useState([]);

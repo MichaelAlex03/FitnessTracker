@@ -1,15 +1,11 @@
 import { View, Text, ScrollView, Alert, StatusBar, TouchableOpacity, TextInput, Image } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Avatar } from "react-native-elements";
 import { router } from 'expo-router';
-import axios, { axiosPrivate } from '@/api/axios';
+import axios from '@/api/axios';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import * as ImagePicker from 'expo-image-picker';
 
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-
-import FormField from '@/components/FormField'
 import CustomButton from '@/components/CustomButton'
 import useAuth from '@/hooks/useAuth';
 import fetchUserInfo from '@/hooks/fetchUserInfo';
@@ -20,20 +16,25 @@ const LOGOUT_URL = '/auth/logout'
 const PHONE_REGEX = /^[0-9]{3}-[0-9]{3}-[0-9]{4}$/
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 
+interface ImagePickerProps {
+  profileImage: string | null,
+  setProfileImage: React.Dispatch<React.SetStateAction<null | string>>
+}
+
 const Profile = () => {
 
   const axiosPrivate = useAxiosPrivate();
   const { auth, setAuth } = useAuth();
 
   const [refresh, setRefresh] = useState(0);
-  const [profileImage, setProfileImage] = useState(null);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
   const [isEdit, setIsEdit] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
 
   //Fetch current user info
-  const { userInfo } = fetchUserInfo(refresh, auth?.user, auth?.accessToken);
+  const { userInfo } = fetchUserInfo({ refresh, name: auth?.user, accessToken: auth?.accessToken });
 
   //Use useEffect to set state due to asnyc nature
   useEffect(() => {
@@ -208,7 +209,7 @@ const Profile = () => {
 export default Profile
 
 
-const ProfileImagePicker = ({ profileImage, setProfileImage }) => {
+const ProfileImagePicker = ({ profileImage, setProfileImage }: ImagePickerProps) => {
 
   const pickImage = async () => {
 

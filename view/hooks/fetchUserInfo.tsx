@@ -1,12 +1,25 @@
 import { useEffect, useState } from 'react'
 import useAxiosPrivate from './useAxiosPrivate'
 
-const fetchUserInfo = (refresh, name, accessToken) => {
+interface FetchProps {
+    refresh: number,
+    name: string,
+    accessToken: string
+}
+
+interface UserInfo {
+    user_name: string;
+    user_email: string;
+    user_phone: string;
+    id: string
+}
+
+const fetchUserInfo = ({refresh, name, accessToken}: FetchProps) => {
 
     const axiosPrivate = useAxiosPrivate();
 
     const API_URL = `/api/user/${name}`
-    const [userInfo, setUserInfo] = useState({});
+    const [userInfo, setUserInfo] = useState<UserInfo[]>([]);
 
     useEffect(() => {
         const fetchUser = async () => {

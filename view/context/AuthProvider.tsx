@@ -4,7 +4,7 @@ interface AuthData {
     user: string;
     pwd?: string;
     accessToken: string;
-    userId?: string;
+    userId: string;
 }
 
 interface AuthContextType {
