@@ -135,6 +135,7 @@ const createWorkoutExercises = async (workoutId, selectedExercises) => {
             const { data, error } = await supabase
                 .from('user_exercises')
                 .insert([{ exercise_name: exercise, workout_id: workoutId }])
+                .select()
                 .single();
             if (error) throw error;
             await createSet(data);
