@@ -5,11 +5,11 @@ const WORKOUT_URL = '/api/workouts'
 
 interface Workout {
     id: number,
-    exercise_name: string,
+    workout_name: string,
     user_id: string
 }
 
-const usefetchWorkouts = (id: string) => {
+const usefetchWorkouts = (id: string, refresh: number) => {
 
     console.log(id)
     const axiosPrivate = useAxiosPrivate();
@@ -26,7 +26,7 @@ const usefetchWorkouts = (id: string) => {
             }
         }
         getWorkouts();
-    }, [])
+    }, [refresh])
     return workouts  
 }
 

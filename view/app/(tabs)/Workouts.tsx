@@ -13,14 +13,13 @@ import { AxiosError } from 'axios';
 const EXERCISES_URL = '/api/exercises';
 const CREATE_WORKOUT_URL = '/api/workouts'
 
-interface Exercise {
-  exercise_name: string
-}
 
 interface CreateWorkoutProps {
   showCreateWorkout: boolean,
   setShowCreateWorkout: React.Dispatch<React.SetStateAction<boolean>>,
-  exercises: Exercise[]
+  exercises: Exercise[],
+  setRefresh: React.Dispatch<React.SetStateAction<number>>
+  refresh: number
 }
 
 interface WorkoutScreenProps {
@@ -28,9 +27,15 @@ interface WorkoutScreenProps {
   setShowWorkout: React.Dispatch<React.SetStateAction<boolean>>,
 }
 
-interface Workout {
+interface Exercise {
   id: number,
   exercise_name: string,
+  user_id: string
+}
+
+interface Workout {
+  id: number,
+  workout_name: string,
   user_id: string
 }
 
@@ -38,7 +43,7 @@ export default function Workouts() {
   const [refresh, setRefresh] = useState(0);
   const [showCreateWorkout, setShowCreateWorkout] = useState(false);
   const [showWorkout, setShowWorkout] = useState(false);
-  const [exercises, setExercises] = useState([]);
+  const [exercises, setExercises] = useState<Exercise[]>([]);
 
   const axiosPrivate = useAxiosPrivate();
 
@@ -61,13 +66,31 @@ export default function Workouts() {
 
   console.log(exercises)
 
-  const workouts = usefetchWorkouts(auth.userId);
+  const workouts = usefetchWorkouts(auth.userId, refresh);
   console.log("workouts", workouts)
+
   const workoutItem = (item: Workout) => {
     return (
-      <View>
-        <Text>Test</Text>
-      </View>
+      <TouchableOpacity
+        className="bg-black-100 mx-4 mb-4 rounded-2xl p-4 border border-black-200 active:opacity-80"
+      >
+        <View className="flex-row justify-between items-center">
+          <View className="flex-1">
+            <Text className="text-white text-lg font-pmedium mb-1">
+              {item.workout_name}
+            </Text>
+
+          </View>
+
+          <TouchableOpacity className="bg-secondary/20 p-4 rounded-xl">
+            <AntDesign
+              name="delete"
+              size={20}
+              color="#FF9C01" // Your secondary accent color
+            />
+          </TouchableOpacity>
+        </View>
+      </TouchableOpacity>
     )
   }
 
@@ -108,6 +131,8 @@ export default function Workouts() {
           showCreateWorkout={showCreateWorkout}
           setShowCreateWorkout={setShowCreateWorkout}
           exercises={exercises}
+          refresh={refresh}
+          setRefresh={setRefresh}
         />
       }
       {
@@ -120,9 +145,9 @@ export default function Workouts() {
 
 
 //Create Workout Modal
-const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises }: CreateWorkoutProps) => {
+const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises, setRefresh, refresh }: CreateWorkoutProps) => {
   const [selectedExercises, setSelectedExercises] = useState<Exercise[]>([]);
-  const [selectedExercise, setSelectedExercise] = useState<Workout>({} as Workout);
+  const [selectedExercise, setSelectedExercise] = useState<Exercise>({} as Exercise);
   const [workoutName, setWorkoutName] = useState('');
   const [errMsg, setErrMsg] = useState('');
 
@@ -153,11 +178,11 @@ const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises }: C
       })
 
       const workoutId = response.data.workoutId;
-      console.log("WORKOUT", workoutId);
+      setRefresh(refresh + 1);
       setShowCreateWorkout(false);
     } catch (err) {
       console.error(err)
-    } 
+    }
   }
 
 
@@ -174,7 +199,7 @@ const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises }: C
     )
   }
 
-  const handleAddExercise = (item: Workout) => {
+  const handleAddExercise = (item: Exercise) => {
 
     const found = selectedExercises.find(exercise => exercise.exercise_name === item.exercise_name);
     if (found) {
