@@ -25,6 +25,7 @@ interface CreateWorkoutProps {
 interface WorkoutScreenProps {
   showWorkout: boolean,
   setShowWorkout: React.Dispatch<React.SetStateAction<boolean>>,
+  workoutId: number
 }
 
 interface Exercise {
@@ -44,6 +45,7 @@ export default function Workouts() {
   const [showCreateWorkout, setShowCreateWorkout] = useState(false);
   const [showWorkout, setShowWorkout] = useState(false);
   const [exercises, setExercises] = useState<Exercise[]>([]);
+  const [activeWorkout, setActiveWorkout] = useState(0);
 
   const axiosPrivate = useAxiosPrivate();
 
@@ -64,15 +66,24 @@ export default function Workouts() {
     fetchExercises();
   }, [])
 
-  console.log(exercises)
 
   const workouts = usefetchWorkouts(auth.userId, refresh);
-  console.log("workouts", workouts)
+  console.log("workouts", workouts);
+
+  const handleDeleteWorkout = async (id: number) => {
+
+  }
+
+  const handleOpenWorkout = (id: number) => {
+    setActiveWorkout(id);
+    setShowWorkout(true)
+  }
 
   const workoutItem = (item: Workout) => {
     return (
       <TouchableOpacity
         className="bg-black-100 mx-4 mb-4 rounded-2xl p-4 border border-black-200 active:opacity-80"
+        onPress={() => handleOpenWorkout(item.id)}
       >
         <View className="flex-row justify-between items-center">
           <View className="flex-1">
@@ -82,7 +93,7 @@ export default function Workouts() {
 
           </View>
 
-          <TouchableOpacity className="bg-secondary/20 p-4 rounded-xl">
+          <TouchableOpacity className="bg-secondary/20 p-4 rounded-xl" onPress={() => handleDeleteWorkout(item.id)}>
             <AntDesign
               name="delete"
               size={20}
@@ -136,7 +147,7 @@ export default function Workouts() {
         />
       }
       {
-        showWorkout && <WorkoutScreen showWorkout={showWorkout} setShowWorkout={setShowWorkout} />
+        showWorkout && <WorkoutScreen showWorkout={showWorkout} setShowWorkout={setShowWorkout} workoutId={activeWorkout}/>
       }
 
     </SafeAreaView>
@@ -329,7 +340,7 @@ const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises, set
 
 
 //Workout Screen Modal
-const WorkoutScreen = ({ showWorkout, setShowWorkout }: WorkoutScreenProps) => {
+const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId }: WorkoutScreenProps) => {
   return (
     <Modal
       visible={showWorkout}
