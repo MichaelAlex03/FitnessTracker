@@ -1,9 +1,9 @@
-import { Text, ScrollView, View, FlatList, Modal, TextInput } from 'react-native'
+import { Text, ScrollView, View, FlatList, Modal, TextInput, Alert } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { Dropdown } from 'react-native-element-dropdown';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import fetchUserInfo from '@/hooks/fetchUserInfo'
-import fetchWorkouts from '@/hooks/fetchWorkouts'
+import usefetchWorkouts from '@/hooks/usefetchWorkouts'
 import useAuth from '@/hooks/useAuth'
 import { TouchableOpacity } from 'react-native'
 import useAxiosPrivate from '@/hooks/useAxiosPrivate'
@@ -24,6 +24,12 @@ interface CreateWorkoutProps {
 interface WorkoutScreenProps {
   showWorkout: boolean,
   setShowWorkout: React.Dispatch<React.SetStateAction<boolean>>,
+}
+
+interface Workout {
+  id: number,
+  exercise_name: string,
+  user_id: string
 }
 
 export default function Workouts() {
@@ -53,20 +59,24 @@ export default function Workouts() {
 
   console.log(exercises)
 
-  // const workouts  = fetchWorkouts(auth.userId);
-  // console.log("workouts", workouts)
-  const workoutItem = () => {
-
+  const workouts  = usefetchWorkouts(auth.userId);
+  console.log("workouts", workouts)
+  const workoutItem = (item: Workout) => {
+    return (
+      <View>
+        <Text>Test</Text>
+      </View>
+    )
   }
 
 
   return (
     <SafeAreaView className="bg-primary flex-1">
 
-      {/* <FlatList
-        data={exercises}
-        renderItem={}
-        keyExtractor={}
+      <FlatList
+        data={workouts}
+        renderItem={({item}) => workoutItem(item)}
+        keyExtractor={(item) => item.id.toString()}
         ListHeaderComponent={() => (
           <View className='flex-1 p-5'>
 
@@ -89,7 +99,7 @@ export default function Workouts() {
             </View>
           </View>
         )}
-      /> */}
+      />
       {
         showCreateWorkout &&
         <CreateWorkout
@@ -108,7 +118,7 @@ export default function Workouts() {
 
 const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises }: CreateWorkoutProps) => {
   const [selectedExercises, setSelectedExercises] = useState<Exercise[]>([]);
-  const [selectedExercise, setSelectedExercise] = useState('');
+  const [selectedExercise, setSelectedExercise] = useState<Workout>({} as Workout);
   const [workoutName, setWorkoutName] = useState('');
 
   const exerciseNames = exercises.map((ex, i) => ({
@@ -134,16 +144,22 @@ const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises }: C
     )
   }
 
-  const handleAddExercise = () => {
+  const handleAddExercise = (item: Workout) => {
 
+    const found = selectedExercises.find(exercise => exercise.exercise_name === item.exercise_name);
+    if(found){
+      Alert.alert("Duplicate Exercise", "You have already added this exercise to the workout");
+      return;
+    }
+    setSelectedExercises([...selectedExercises, item]);
+    setSelectedExercise(item);
   }
 
   const handleRemoveExercise = (name: string) => {
     const updatedExercises = selectedExercises.filter((exercise) => exercise.exercise_name !== name);
-    setSelectedExercises(updatedExercises)
+    setSelectedExercises(updatedExercises);
   }
 
-  console.log("Selected Ex", selectedExercises)
 
   return (
     <Modal
@@ -167,7 +183,7 @@ const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises }: C
             />
           </View>
 
-          <View className='mb-4 flex gap-4'>
+          <View className='mb-2 flex gap-4'>
             {selectedExercises.length > 0 &&
               selectedExercises.map((exercise, i) => {
                 return exerciseItem(exercise.exercise_name, i)
@@ -182,11 +198,11 @@ const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises }: C
               value={selectedExercise}
               maxHeight={300}
               placeholder='Select an exercise'
-              labelField="exerciseName"
+              labelField="exercise_name"
               valueField="value"
               onChange={(item) => {
-                setSelectedExercises([...selectedExercises, item]);
-                setSelectedExercise(item);
+                console.log("ITEM", item)
+                handleAddExercise(item)
               }}
               style={{
                 backgroundColor: 'white',
@@ -234,16 +250,17 @@ const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises }: C
           </View>
 
           <View className='flex gap-5 mt-2'>
+
             <TouchableOpacity
-              onPress={() => setShowCreateWorkout(false)}
-              className='bg-secondary rounded-2xl py-4 '
+              onPress={handleCreateWorkout}
+              className='bg-[#25344d] rounded-2xl py-4 '
             >
-              <Text className='text-white text-center font-bold'>Add Exercise</Text>
+              <Text className='text-white text-center font-bold'>Create Workout</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               onPress={() => setShowCreateWorkout(false)}
-              className='bg-black py-4 rounded-2xl'
+              className='bg-secondary py-4 rounded-2xl'
             >
               <Text className='text-white text-center font-bold'>Close</Text>
             </TouchableOpacity>
