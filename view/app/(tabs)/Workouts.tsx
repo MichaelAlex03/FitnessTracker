@@ -8,10 +8,14 @@ import { TouchableOpacity } from 'react-native'
 import useAxiosPrivate from '@/hooks/useAxiosPrivate'
 import { AntDesign } from '@expo/vector-icons';
 import { AxiosError } from 'axios';
+import { Menu, MenuOption, MenuOptions, MenuTrigger } from 'react-native-popup-menu';
+import { EditOutlined } from '@ant-design/icons';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 
 const EXERCISES_URL = '/api/exercises';
 const CREATE_WORKOUT_URL = '/api/workouts'
+
 
 
 interface CreateWorkoutProps {
@@ -79,6 +83,7 @@ export default function Workouts() {
     setShowWorkout(true)
   }
 
+
   const workoutItem = (item: Workout) => {
     return (
       <TouchableOpacity
@@ -90,20 +95,48 @@ export default function Workouts() {
             <Text className="text-white text-lg font-pmedium mb-1">
               {item.workout_name}
             </Text>
-
           </View>
 
-          <TouchableOpacity className="bg-secondary/20 p-4 rounded-xl" onPress={() => handleDeleteWorkout(item.id)}>
-            <AntDesign
-              name="delete"
-              size={20}
-              color="#FF9C01" // Your secondary accent color
-            />
-          </TouchableOpacity>
+          <Menu>
+            <MenuTrigger>
+              <View className="bg-secondary/20 p-2 rounded-xl">
+                <AntDesign name="ellipsis1" size={20} color="#FF9C01" />
+              </View>
+            </MenuTrigger>
+            <MenuOptions
+              optionsContainerStyle={{
+                backgroundColor: '#1E1E1E',
+                borderRadius: 8,
+                marginTop: 40,
+              }}
+            >
+              <MenuOption
+                onSelect={() => handleDeleteWorkout(item.id)}
+                style={{ padding: 12, flexDirection: 'row', alignItems: 'center' }}
+              >
+                <AntDesign name="delete" size={20} color="red" className='mr-2' />
+                <Text className="text-white text-base">Delete</Text>
+              </MenuOption>
+              <MenuOption
+                onSelect={() => handleDeleteWorkout(item.id)}
+                style={{ padding: 12, flexDirection: 'row', alignItems: 'center' }}
+              >
+                <Icon name="edit" size={20} color="white" className='mr-2'/>
+                <Text className="text-white text-base">Rename</Text>
+              </MenuOption>
+              <MenuOption
+                onSelect={() => handleDeleteWorkout(item.id)}
+                style={{ padding: 12, flexDirection: 'row', alignItems: 'center' }}
+              >
+                <Icon name="edit" size={20} color="white" className='mr-2'/>
+                <Text className="text-white text-base">Edit Workout</Text>
+              </MenuOption>
+            </MenuOptions>
+          </Menu>
         </View>
       </TouchableOpacity>
-    )
-  }
+    );
+  };
 
 
   return (
@@ -147,7 +180,7 @@ export default function Workouts() {
         />
       }
       {
-        showWorkout && <WorkoutScreen showWorkout={showWorkout} setShowWorkout={setShowWorkout} workoutId={activeWorkout}/>
+        showWorkout && <WorkoutScreen showWorkout={showWorkout} setShowWorkout={setShowWorkout} workoutId={activeWorkout} />
       }
 
     </SafeAreaView>

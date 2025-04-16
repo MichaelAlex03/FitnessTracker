@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, Pressable } from 'react-native'
+import { View, Text, ScrollView, Pressable, TouchableOpacity } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Link, router } from "expo-router";
@@ -87,10 +87,16 @@ const Login = () => {
             otherStyles={'mt-7'}
           />
 
+          <TouchableOpacity className='w-full flex flex-row justify-end'>
+            <Text className='text-gray-100 text-base mt-4 font-bold'>
+              <Link href={'/'}>Forgot Password?</Link>
+            </Text>
+          </TouchableOpacity>
+
           <CustomButton
             title="Sign In"
             handlePress={handleSubmit}
-            containerStyles={'mt-7 bg-secondary'}
+            containerStyles={'mt-6 bg-secondary'}
             isLoading={isSubmitting}
           />
 
@@ -101,11 +107,7 @@ const Login = () => {
             </Link>
           </View>
 
-          <View>
-            <Text className='text-gray-100 text-lg mt-4'>
-              <Link href={'/'}>Forgot Password</Link>
-            </Text>
-          </View>
+
         </View>
 
       </ScrollView>
