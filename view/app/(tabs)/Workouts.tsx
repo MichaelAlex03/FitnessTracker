@@ -29,7 +29,8 @@ interface CreateWorkoutProps {
 interface WorkoutScreenProps {
   showWorkout: boolean,
   setShowWorkout: React.Dispatch<React.SetStateAction<boolean>>,
-  workoutId: number
+  workoutId: number,
+  setActiveWorkout: React.Dispatch<React.SetStateAction<number>>
 }
 
 interface Exercise {
@@ -73,6 +74,8 @@ export default function Workouts() {
 
   const workouts = usefetchWorkouts(auth.userId, refresh);
   console.log("workouts", workouts);
+
+  console.log("ACTIVE", activeWorkout)
 
   const handleDeleteWorkout = async (id: number) => {
 
@@ -121,14 +124,14 @@ export default function Workouts() {
                 onSelect={() => handleDeleteWorkout(item.id)}
                 style={{ padding: 12, flexDirection: 'row', alignItems: 'center' }}
               >
-                <Icon name="edit" size={20} color="white" className='mr-2'/>
+                <Icon name="edit" size={20} color="white" className='mr-2' />
                 <Text className="text-white text-base">Rename</Text>
               </MenuOption>
               <MenuOption
                 onSelect={() => handleDeleteWorkout(item.id)}
                 style={{ padding: 12, flexDirection: 'row', alignItems: 'center' }}
               >
-                <Icon name="edit" size={20} color="white" className='mr-2'/>
+                <Icon name="edit" size={20} color="white" className='mr-2' />
                 <Text className="text-white text-base">Edit Workout</Text>
               </MenuOption>
             </MenuOptions>
@@ -180,7 +183,7 @@ export default function Workouts() {
         />
       }
       {
-        showWorkout && <WorkoutScreen showWorkout={showWorkout} setShowWorkout={setShowWorkout} workoutId={activeWorkout} />
+        showWorkout && <WorkoutScreen showWorkout={showWorkout} setShowWorkout={setShowWorkout} workoutId={activeWorkout} setActiveWorkout={setActiveWorkout} />
       }
 
     </SafeAreaView>
@@ -204,7 +207,7 @@ const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises, set
   }));
 
   const handleCreateWorkout = async () => {
-    // Your code here
+
     if (selectedExercises.length == 0) {
       Alert.alert("No Workouts Selected", "Please select at least one exercise to create a workout");
       return;
@@ -222,6 +225,12 @@ const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises, set
       })
 
       const workoutId = response.data.workoutId;
+
+      await axiosPrivate.post(EXERCISES_URL, {
+        workoutId,
+        selectedExercises
+      })
+
       setRefresh(refresh + 1);
       setShowCreateWorkout(false);
     } catch (err) {
@@ -244,7 +253,6 @@ const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises, set
   }
 
   const handleAddExercise = (item: Exercise) => {
-
     const found = selectedExercises.find(exercise => exercise.exercise_name === item.exercise_name);
     if (found) {
       Alert.alert("Duplicate Exercise", "You have already added this exercise to the workout");
@@ -300,7 +308,6 @@ const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises, set
               labelField="exercise_name"
               valueField="value"
               onChange={(item) => {
-                console.log("ITEM", item)
                 handleAddExercise(item)
               }}
               style={{
@@ -373,17 +380,23 @@ const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises, set
 
 
 //Workout Screen Modal
-const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId }: WorkoutScreenProps) => {
+const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkout }: WorkoutScreenProps) => {
   return (
     <Modal
       visible={showWorkout}
       transparent={true}
       animationType="slide"
-      onRequestClose={() => setShowWorkout(false)}
+      onRequestClose={() => {
+        setShowWorkout(false)
+        setActiveWorkout(0)
+      }}
     >
       <View className="flex-1 bg-black/50 justify-center items-center">
         <Text>Test</Text>
-        <TouchableOpacity onPress={() => setShowWorkout(false)}>
+        <TouchableOpacity onPress={() => {
+          setShowWorkout(false)
+          setActiveWorkout(0)
+        }}>
           <Text className='text-white'>Close</Text>
         </TouchableOpacity>
       </View>
