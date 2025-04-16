@@ -1,15 +1,17 @@
-import { Text, ScrollView, View, FlatList, Modal, TextInput, Alert } from 'react-native'
+import { Text, View, FlatList, Modal, TextInput, Alert } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { Dropdown } from 'react-native-element-dropdown';
 import { SafeAreaView } from 'react-native-safe-area-context'
-import fetchUserInfo from '@/hooks/fetchUserInfo'
 import usefetchWorkouts from '@/hooks/usefetchWorkouts'
 import useAuth from '@/hooks/useAuth'
 import { TouchableOpacity } from 'react-native'
 import useAxiosPrivate from '@/hooks/useAxiosPrivate'
 import { AntDesign } from '@expo/vector-icons';
+import { AxiosError } from 'axios';
+
 
 const EXERCISES_URL = '/api/exercises';
+const CREATE_WORKOUT_URL = '/api/workouts'
 
 interface Exercise {
   exercise_name: string
@@ -59,7 +61,7 @@ export default function Workouts() {
 
   console.log(exercises)
 
-  const workouts  = usefetchWorkouts(auth.userId);
+  const workouts = usefetchWorkouts(auth.userId);
   console.log("workouts", workouts)
   const workoutItem = (item: Workout) => {
     return (
@@ -75,7 +77,7 @@ export default function Workouts() {
 
       <FlatList
         data={workouts}
-        renderItem={({item}) => workoutItem(item)}
+        renderItem={({ item }) => workoutItem(item)}
         keyExtractor={(item) => item.id.toString()}
         ListHeaderComponent={() => (
           <View className='flex-1 p-5'>
@@ -116,18 +118,46 @@ export default function Workouts() {
   )
 }
 
+
+//Create Workout Modal
 const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises }: CreateWorkoutProps) => {
   const [selectedExercises, setSelectedExercises] = useState<Exercise[]>([]);
   const [selectedExercise, setSelectedExercise] = useState<Workout>({} as Workout);
   const [workoutName, setWorkoutName] = useState('');
+  const [errMsg, setErrMsg] = useState('');
+
+  const axiosPrivate = useAxiosPrivate();
+  const { auth } = useAuth();
 
   const exerciseNames = exercises.map((ex, i) => ({
     exercise_name: ex.exercise_name,
     value: i.toString()
   }));
 
-  const handleCreateWorkout = () => {
+  const handleCreateWorkout = async () => {
     // Your code here
+    if (selectedExercises.length == 0) {
+      Alert.alert("No Workouts Selected", "Please select at least one exercise to create a workout");
+      return;
+    }
+
+    if (!workoutName) {
+      Alert.alert("No Workout Name", "Please enter in a workout name");
+      return;
+    }
+
+    try {
+      const response = await axiosPrivate.post(CREATE_WORKOUT_URL, {
+        userId: auth.userId,
+        workoutName,
+      })
+
+      const workoutId = response.data.workoutId;
+      console.log("WORKOUT", workoutId);
+      setShowCreateWorkout(false);
+    } catch (err) {
+      console.error(err)
+    } 
   }
 
 
@@ -147,7 +177,7 @@ const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises }: C
   const handleAddExercise = (item: Workout) => {
 
     const found = selectedExercises.find(exercise => exercise.exercise_name === item.exercise_name);
-    if(found){
+    if (found) {
       Alert.alert("Duplicate Exercise", "You have already added this exercise to the workout");
       return;
     }
@@ -272,6 +302,8 @@ const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises }: C
   );
 };
 
+
+//Workout Screen Modal
 const WorkoutScreen = ({ showWorkout, setShowWorkout }: WorkoutScreenProps) => {
   return (
     <Modal
