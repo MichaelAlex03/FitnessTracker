@@ -10,7 +10,7 @@ const handleLogin = async (req, res) => {
     console.log(user)
 
     const foundUser = await pg.findUser(user);
-    console.log("USERRRR" ,foundUser[0])
+    console.log("USERRRR" , foundUser[0])
     if (foundUser[0]?.user_name === '') return res.sendStatus(401); //user not found
     console.log("Hereee")
     //evaluate password

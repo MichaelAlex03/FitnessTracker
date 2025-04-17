@@ -31,6 +31,10 @@ const updateSets = async (sets) => {
     });
 };
 
+const updateWorkout = async () => {
+    
+}
+
 //---------------------------- Get Routes Queries ------------------------------//
 const findUser = async (user) => {
     console.log(user)
