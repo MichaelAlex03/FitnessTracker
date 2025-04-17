@@ -7,14 +7,14 @@ import useAuth from '@/hooks/useAuth'
 import { TouchableOpacity } from 'react-native'
 import useAxiosPrivate from '@/hooks/useAxiosPrivate'
 import { AntDesign } from '@expo/vector-icons';
-import { AxiosError } from 'axios';
 import { Menu, MenuOption, MenuOptions, MenuTrigger } from 'react-native-popup-menu';
-import { EditOutlined } from '@ant-design/icons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import RenamePopup from '@/components/RenamePopup';
 
 
 const EXERCISES_URL = '/api/exercises';
-const CREATE_WORKOUT_URL = '/api/workouts'
+const WORKOUT_URL = '/api/workouts';
+const SETS_URL = '/api/sets';
 
 
 
@@ -51,10 +51,14 @@ export default function Workouts() {
   const [showWorkout, setShowWorkout] = useState(false);
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [activeWorkout, setActiveWorkout] = useState(0);
+  const [showRename, setShowRename] = useState(false);
+
 
   const axiosPrivate = useAxiosPrivate();
 
   const { auth } = useAuth();
+
+  let workouts = usefetchWorkouts(auth.userId, refresh);
 
   //Function to fetch exercises users can choose from
   const fetchExercises = async () => {
@@ -72,18 +76,48 @@ export default function Workouts() {
   }, [])
 
 
-  const workouts = usefetchWorkouts(auth.userId, refresh);
-  console.log("workouts", workouts);
-
-  console.log("ACTIVE", activeWorkout)
-
   const handleDeleteWorkout = async (id: number) => {
+
+    try {
+      //Delete all sets
+      await axiosPrivate.delete(SETS_URL, {
+        params: {
+          workoutId: id
+        }
+      })
+
+      //Delete all exercises
+      await axiosPrivate.delete(EXERCISES_URL, {
+        params: {
+          workoutId: id
+        }
+      })
+
+      //Delete workout
+      await axiosPrivate.delete(WORKOUT_URL, {
+        params: {
+          workoutId: id
+        }
+      })
+
+
+      setRefresh(refresh + 1)
+
+    } catch (error) {
+      Alert.alert("Error Deleting Workout", "There was a problem deleting the workout, please try again later");
+      console.log(error)
+    }
 
   }
 
   const handleOpenWorkout = (id: number) => {
     setActiveWorkout(id);
     setShowWorkout(true)
+  }
+
+  const handleRename = (id: number) => {
+    setShowRename(true)
+    setActiveWorkout(id)
   }
 
 
@@ -121,7 +155,9 @@ export default function Workouts() {
                 <Text className="text-white text-base">Delete</Text>
               </MenuOption>
               <MenuOption
-                onSelect={() => handleDeleteWorkout(item.id)}
+                onSelect={() => {
+                  handleRename(item.id)
+                }}
                 style={{ padding: 12, flexDirection: 'row', alignItems: 'center' }}
               >
                 <Icon name="edit" size={20} color="white" className='mr-2' />
@@ -185,18 +221,20 @@ export default function Workouts() {
       {
         showWorkout && <WorkoutScreen showWorkout={showWorkout} setShowWorkout={setShowWorkout} workoutId={activeWorkout} setActiveWorkout={setActiveWorkout} />
       }
+      {
+        showRename && <RenamePopup showRename={showRename} setShowRename={setShowRename} workoutId={activeWorkout}/>
+      }
 
     </SafeAreaView>
   )
 }
 
 
-//Create Workout Modal
+//Workout Creation Modal
 const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises, setRefresh, refresh }: CreateWorkoutProps) => {
   const [selectedExercises, setSelectedExercises] = useState<Exercise[]>([]);
   const [selectedExercise, setSelectedExercise] = useState<Exercise>({} as Exercise);
   const [workoutName, setWorkoutName] = useState('');
-  const [errMsg, setErrMsg] = useState('');
 
   const axiosPrivate = useAxiosPrivate();
   const { auth } = useAuth();
@@ -219,7 +257,7 @@ const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises, set
     }
 
     try {
-      const response = await axiosPrivate.post(CREATE_WORKOUT_URL, {
+      const response = await axiosPrivate.post(WORKOUT_URL, {
         userId: auth.userId,
         workoutName,
       })
@@ -402,6 +440,10 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
       </View>
     </Modal>
   )
+}
+
+const editWorkoutScreen = () => {
+
 }
 
 
