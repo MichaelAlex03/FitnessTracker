@@ -1,18 +1,34 @@
+import useAxiosPrivate from '@/hooks/useAxiosPrivate';
 import React, { useState } from 'react'
-import { Modal, View, Text, TouchableOpacity, TextInput } from 'react-native'
+import { Modal, View, Text, TouchableOpacity, TextInput } from 'react-native';
 
+const WORKOUT_URL = '/api/workouts';
 
 interface PopupScreenProps {
     showRename: boolean,
     setShowRename: React.Dispatch<React.SetStateAction<boolean>>,
-    workoutId: number
+    workoutId: number,
+    refresh: number,
+    setRefresh: React.Dispatch<React.SetStateAction<number>>
 }
 
-const RenamePopup = ({ showRename, setShowRename, workoutId }: PopupScreenProps) => {
+const RenamePopup = ({ showRename, setShowRename, workoutId, refresh, setRefresh }: PopupScreenProps) => {
 
     const [workoutName, setWorkoutName] = useState('');
+    const axiosPrivate = useAxiosPrivate()
 
-    const handleUpdateWorkoutName = () => {
+    const handleUpdateWorkoutName = async () => {
+
+        try {
+            await axiosPrivate.patch(`${WORKOUT_URL}/${workoutId}`, {
+                workoutName
+            });
+
+            setShowRename(false);
+            setRefresh(refresh + 1)
+        } catch (error) {
+            console.error(error)
+        }
 
     }
 
@@ -42,8 +58,14 @@ const RenamePopup = ({ showRename, setShowRename, workoutId }: PopupScreenProps)
 
 
                         <TouchableOpacity
-                            onPress={() => setShowRename(false)}
+                            onPress={handleUpdateWorkoutName}
                             className='bg-secondary py-4 rounded-2xl'
+                        >
+                            <Text className='text-white text-center font-bold'>Update Name</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={() => setShowRename(false)}
+                            className='bg-[#25344d] py-4 rounded-2xl'
                         >
                             <Text className='text-white text-center font-bold'>Close</Text>
                         </TouchableOpacity>

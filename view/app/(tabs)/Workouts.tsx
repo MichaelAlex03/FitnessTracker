@@ -222,7 +222,7 @@ export default function Workouts() {
         showWorkout && <WorkoutScreen showWorkout={showWorkout} setShowWorkout={setShowWorkout} workoutId={activeWorkout} setActiveWorkout={setActiveWorkout} />
       }
       {
-        showRename && <RenamePopup showRename={showRename} setShowRename={setShowRename} workoutId={activeWorkout}/>
+        showRename && <RenamePopup showRename={showRename} setShowRename={setShowRename} workoutId={activeWorkout} refresh={refresh} setRefresh={setRefresh}/>
       }
 
     </SafeAreaView>
