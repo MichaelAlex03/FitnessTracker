@@ -31,8 +31,13 @@ const updateSets = async (sets) => {
     });
 };
 
-const updateWorkout = async () => {
-    
+const updateWorkout = async (workoutId, workoutName) => {
+    const { data, error } = await supabase
+        .from('workouts')
+        .update({workout_name: workoutName})
+        .eq('id', workoutId)
+    if (error) console.log(error);
+    return data
 }
 
 //---------------------------- Get Routes Queries ------------------------------//
@@ -247,5 +252,6 @@ module.exports = {
     addSet,
     deleteSet,
     deleteExercise,
-    updateSets
+    updateSets,
+    updateWorkout
 }

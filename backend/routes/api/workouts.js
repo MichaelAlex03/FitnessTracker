@@ -8,5 +8,6 @@ router.route('/')
 
 router.route('/:id')
     .get(workoutsController.getWorkouts)
+    .patch(workoutsController.updateWorkout)
 
 module.exports = router;

@@ -23,8 +23,21 @@ const deleteWorkout = async (req, res) => {
     return res.status(200).json({ 'message': `workout ${workoutId} deleted` });
 }
 
+const updateWorkout = async (req, res) => {
+    const { id } = req.params;
+    console.log(id)
+    const { workoutName } = req.body;
+    try {
+        await pg.updateWorkout(id, workoutName);
+        return res.status(200).json({ 'message': `workout ${id} updated` });
+    } catch (error) {
+        console.error(error)
+    }
+}
+
 module.exports = {
     getWorkouts,
     createWorkout,
     deleteWorkout,
+    updateWorkout
 }
