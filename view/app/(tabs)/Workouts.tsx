@@ -10,6 +10,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { Menu, MenuOption, MenuOptions, MenuTrigger } from 'react-native-popup-menu';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import RenamePopup from '@/components/RenamePopup';
+import EditWorkout from '@/components/EditWorkout';
 
 
 const EXERCISES_URL = '/api/exercises';
@@ -52,6 +53,7 @@ export default function Workouts() {
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [activeWorkout, setActiveWorkout] = useState(0);
   const [showRename, setShowRename] = useState(false);
+  const [editWorkout, setEditWorkout] = useState(false);
 
 
   const axiosPrivate = useAxiosPrivate();
@@ -120,6 +122,11 @@ export default function Workouts() {
     setActiveWorkout(id)
   }
 
+  const handleEditWorkout = (id: number) => {
+    setEditWorkout(true);
+    setActiveWorkout(id)
+  }
+
 
   const workoutItem = (item: Workout) => {
     return (
@@ -164,7 +171,7 @@ export default function Workouts() {
                 <Text className="text-white text-base">Rename</Text>
               </MenuOption>
               <MenuOption
-                onSelect={() => handleDeleteWorkout(item.id)}
+                onSelect={() => handleEditWorkout(item.id)}
                 style={{ padding: 12, flexDirection: 'row', alignItems: 'center' }}
               >
                 <Icon name="edit" size={20} color="white" className='mr-2' />
@@ -223,6 +230,9 @@ export default function Workouts() {
       }
       {
         showRename && <RenamePopup showRename={showRename} setShowRename={setShowRename} workoutId={activeWorkout} refresh={refresh} setRefresh={setRefresh}/>
+      }
+      {
+        editWorkout && <EditWorkout editWorkout={editWorkout} setEditWorkout={setEditWorkout} workoutId={activeWorkout} setActiveWorkout={setActiveWorkout} refresh={refresh} setRefresh={setRefresh}/>
       }
 
     </SafeAreaView>
