@@ -23,7 +23,7 @@ const deleteAllWorkoutExercises = async (req, res) => {
 const getWorkoutExercises = async (req, res) => {
     const { workoutId } = req.params;
     const result = await pg.getWorkoutExercises(workoutId);
-    return res.status(200).json({ exercises: result.rows });
+    return res.status(200).json({ exercises: result });
 }
 
 const deleteExercise = async (req, res) => {
