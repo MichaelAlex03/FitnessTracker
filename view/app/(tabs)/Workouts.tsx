@@ -7,10 +7,11 @@ import useAuth from '@/hooks/useAuth'
 import { TouchableOpacity } from 'react-native'
 import useAxiosPrivate from '@/hooks/useAxiosPrivate'
 import { AntDesign } from '@expo/vector-icons';
-import { Menu, MenuOption, MenuOptions, MenuTrigger } from 'react-native-popup-menu';
+import { Menu, MenuOption, MenuOptions, MenuProvider, MenuTrigger } from 'react-native-popup-menu';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import RenamePopup from '@/components/RenamePopup';
 import EditWorkout from '@/components/EditWorkout';
+import { axiosPrivate } from '@/api/axios';
 
 
 const EXERCISES_URL = '/api/exercises';
@@ -31,7 +32,8 @@ interface WorkoutScreenProps {
   showWorkout: boolean,
   setShowWorkout: React.Dispatch<React.SetStateAction<boolean>>,
   workoutId: number,
-  setActiveWorkout: React.Dispatch<React.SetStateAction<number>>
+  setActiveWorkout: React.Dispatch<React.SetStateAction<number>>,
+  workoutName: string
 }
 
 interface Exercise {
@@ -46,6 +48,14 @@ interface Workout {
   user_id: string
 }
 
+interface Sets {
+  id: number,
+  exercise_id: number,
+  exercise_reps: number,
+  exercise_sets: number,
+  workout_id: number
+}
+
 export default function Workouts() {
   const [refresh, setRefresh] = useState(0);
   const [showCreateWorkout, setShowCreateWorkout] = useState(false);
@@ -54,6 +64,7 @@ export default function Workouts() {
   const [activeWorkout, setActiveWorkout] = useState(0);
   const [showRename, setShowRename] = useState(false);
   const [editWorkout, setEditWorkout] = useState(false);
+  const [workoutName, setWorkoutName] = useState('');
 
 
   const axiosPrivate = useAxiosPrivate();
@@ -112,7 +123,8 @@ export default function Workouts() {
 
   }
 
-  const handleOpenWorkout = (id: number) => {
+  const handleOpenWorkout = (id: number, workoutName: string) => {
+    setWorkoutName(workoutName)
     setActiveWorkout(id);
     setShowWorkout(true)
   }
@@ -132,7 +144,7 @@ export default function Workouts() {
     return (
       <TouchableOpacity
         className="bg-black-100 mx-4 mb-4 rounded-2xl p-4 border border-black-200 active:opacity-80"
-        onPress={() => handleOpenWorkout(item.id)}
+        onPress={() => handleOpenWorkout(item.id, item.workout_name)}
       >
         <View className="flex-row justify-between items-center">
           <View className="flex-1">
@@ -226,13 +238,13 @@ export default function Workouts() {
         />
       }
       {
-        showWorkout && <WorkoutScreen showWorkout={showWorkout} setShowWorkout={setShowWorkout} workoutId={activeWorkout} setActiveWorkout={setActiveWorkout} />
+        showWorkout && <WorkoutScreen showWorkout={showWorkout} setShowWorkout={setShowWorkout} workoutId={activeWorkout} setActiveWorkout={setActiveWorkout} workoutName={workoutName} />
       }
       {
-        showRename && <RenamePopup showRename={showRename} setShowRename={setShowRename} workoutId={activeWorkout} refresh={refresh} setRefresh={setRefresh}/>
+        showRename && <RenamePopup showRename={showRename} setShowRename={setShowRename} workoutId={activeWorkout} refresh={refresh} setRefresh={setRefresh} />
       }
       {
-        editWorkout && <EditWorkout editWorkout={editWorkout} setEditWorkout={setEditWorkout} workoutId={activeWorkout} setActiveWorkout={setActiveWorkout} refresh={refresh} setRefresh={setRefresh}/>
+        editWorkout && <EditWorkout editWorkout={editWorkout} setEditWorkout={setEditWorkout} workoutId={activeWorkout} setActiveWorkout={setActiveWorkout} refresh={refresh} setRefresh={setRefresh} />
       }
 
     </SafeAreaView>
@@ -428,33 +440,197 @@ const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises, set
 
 
 //Workout Screen Modal
-const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkout }: WorkoutScreenProps) => {
+const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkout, workoutName }: WorkoutScreenProps) => {
+
+  const [exercises, setExercises] = useState<Exercise[]>([]);
+  const [exerciseSets, setExerciseSets] = useState<Sets[]>([]);
+  const [workouts, setWorkouts] = useState<Workout[]>([]);
+  const [toggleAddExercise, setToggleAddExercise] = useState(false);
+  const [refreshSet, setRefreshSet] = useState(0);
+  const [refreshExercise, setRefreshExercise] = useState(0);
+
+  const options = ["Delete Exercise", "View Exercise History"];
+
+  const axiosPrivate = useAxiosPrivate();
+
+
+  /* Retrieves exercises for the workout */
+  useEffect(() => {
+    const fetchExercises = async () => {
+
+      try {
+        const exerciseData = await axiosPrivate.get(EXERCISES_URL + `/getWorkoutExercises/${workoutId}`);
+        setExercises(exerciseData.data.exercises);
+      } catch (error) {
+        console.error('Error fetching exercises:', error);
+      }
+    };
+
+    fetchExercises();
+  }, []);
+
+  /* Retrieves sets for the workout */
+  useEffect(() => {
+    const fetchSets = async () => {
+      try {
+        const setsData = await axiosPrivate.get(SETS_URL + `/getAllSets/${workoutId}`);
+        setExerciseSets(setsData.data.sets);
+      } catch (error) {
+        console.error('Error fetching sets:', error);
+      }
+    }
+    fetchSets();
+  }, []);
+
+
+  const handleAddSet = () => {
+
+  }
+
+  const handleRemoveSet = () => {
+
+  }
+
+  const handleSave = async () => {
+    setShowWorkout(false)
+  }
+
+  const renderItem = (item: Exercise) => {
+    return (
+      <View className='p-6'>
+
+        <View className='flex flex-row items-center'>
+          <TouchableOpacity className='mr-auto'>
+            <Text className='text-secondary font-semibold text-2xl'>{item.exercise_name}</Text>
+          </TouchableOpacity>
+          <Menu>
+            <MenuTrigger>
+              <View className="bg-secondary/20 p-2 rounded-xl">
+                <AntDesign name="ellipsis1" size={20} color="#FF9C01" />
+              </View>
+            </MenuTrigger>
+            <MenuOptions
+              optionsContainerStyle={{
+                backgroundColor: '#1E1E1E',
+                borderRadius: 8,
+                marginTop: 40,
+              }}
+            >
+              <MenuOption
+                style={{ padding: 12, flexDirection: 'row', alignItems: 'center' }}
+              >
+                <AntDesign name="delete" size={20} color="red" className='mr-2' />
+                <Text className="text-white text-base">Delete</Text>
+              </MenuOption>
+              <MenuOption
+                onSelect={() => {
+
+                }}
+                style={{ padding: 12, flexDirection: 'row', alignItems: 'center' }}
+              >
+                <Icon name="edit" size={20} color="white" className='mr-2' />
+                <Text className="text-white text-base">Rename</Text>
+              </MenuOption>
+              <MenuOption
+                onSelect={() => { }}
+                style={{ padding: 12, flexDirection: 'row', alignItems: 'center' }}
+              >
+                <Icon name="edit" size={20} color="white" className='mr-2' />
+                <Text className="text-white text-base">Edit Workout</Text>
+              </MenuOption>
+            </MenuOptions>
+          </Menu>
+        </View>
+      </View>
+    )
+  }
+
+
   return (
     <Modal
       visible={showWorkout}
-      transparent={true}
       animationType="slide"
       onRequestClose={() => {
         setShowWorkout(false)
         setActiveWorkout(0)
       }}
     >
-      <View className="flex-1 bg-black/50 justify-center items-center">
-        <Text>Test</Text>
-        <TouchableOpacity onPress={() => {
-          setShowWorkout(false)
-          setActiveWorkout(0)
-        }}>
-          <Text className='text-white'>Close</Text>
-        </TouchableOpacity>
-      </View>
+      <SafeAreaView className="flex-1 bg-primary">
+        <MenuProvider>
+          <FlatList
+            data={exercises}
+            renderItem={({ item }) => renderItem(item)}
+            keyExtractor={(item) => item.id.toString()}
+            ListHeaderComponent={() => (
+              <View className='px-6 py-6 gap-4'>
+                <View className="flex flex-row justify-evenly items-center">
+                  <TouchableOpacity
+                    className=' bg-gray-400 px-6 py-2 rounded-lg'
+                    onPress={() => {
+                      setShowWorkout(false)
+                      setActiveWorkout(0)
+                    }}
+                  >
+                    <Icon name="close" size={20} color="#000000" />
+                  </TouchableOpacity>
+
+                  <Text className='text-white font-pbold text-xl mx-auto'>Edit Workout</Text>
+                  <TouchableOpacity
+                    className='bg-secondary px-4 py-2 rounded-lg'
+                    onPress={() => {
+                      setShowWorkout(false)
+                      setActiveWorkout(0)
+                    }}
+                  >
+                    <Text className='text-xl text-white'>Save</Text>
+                  </TouchableOpacity>
+                </View>
+
+                <View className='flex flex-row items-center gap-4 mt-10'>
+                  <Text className='text-white font-bold text-2xl'>{workoutName}</Text>
+                  <Menu>
+                    <MenuTrigger>
+                      <View className="bg-secondary/20 p-2 rounded-xl">
+                        <AntDesign name="ellipsis1" size={16} color="#FF9C01" />
+                      </View>
+                    </MenuTrigger>
+                    <MenuOptions
+                      optionsContainerStyle={{
+                        backgroundColor: '#1E1E1E',
+                        borderRadius: 8,
+                        marginTop: 40,
+                        zIndex: 10000,
+                      }}
+                    >
+                      <MenuOption
+                        onSelect={() => {
+
+                        }}
+                        style={{ padding: 12, flexDirection: 'row', alignItems: 'center' }}
+                      >
+                        <Icon name="edit" size={20} color="white" className='mr-2' />
+                        <Text className="text-white text-base">Rename</Text>
+                      </MenuOption>
+                      <MenuOption
+                        onSelect={() => { }}
+                        style={{ padding: 12, flexDirection: 'row', alignItems: 'center' }}
+                      >
+                        <Icon name="edit" size={20} color="white" className='mr-2' />
+                        <Text className="text-white text-base">Edit Workout</Text>
+                      </MenuOption>
+                    </MenuOptions>
+                  </Menu>
+                </View>
+              </View>
+            )}
+          />
+        </MenuProvider>
+      </SafeAreaView>
+
     </Modal>
   )
 }
 
-const editWorkoutScreen = () => {
-
-}
 
 
 
