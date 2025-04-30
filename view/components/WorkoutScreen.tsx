@@ -38,7 +38,8 @@ interface Sets {
     exercise_id: number,
     exercise_reps: number,
     exercise_sets: number,
-    workout_id: number
+    workout_id: number,
+    exercise_weight: number
 }
 
 const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkout, workoutName }: WorkoutScreenProps) => {
@@ -51,8 +52,8 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
     const [refreshExercise, setRefreshExercise] = useState(0);
     const [editWorkoutName, setEditWorkoutName] = useState(false);
     const [refresh, setRefresh] = useState(0);
+    const [elapsedTime, setElapsedTime] = useState(0);
 
-    const options = ["Delete Exercise", "View Exercise History"];
 
     const axiosPrivate = useAxiosPrivate();
 
@@ -85,23 +86,57 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
         fetchSets();
     }, []);
 
+    useEffect(() => {
+        let intervalId: NodeJS.Timeout;
 
-    const handleAddSet = () => {
+        if (showWorkout) {
+            setElapsedTime(0);
+            intervalId = setInterval(() => {
+                setElapsedTime(prev => prev + 1);
+            }, 1000)
+        }
 
+        return () => {
+            clearInterval(intervalId);
+        }
+
+    }, [showWorkout])
+
+    const formatTime = (seconds: number) => {
+        const minutes = Math.floor((seconds % 3600) / 60);
+        const remainingSeconds = seconds % 60;
+
+        return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+    };
+
+    const handleAddSet = (item: Exercise) => {
+        setExerciseSets([...exerciseSets, {
+            id: exerciseSets.length + 1,
+            exercise_id: item.id,
+            exercise_reps: 0,
+            exercise_sets: 0,
+            workout_id: workoutId,
+            exercise_weight: 0
+        }])
     }
 
-    const handleRemoveSet = () => {
-
+    const handleRemoveSet = (id: number) => {
+        const updatedSets = exerciseSets.filter(set => set.id !== id);
+        setExerciseSets(updatedSets);
     }
 
     const handleSave = async () => {
         setShowWorkout(false)
     }
 
+
+
     const renderItem = (item: Exercise) => {
+        // Filter sets for this specific exercise
+        const exerciseSetsFiltered = exerciseSets.filter(set => set.exercise_id === item.id);
+
         return (
             <View className='p-6'>
-
                 <View className='flex flex-row items-center'>
                     <TouchableOpacity className='mr-auto'>
                         <Text className='text-secondary font-semibold text-2xl'>{item.exercise_name}</Text>
@@ -144,6 +179,79 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                         </MenuOptions>
                     </Menu>
                 </View>
+
+                <View className='mt-4'>
+                    {exerciseSetsFiltered.map((set, index) => (
+                        <View key={set.id} className='flex flex-row items-center gap-8 py-2'>
+                            <Menu>
+                                <MenuTrigger>
+                                    <View className='flex items-center gap-4 justify-center'>
+                                        <Text className='text-white font-semibold text-lg'>Set</Text>
+                                        <Text className='text-white font-semibold text-lg bg-secondary/20 px-4 py-1 rounded-lg'>{index + 1}</Text>
+                                    </View>
+                                </MenuTrigger>
+                                <MenuOptions
+                                    optionsContainerStyle={{
+                                        backgroundColor: '#1E1E1E',
+                                        borderRadius: 8,
+                                        marginTop: 80,
+                                    }}
+                                >
+                                    <MenuOption
+                                        style={{ padding: 12, flexDirection: 'row', alignItems: 'center', gap: 8 }}
+                                    >
+                                        <View className="bg-blue-500/30 w-8 h-8 rounded-full items-center justify-center">
+                                            <Text className="text-blue-500 font-bold">W</Text>
+                                        </View>
+                                        <Text className="text-white text-base font-semibold">Warmup Set</Text>
+                                    </MenuOption>
+                                    <MenuOption
+                                        style={{ padding: 12, flexDirection: 'row', alignItems: 'center', gap: 8 }}
+                                    >
+                                        <View className="bg-purple-500/30 w-8 h-8 rounded-full items-center justify-center">
+                                            <Text className="text-purple-500 font-bold">D</Text>
+                                        </View>
+                                        <Text className="text-white text-base font-semibold">Drop Set</Text>
+                                    </MenuOption>
+                                    <MenuOption
+                                        style={{ padding: 12, flexDirection: 'row', alignItems: 'center', gap: 8 }}
+                                    >
+                                        <View className="bg-red-500/30 w-8 h-8 rounded-full items-center justify-center">
+                                            <Text className="text-red-500 font-bold">F</Text>
+                                        </View>
+                                        <Text className="text-white text-base font-semibold">Failure Set</Text>
+                                    </MenuOption>
+                                </MenuOptions>
+                            </Menu>
+
+                            <View className='flex items-center gap-4 justify-center'>
+                                <Text className='text-white font-semibold text-lg'>Previous Weight</Text>
+                                <Text className='text-white font-semibold text-lg px-4 py-1'>0</Text>
+                            </View>
+                            <View className='flex items-center gap-4 justify-center'>
+                                <Text className='text-white font-semibold text-lg'>Reps</Text>
+                                <TextInput
+                                    className='text-white font-semibold text-lg px-6 py-1 bg-secondary/20 rounded-lg'
+                                    placeholder={set.exercise_reps.toString()} />
+                            </View>
+                            <View className='flex items-center gap-4 justify-center'>
+                                <Text className='text-white font-semibold text-lg'>Weight</Text>
+                                <TextInput
+                                    className='text-white font-semibold text-lg px-6 py-1 bg-secondary/20 rounded-lg '
+                                    placeholder={set.exercise_weight.toString()}
+                                />
+                            </View>
+
+                        </View>
+                    ))}
+
+                    <TouchableOpacity
+                        className='mt-2 bg-secondary/20 p-2 rounded-xl'
+                        onPress={() => { handleAddSet(item) }}
+                    >
+                        <Text className='text-secondary text-center'>Add Set</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         )
     }
@@ -168,7 +276,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                             <View className='px-6 py-6 gap-4 mt-5'>
                                 <View className="flex flex-row justify-evenly items-center">
                                     <TouchableOpacity
-                                        className=' bg-gray-400 px-6 py-2 rounded-lg mr-auto'
+                                        className='bg-gray-400 px-6 py-2 rounded-lg mr-auto'
                                         onPress={() => {
                                             setShowWorkout(false)
                                             setActiveWorkout(0)
@@ -188,33 +296,42 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                                     </TouchableOpacity>
                                 </View>
 
-                                <View className='flex flex-row items-center gap-4 mt-10'>
-                                    <TextInput className='text-white font-bold text-2xl' editable={false}>{workoutName}</TextInput>
-                                    <Menu>
-                                        <MenuTrigger>
-                                            <View className="bg-secondary/20 p-2 rounded-xl">
-                                                <AntDesign name="ellipsis1" size={16} color="#FF9C01" />
-                                            </View>
-                                        </MenuTrigger>
-                                        <MenuOptions
-                                            optionsContainerStyle={{
-                                                backgroundColor: '#1E1E1E',
-                                                borderRadius: 8,
-                                                marginTop: 40,
-                                                zIndex: 10000,
-                                            }}
-                                        >
-                                            <MenuOption
-                                                onSelect={() => {
-                                                    setEditWorkoutName(true)
+                                <View className='flex flex-col gap-2 mt-10'>
+                                    <View className='flex flex-row items-center gap-4'>
+                                        <TextInput className='text-white font-bold text-2xl' editable={false}>{workoutName}</TextInput>
+                                        <Menu>
+                                            <MenuTrigger>
+                                                <View className="bg-secondary/20 p-2 rounded-xl">
+                                                    <AntDesign name="ellipsis1" size={16} color="#FF9C01" />
+                                                </View>
+                                            </MenuTrigger>
+                                            <MenuOptions
+                                                optionsContainerStyle={{
+                                                    backgroundColor: '#1E1E1E',
+                                                    borderRadius: 8,
+                                                    marginTop: 40,
+                                                    zIndex: 10000,
                                                 }}
-                                                style={{ padding: 12, flexDirection: 'row', alignItems: 'center' }}
                                             >
-                                                <Icon name="edit" size={20} color="white" className='mr-2' />
-                                                <Text className="text-white text-base">Rename Workout</Text>
-                                            </MenuOption>
-                                        </MenuOptions>
-                                    </Menu>
+                                                <MenuOption
+                                                    onSelect={() => {
+                                                        setEditWorkoutName(true)
+                                                    }}
+                                                    style={{ padding: 12, flexDirection: 'row', alignItems: 'center' }}
+                                                >
+                                                    <Icon name="edit" size={20} color="white" className='mr-2' />
+                                                    <Text className="text-white text-base">Rename Workout</Text>
+                                                </MenuOption>
+                                            </MenuOptions>
+                                        </Menu>
+                                    </View>
+
+                                    <View className='flex flex-row items-center gap-2'>
+                                        <Icon name="timer" size={20} color="#FF9C01" />
+                                        <Text className='text-secondary font-semibold text-lg'>
+                                            {formatTime(elapsedTime)}
+                                        </Text>
+                                    </View>
                                 </View>
                             </View>
                         )}
