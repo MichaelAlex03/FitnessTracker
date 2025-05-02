@@ -8,7 +8,7 @@ import { Menu, MenuOption, MenuOptions, MenuProvider, MenuTrigger } from 'react-
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import RenamePopup from '@/components/RenamePopup';
 import RenderSet from '@/components/RenderSet';
-
+import AddExercisePopup from '@/components/AddExercisePopup';
 const EXERCISES_URL = '/api/exercises';
 const WORKOUT_URL = '/api/workouts';
 const SETS_URL = '/api/sets';
@@ -62,6 +62,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
     const [editWorkoutName, setEditWorkoutName] = useState(false);
     const [refresh, setRefresh] = useState(0);
     const [elapsedTime, setElapsedTime] = useState(0);
+    const [addExercise, setAddExercise] = useState(false);
 
 
     const axiosPrivate = useAxiosPrivate();
@@ -137,6 +138,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
         const updatedSets = exerciseSets.filter(set => set.id !== id);
         setExerciseSets(updatedSets);
     }
+
 
     const handleSave = async () => {
         setShowWorkout(false)
@@ -291,10 +293,34 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                                 </View>
                             </View>
                         )}
+                        ListFooterComponent={() => (
+                            <View className='flex gap-8 items-center p-6'>
+                                <TouchableOpacity
+                                    className="bg-gray-600 rounded-xl w-full p-3 "
+                                    onPress={() => {
+                                        setAddExercise(true)
+                                    }}
+                                >
+                                    <Text className="text-white font-bold text-center">Add Exercise</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity
+                                    className="bg-red-400/20 rounded-xl w-full p-3"
+                                    onPress={() => {
+                                        setShowWorkout(false)
+                                        setActiveWorkout(0)
+                                    }}>
+                                    <Text className="text-red-400 font-bold text-center">Cancel Workout</Text>
+                                </TouchableOpacity>
+                            </View>
+                        )}
                     />
                 </MenuProvider>
                 {
                     editWorkoutName && <RenamePopup showRename={editWorkoutName} setShowRename={setEditWorkoutName} workoutId={workoutId} refresh={refresh} setRefresh={setRefresh} />
+                }
+                {
+                    addExercise && <AddExercisePopup />
                 }
             </SafeAreaView>
 
