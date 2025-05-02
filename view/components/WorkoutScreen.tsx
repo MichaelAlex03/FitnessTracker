@@ -1,5 +1,5 @@
 import { Text, View, FlatList, Modal, TextInput, Alert } from 'react-native'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { TouchableOpacity } from 'react-native'
 import useAxiosPrivate from '@/hooks/useAxiosPrivate'
@@ -7,11 +7,21 @@ import { AntDesign } from '@expo/vector-icons';
 import { Menu, MenuOption, MenuOptions, MenuProvider, MenuTrigger } from 'react-native-popup-menu';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import RenamePopup from '@/components/RenamePopup';
-
+import { GestureDetector, Gesture } from 'react-native-gesture-handler';
+import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
+import Reanimated, {
+    withTiming,
+    useAnimatedStyle,
+    useSharedValue,
+    runOnJS,
+    SharedValue
+} from 'react-native-reanimated';
 
 const EXERCISES_URL = '/api/exercises';
 const WORKOUT_URL = '/api/workouts';
 const SETS_URL = '/api/sets';
+
+const END_POSITION = 200; //Used to determine start position of swipe as we start from end(right) to start(left) to delete set
 
 interface WorkoutScreenProps {
     showWorkout: boolean,
@@ -39,10 +49,17 @@ interface Sets {
     exercise_reps: number,
     exercise_sets: number,
     workout_id: number,
-    exercise_weight: number
+    exercise_weight: number,
+}
+
+interface SetProps {
+    set: Sets,
+    index: number,
+    handleRemoveSet: (id: number) => void
 }
 
 const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkout, workoutName }: WorkoutScreenProps) => {
+
 
     const [exercises, setExercises] = useState<Exercise[]>([]);
     const [exerciseSets, setExerciseSets] = useState<Sets[]>([]);
@@ -56,6 +73,9 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
 
 
     const axiosPrivate = useAxiosPrivate();
+
+    const timerRef = useRef(0);
+
 
 
     /* Retrieves exercises for the workout */
@@ -102,6 +122,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
 
     }, [showWorkout])
 
+
     const formatTime = (seconds: number) => {
         const minutes = Math.floor((seconds % 3600) / 60);
         const remainingSeconds = seconds % 60;
@@ -129,11 +150,13 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
         setShowWorkout(false)
     }
 
+    console.log("SETS", exerciseSets)
 
 
     const renderItem = (item: Exercise) => {
         // Filter sets for this specific exercise
         const exerciseSetsFiltered = exerciseSets.filter(set => set.exercise_id === item.id);
+
 
         return (
             <View className='p-6'>
@@ -181,68 +204,9 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                 </View>
 
                 <View className='mt-4'>
+
                     {exerciseSetsFiltered.map((set, index) => (
-                        <View key={set.id} className='flex flex-row items-center gap-8 py-2'>
-                            <Menu>
-                                <MenuTrigger>
-                                    <View className='flex items-center gap-4 justify-center'>
-                                        <Text className='text-white font-semibold text-lg'>Set</Text>
-                                        <Text className='text-white font-semibold text-lg bg-secondary/20 px-4 py-1 rounded-lg'>{index + 1}</Text>
-                                    </View>
-                                </MenuTrigger>
-                                <MenuOptions
-                                    optionsContainerStyle={{
-                                        backgroundColor: '#1E1E1E',
-                                        borderRadius: 8,
-                                        marginTop: 80,
-                                    }}
-                                >
-                                    <MenuOption
-                                        style={{ padding: 12, flexDirection: 'row', alignItems: 'center', gap: 8 }}
-                                    >
-                                        <View className="bg-blue-500/30 w-8 h-8 rounded-full items-center justify-center">
-                                            <Text className="text-blue-500 font-bold">W</Text>
-                                        </View>
-                                        <Text className="text-white text-base font-semibold">Warmup Set</Text>
-                                    </MenuOption>
-                                    <MenuOption
-                                        style={{ padding: 12, flexDirection: 'row', alignItems: 'center', gap: 8 }}
-                                    >
-                                        <View className="bg-purple-500/30 w-8 h-8 rounded-full items-center justify-center">
-                                            <Text className="text-purple-500 font-bold">D</Text>
-                                        </View>
-                                        <Text className="text-white text-base font-semibold">Drop Set</Text>
-                                    </MenuOption>
-                                    <MenuOption
-                                        style={{ padding: 12, flexDirection: 'row', alignItems: 'center', gap: 8 }}
-                                    >
-                                        <View className="bg-red-500/30 w-8 h-8 rounded-full items-center justify-center">
-                                            <Text className="text-red-500 font-bold">F</Text>
-                                        </View>
-                                        <Text className="text-white text-base font-semibold">Failure Set</Text>
-                                    </MenuOption>
-                                </MenuOptions>
-                            </Menu>
-
-                            <View className='flex items-center gap-4 justify-center'>
-                                <Text className='text-white font-semibold text-lg'>Previous Weight</Text>
-                                <Text className='text-white font-semibold text-lg px-4 py-1'>0</Text>
-                            </View>
-                            <View className='flex items-center gap-4 justify-center'>
-                                <Text className='text-white font-semibold text-lg'>Reps</Text>
-                                <TextInput
-                                    className='text-white font-semibold text-lg px-6 py-1 bg-secondary/20 rounded-lg'
-                                    placeholder={set.exercise_reps.toString()} />
-                            </View>
-                            <View className='flex items-center gap-4 justify-center'>
-                                <Text className='text-white font-semibold text-lg'>Weight</Text>
-                                <TextInput
-                                    className='text-white font-semibold text-lg px-6 py-1 bg-secondary/20 rounded-lg '
-                                    placeholder={set.exercise_weight.toString()}
-                                />
-                            </View>
-
-                        </View>
+                        <RenderSet key={set.id} set={set} index={index} handleRemoveSet={handleRemoveSet} />
                     ))}
 
                     <TouchableOpacity
@@ -347,3 +311,81 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
 }
 
 export default WorkoutScreen
+
+const RenderSet = ({ set, index, handleRemoveSet }: SetProps) => {
+
+    return (
+        <View className='flex flex-row items-center gap-8 py-2'>
+            <Menu>
+                <MenuTrigger>
+                    <View className='items-center gap-4 justify-center'>
+                        {index === 0 && <Text className='text-white font-semibold text-lg'>Sets</Text>}
+                        <Text className='text-white font-semibold text-lg bg-secondary/20 px-4 py-1 rounded-lg'>{index + 1}</Text>
+                    </View>
+                </MenuTrigger>
+                <MenuOptions
+                    optionsContainerStyle={{
+                        backgroundColor: '#1E1E1E',
+                        borderRadius: 8,
+                        marginTop: 80,
+                    }}
+                >
+                    <MenuOption
+                        style={{ padding: 12, flexDirection: 'row', alignItems: 'center', gap: 8 }}
+                    >
+                        <View className="bg-blue-500/30 w-8 h-8 rounded-full items-center justify-center">
+                            <Text className="text-blue-500 font-bold">W</Text>
+                        </View>
+                        <Text className="text-white text-base font-semibold">Warmup Set</Text>
+                    </MenuOption>
+                    <MenuOption
+                        style={{ padding: 12, flexDirection: 'row', alignItems: 'center', gap: 8 }}
+                    >
+                        <View className="bg-purple-500/30 w-8 h-8 rounded-full items-center justify-center">
+                            <Text className="text-purple-500 font-bold">D</Text>
+                        </View>
+                        <Text className="text-white text-base font-semibold">Drop Set</Text>
+                    </MenuOption>
+                    <MenuOption
+                        style={{ padding: 12, flexDirection: 'row', alignItems: 'center', gap: 8 }}
+                    >
+                        <View className="bg-red-500/30 w-8 h-8 rounded-full items-center justify-center">
+                            <Text className="text-red-500 font-bold">F</Text>
+                        </View>
+                        <Text className="text-white text-base font-semibold">Failure Set</Text>
+                    </MenuOption>
+                </MenuOptions>
+            </Menu>
+
+            <View className='flex-1 items-center gap-4 justify-center'>
+                {index === 0 && <Text className='text-white font-semibold text-lg'>Prev</Text>}
+                <Text className='text-white font-semibold text-lg px-4 py-1'>
+                    <AntDesign name="minus" size={20} color="white" />
+                </Text>
+            </View>
+            <View className='flex-1 items-center gap-4 justify-center'>
+                {index === 0 && <Text className='text-white font-semibold text-lg'>Reps</Text>}
+                <TextInput
+                    className='text-white font-semibold text-lg px-6 py-1 bg-secondary/20 rounded-lg'
+                    placeholder={set.exercise_reps.toString()} />
+            </View>
+            <View className='flex-1 items-center gap-4 justify-center'>
+                {index === 0 && <Text className='text-white font-semibold text-lg'>Weight</Text>}
+                <TextInput
+                    className='text-white font-semibold text-lg px-6 py-1 bg-secondary/20 rounded-lg '
+                    placeholder={set.exercise_weight.toString()}
+                />
+            </View>
+            <View className='flex-1 items-center gap-4 justify-center'>
+                {index === 0 && <Text className='text-white font-semibold text-lg'>Delete</Text>}
+                <TouchableOpacity
+                    onPress={() => handleRemoveSet(set.id)}
+                    className="bg-gray-500 px-3 py-1.5 rounded-lg"
+                >
+                    <AntDesign name="minus" size={20} color="white" />
+                </TouchableOpacity>
+            </View>
+        </View>
+
+    )
+}
