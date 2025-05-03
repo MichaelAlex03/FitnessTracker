@@ -1,8 +1,8 @@
-import React, { createContext, useState } from 'react'
+import React, { createContext, Dispatch, SetStateAction, useState } from 'react'
 
 interface TimerContextProps {
   elapsedTime: number;
-  setElapsedTime: (value: number) => void;
+  setElapsedTime: Dispatch<SetStateAction<number>>;
 }
 
 const TimerContext = createContext<TimerContextProps>({} as TimerContextProps)

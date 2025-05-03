@@ -10,14 +10,15 @@ interface TimerProps {
 
 const WorkoutTimer = ({ showWorkout }: TimerProps) => {
 
-    const { elapsedTime, setElapsedTime } = useTimerContext()
+    let { elapsedTime, setElapsedTime } = useTimerContext()
 
     useEffect(() => {
         let intervalId: NodeJS.Timeout;
 
         if (showWorkout) {
             intervalId = setInterval(() => {
-                setElapsedTime(elapsedTime + 1);
+                elapsedTime += 1
+                setElapsedTime(elapsedTime);
             }, 1000)
         }
 

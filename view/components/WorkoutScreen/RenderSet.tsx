@@ -70,13 +70,12 @@ const RenderSet = ({ set, index, handleRemoveSet }: SetProps) => {
                 {index === 0 && <Text className='text-white font-semibold text-lg'>Reps</Text>}
                 <TextInput
                     className='text-white font-semibold text-lg px-6 py-1 bg-secondary/20 rounded-lg'
-                    placeholder={set.exercise_reps.toString()} />
+                />
             </View>
             <View className='flex-1 items-center gap-4 justify-center'>
                 {index === 0 && <Text className='text-white font-semibold text-lg'>Weight</Text>}
                 <TextInput
                     className='text-white font-semibold text-lg px-6 py-1 bg-secondary/20 rounded-lg '
-                    placeholder={set.exercise_weight.toString()}
                 />
             </View>
             <View className='flex-1 items-center gap-4 justify-center'>

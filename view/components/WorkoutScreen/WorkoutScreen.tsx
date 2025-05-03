@@ -65,11 +65,11 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
     const [editWorkoutName, setEditWorkoutName] = useState(false);
     const [refresh, setRefresh] = useState(0);
     const [addExercise, setAddExercise] = useState(false);
+    const [showTimerPopup, setShowTimerPopup] = useState(false);
 
 
     const axiosPrivate = useAxiosPrivate();
 
-    const { setElapsedTime } = useTimerContext();
 
 
 
@@ -217,12 +217,10 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                                     <TouchableOpacity
                                         className='bg-gray-400 px-6 py-2 rounded-lg mr-auto'
                                         onPress={() => {
-                                            setShowWorkout(false)
-                                            setActiveWorkout(0)
-                                            setElapsedTime(0)
+                                            setShowTimerPopup(true)
                                         }}
                                     >
-                                        <Icon name="close" size={20} color="#000000" />
+                                        <Icon name="access-time" size={20} color="#000000" />
                                     </TouchableOpacity>
 
                                     <TouchableOpacity
@@ -230,7 +228,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                                         onPress={() => {
                                             setShowWorkout(false)
                                             setActiveWorkout(0)
-                                            setElapsedTime(0)
+                                            
                                         }}
                                     >
                                         <Text className='text-xl text-white'>Finish</Text>
@@ -287,7 +285,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                                     onPress={() => {
                                         setShowWorkout(false)
                                         setActiveWorkout(0)
-                                        setElapsedTime(0)
+                                        
                                     }}>
                                     <Text className="text-red-400 font-bold text-center">Cancel Workout</Text>
                                 </TouchableOpacity>
@@ -301,6 +299,10 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                 {
                     addExercise && <AddExercisePopup />
                 }
+                {
+                    showTimerPopup
+                }
+                
             </SafeAreaView>
 
         </Modal>
