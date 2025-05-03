@@ -12,7 +12,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import RenamePopup from '@/components/RenamePopup';
 import EditWorkout from '@/components/EditWorkout';
 import { axiosPrivate } from '@/api/axios';
-import WorkoutScreen from '@/components/WorkoutScreen';
+import WorkoutScreen from '@/components/WorkoutScreen/WorkoutScreen';
 import CreateWorkout from '@/components/CreateWorkout';
 
 

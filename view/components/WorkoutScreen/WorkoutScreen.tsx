@@ -7,13 +7,16 @@ import { AntDesign } from '@expo/vector-icons';
 import { Menu, MenuOption, MenuOptions, MenuProvider, MenuTrigger } from 'react-native-popup-menu';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import RenamePopup from '@/components/RenamePopup';
-import RenderSet from '@/components/RenderSet';
-import AddExercisePopup from '@/components/AddExercisePopup';
+import RenderSet from '@/components/WorkoutScreen/RenderSet';
+import AddExercisePopup from '@/components/WorkoutScreen/AddExercisePopup';
+import WorkoutTimer from './WorkoutTimer'
+import useTimerContext from '@/hooks/useTimerContext'
+import uuid from 'react-native-uuid';
+
+
 const EXERCISES_URL = '/api/exercises';
 const WORKOUT_URL = '/api/workouts';
 const SETS_URL = '/api/sets';
-
-const END_POSITION = 200; //Used to determine start position of swipe as we start from end(right) to start(left) to delete set
 
 interface WorkoutScreenProps {
     showWorkout: boolean,
@@ -36,7 +39,7 @@ interface Workout {
 }
 
 interface Sets {
-    id: number,
+    id: string,
     exercise_id: number,
     exercise_reps: number,
     exercise_sets: number,
@@ -47,7 +50,7 @@ interface Sets {
 interface SetProps {
     set: Sets,
     index: number,
-    handleRemoveSet: (id: number) => void
+    handleRemoveSet: (id: String) => void
 }
 
 const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkout, workoutName }: WorkoutScreenProps) => {
@@ -61,13 +64,13 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
     const [refreshExercise, setRefreshExercise] = useState(0);
     const [editWorkoutName, setEditWorkoutName] = useState(false);
     const [refresh, setRefresh] = useState(0);
-    const [elapsedTime, setElapsedTime] = useState(0);
     const [addExercise, setAddExercise] = useState(false);
 
 
     const axiosPrivate = useAxiosPrivate();
 
-    const timerRef = useRef(0);
+    const { setElapsedTime } = useTimerContext();
+
 
 
 
@@ -99,33 +102,11 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
         fetchSets();
     }, []);
 
-    useEffect(() => {
-        let intervalId: NodeJS.Timeout;
-
-        if (showWorkout) {
-            setElapsedTime(0);
-            intervalId = setInterval(() => {
-                setElapsedTime(prev => prev + 1);
-            }, 1000)
-        }
-
-        return () => {
-            clearInterval(intervalId);
-        }
-
-    }, [showWorkout])
-
-
-    const formatTime = (seconds: number) => {
-        const minutes = Math.floor((seconds % 3600) / 60);
-        const remainingSeconds = seconds % 60;
-
-        return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
-    };
-
     const handleAddSet = (item: Exercise) => {
+        let setID = uuid.v4();
+
         setExerciseSets([...exerciseSets, {
-            id: exerciseSets.length + 1,
+            id: setID,
             exercise_id: item.id,
             exercise_reps: 0,
             exercise_sets: 0,
@@ -134,8 +115,8 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
         }])
     }
 
-    const handleRemoveSet = (id: number) => {
-        const updatedSets = exerciseSets.filter(set => set.id !== id);
+    const handleRemoveSet = (id: String) => {
+        const updatedSets = exerciseSets.filter(set => set.id !== String(id));
         setExerciseSets(updatedSets);
     }
 
@@ -238,6 +219,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                                         onPress={() => {
                                             setShowWorkout(false)
                                             setActiveWorkout(0)
+                                            setElapsedTime(0)
                                         }}
                                     >
                                         <Icon name="close" size={20} color="#000000" />
@@ -248,6 +230,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                                         onPress={() => {
                                             setShowWorkout(false)
                                             setActiveWorkout(0)
+                                            setElapsedTime(0)
                                         }}
                                     >
                                         <Text className='text-xl text-white'>Finish</Text>
@@ -283,13 +266,8 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                                             </MenuOptions>
                                         </Menu>
                                     </View>
-
-                                    <View className='flex flex-row items-center gap-2'>
-                                        <Icon name="timer" size={20} color="#FF9C01" />
-                                        <Text className='text-secondary font-semibold text-lg'>
-                                            {formatTime(elapsedTime)}
-                                        </Text>
-                                    </View>
+                                    
+                                    <WorkoutTimer showWorkout={showWorkout}/>
                                 </View>
                             </View>
                         )}
@@ -309,6 +287,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                                     onPress={() => {
                                         setShowWorkout(false)
                                         setActiveWorkout(0)
+                                        setElapsedTime(0)
                                     }}>
                                     <Text className="text-red-400 font-bold text-center">Cancel Workout</Text>
                                 </TouchableOpacity>

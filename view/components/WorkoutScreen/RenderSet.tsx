@@ -4,7 +4,7 @@ import { AntDesign } from '@expo/vector-icons';
 
 interface SetProps {
     set: {
-        id: number;
+        id: String;
         exercise_id: number;
         exercise_reps: number;
         exercise_sets: number;
@@ -12,7 +12,7 @@ interface SetProps {
         exercise_weight: number;
     };
     index: number;
-    handleRemoveSet: (id: number) => void;
+    handleRemoveSet: (id: String) => void;
 }
 
 const RenderSet = ({ set, index, handleRemoveSet }: SetProps) => {

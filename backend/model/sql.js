@@ -34,7 +34,7 @@ const updateSets = async (sets) => {
 const updateWorkout = async (workoutId, workoutName) => {
     const { data, error } = await supabase
         .from('workouts')
-        .update({workout_name: workoutName})
+        .update({ workout_name: workoutName })
         .eq('id', workoutId)
     if (error) console.log(error);
     return data
@@ -160,7 +160,10 @@ const createSet = async (exercise) => {
     const { data, error } = await supabase
         .from('workout_sets')
         .insert([{ exercise_id: exercise.id, exercise_reps: 0, exercise_weight: 0, workout_id: exercise.workout_id }]);
-    if (error) throw error;
+    if (error) {
+        console.log(error)
+        throw error
+    };
     return data;
 };
 
