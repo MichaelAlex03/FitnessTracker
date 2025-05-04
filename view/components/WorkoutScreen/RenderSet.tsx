@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity, TextInput } from 'react-native';
 import { Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-native-popup-menu';
 import { AntDesign } from '@expo/vector-icons';
+import { useState } from 'react';
 
 interface SetProps {
     set: {
@@ -17,13 +18,40 @@ interface SetProps {
 
 const RenderSet = ({ set, index, handleRemoveSet }: SetProps) => {
 
+
+    const [regularSet, setRegularSet] = useState(true);
+    const [warmUpSet, setWarmUpSet] = useState(false);
+    const [dropSet, setDropSet] = useState(false);
+    const [failureSet, setFailureSet] = useState(false);
+
+    const handleWarmUpSet = () => {
+        setWarmUpSet(true);
+        setRegularSet(false);
+        setFailureSet(false);
+        setDropSet(false);
+    }
+
+    const handleDropSet = () => {
+        setWarmUpSet(false);
+        setRegularSet(false);
+        setFailureSet(false);
+        setDropSet(true);
+    }
+
+    const handleFailureSet = () => {
+        setWarmUpSet(false);
+        setRegularSet(false);
+        setFailureSet(true);
+        setDropSet(false);
+    }
+
     return (
         <View className='flex flex-row items-center gap-8 py-2'>
             <Menu>
                 <MenuTrigger>
                     <View className='items-center gap-4 justify-center'>
                         {index === 0 && <Text className='text-white font-semibold text-lg'>Sets</Text>}
-                        <Text className='text-white font-semibold text-lg bg-secondary/20 px-4 py-1 rounded-lg'>{index + 1}</Text>
+                        { regularSet && <Text className='text-white font-semibold text-lg bg-secondary/20 px-4 py-1 rounded-lg'>{index + 1}</Text> }
                     </View>
                 </MenuTrigger>
                 <MenuOptions
