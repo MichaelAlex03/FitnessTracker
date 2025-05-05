@@ -21,15 +21,15 @@ const updateUserProfile = async (prevName, name, phone, email) => {
 };
 
 const updateSets = async (sets) => {
-    sets.map(async set => {
-        const { data, error } = await supabase
-            .from('workout_sets')
-            .update({ exercise_reps: set.exercise_reps, exercise_weight: set.exercise_weight })
-            .eq('id', set.id);
-        if (error) throw error;
-        return data;
-    });
-};
+    const { data, error } = await supabase
+      .from('workout_sets')
+      .upsert(sets, {
+        onConflict: 'id' // Use 'id' to resolve conflicts
+      });
+  
+    if (error) throw error;
+    return data;
+  };
 
 const updateWorkout = async (workoutId, workoutName) => {
     const { data, error } = await supabase

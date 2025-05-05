@@ -1,4 +1,4 @@
-import { Text, View, FlatList, Modal, TextInput, Alert } from 'react-native'
+import { Text, View, FlatList, Modal, TextInput, Alert, StatusBar } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { Dropdown } from 'react-native-element-dropdown';
 import { SafeAreaView } from 'react-native-safe-area-context'

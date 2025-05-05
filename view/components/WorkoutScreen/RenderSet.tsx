@@ -3,20 +3,23 @@ import { Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-native-popup-m
 import { AntDesign } from '@expo/vector-icons';
 import { useState } from 'react';
 
-interface SetProps {
-    set: {
-        id: String;
-        exercise_id: number;
-        exercise_reps: number;
-        exercise_sets: number;
-        workout_id: number;
-        exercise_weight: number;
-    };
-    index: number;
-    handleRemoveSet: (id: String) => void;
+interface Sets {
+    id: string,
+    exercise_id: number,
+    exercise_reps: number,
+    workout_id: number,
+    exercise_weight: number,
 }
 
-const RenderSet = ({ set, index, handleRemoveSet }: SetProps) => {
+interface SetProps {
+    set: Sets;
+    index: number;
+    handleRemoveSet: (id: String) => void;
+    handleRepChange: (set: Sets, reps: number) => void
+    handleWeightChange: (set: Sets, weight: number) => void
+}
+
+const RenderSet = ({ set, index, handleRemoveSet, handleRepChange, handleWeightChange }: SetProps) => {
 
 
     const [regularSet, setRegularSet] = useState(true);
@@ -98,12 +101,14 @@ const RenderSet = ({ set, index, handleRemoveSet }: SetProps) => {
                 {index === 0 && <Text className='text-white font-semibold text-lg'>Reps</Text>}
                 <TextInput
                     className='text-white font-semibold text-lg px-6 py-1 bg-secondary/20 rounded-lg'
+                    onChangeText={(e) => handleRepChange(set, Number(e))}
                 />
             </View>
             <View className='flex-1 items-center gap-4 justify-center'>
                 {index === 0 && <Text className='text-white font-semibold text-lg'>Weight</Text>}
                 <TextInput
                     className='text-white font-semibold text-lg px-6 py-1 bg-secondary/20 rounded-lg '
+                    onChangeText={(e) => handleWeightChange(set, Number(e))}
                 />
             </View>
             <View className='flex-1 items-center gap-4 justify-center'>

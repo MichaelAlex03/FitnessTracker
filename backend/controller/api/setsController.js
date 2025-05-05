@@ -1,26 +1,26 @@
 const pg = require('../../model/sql')
 
-const createSet = async (req, res) => {
-    const { exercise, workoutId } = req.body;
-    try {
-        await pg.addSet(exercise, workoutId);
-        return res.status(201).json({ 'message': 'set created!' });
-    }
-    catch (err) {
-        return res.status(500).json({ 'message': err.message });
-    }
-}
+// const updateSetsForWorkout = async (req, res) => {
+//     const { exercise, workoutId } = req.body;
+//     try {
+//         await pg.addSet(exercise, workoutId);
+//         return res.status(201).json({ 'message': 'set created!' });
+//     }
+//     catch (err) {
+//         return res.status(500).json({ 'message': err.message });
+//     }
+// }
 
-const deleteSet = async (req, res) => {
-    const { setId } = req.params;
-    try {
-        await pg.deleteSet(setId);
-        return res.status(200).json({ 'message': 'set deleted!' });
-    }
-    catch (err) {
-        return res.status(500).json({ 'message': err.message });
-    }
-}
+// const deleteSet = async (req, res) => {
+//     const { setId } = req.params;
+//     try {
+//         await pg.deleteSet(setId);
+//         return res.status(200).json({ 'message': 'set deleted!' });
+//     }
+//     catch (err) {
+//         return res.status(500).json({ 'message': err.message });
+//     }
+// }
 
 const getExerciseSets = async (req, res) => {
     const { userId, exerciseName } = req.params;
@@ -58,8 +58,8 @@ const updateSets = async (req, res) => {
 module.exports = {
     removeAllSets,
     getWorkoutSets,
-    createSet,
-    deleteSet,
+    // updateSetsForWorkout,
+    // deleteSet,
     getExerciseSets,
     updateSets,
 }

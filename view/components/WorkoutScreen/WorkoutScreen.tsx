@@ -10,7 +10,6 @@ import RenamePopup from '@/components/RenamePopup';
 import RenderSet from '@/components/WorkoutScreen/RenderSet';
 import AddExercisePopup from '@/components/WorkoutScreen/AddExercisePopup';
 import WorkoutTimer from './WorkoutTimer'
-import useTimerContext from '@/hooks/useTimerContext'
 import uuid from 'react-native-uuid';
 
 
@@ -42,7 +41,6 @@ interface Sets {
     id: string,
     exercise_id: number,
     exercise_reps: number,
-    exercise_sets: number,
     workout_id: number,
     exercise_weight: number,
 }
@@ -51,6 +49,8 @@ interface SetProps {
     set: Sets,
     index: number,
     handleRemoveSet: (id: String) => void
+    handleRepChange: (set: Sets, reps: number) => void
+    handleWeightChange: (set: Sets, weight: number) => void
 }
 
 const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkout, workoutName }: WorkoutScreenProps) => {
@@ -69,9 +69,6 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
 
 
     const axiosPrivate = useAxiosPrivate();
-
-
-
 
 
     /* Retrieves exercises for the workout */
@@ -109,7 +106,6 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
             id: setID,
             exercise_id: item.id,
             exercise_reps: 0,
-            exercise_sets: 0,
             workout_id: workoutId,
             exercise_weight: 0
         }])
@@ -122,10 +118,42 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
 
 
     const handleSave = async () => {
-        setShowWorkout(false)
+
+        //Check if there are any null values
+        const nullSets = exerciseSets.filter(set => (set.exercise_reps === 0 || set.exercise_weight === 0));
+        if (nullSets.length > 0) {
+            Alert.alert("Empty Sets", "One or more sets have missing values");
+            return
+        }
+
+        try {
+            const response = await axiosPrivate.patch(SETS_URL, {
+                exerciseSets
+            });
+
+            console.log(response)
+
+            Alert.alert("Finished Workout", "Your workout is complete!");
+            setActiveWorkout(0);
+            setShowWorkout(false);
+        } catch (error) {
+
+        }
+
     }
 
     console.log("SETS", exerciseSets)
+
+    const handleRepChange = (set: Sets, reps: number) => {
+        setExerciseSets(prevSets => prevSets.map(s =>
+            s.id === set.id ? { ...s, exercise_reps: reps } : s))
+    }
+
+    const handleWeightChange = (set: Sets, weight: number) => {
+        setExerciseSets(prevSets => prevSets.map(s => (
+            s.id === set.id ? { ...s, exercise_weight: weight } : s
+        )))
+    }
 
 
     const renderItem = (item: Exercise) => {
@@ -181,7 +209,14 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                 <View className='mt-4'>
 
                     {exerciseSetsFiltered.map((set, index) => (
-                        <RenderSet key={set.id} set={set} index={index} handleRemoveSet={handleRemoveSet} />
+                        <RenderSet
+                            key={set.id}
+                            set={set}
+                            index={index}
+                            handleRemoveSet={handleRemoveSet}
+                            handleRepChange={handleRepChange}
+                            handleWeightChange={handleWeightChange}
+                        />
                     ))}
 
                     <TouchableOpacity
@@ -226,9 +261,9 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                                     <TouchableOpacity
                                         className='bg-secondary px-4 py-2 rounded-lg'
                                         onPress={() => {
-                                            setShowWorkout(false)
+                                            handleSave()
                                             setActiveWorkout(0)
-                                            
+
                                         }}
                                     >
                                         <Text className='text-xl text-white'>Finish</Text>
@@ -264,8 +299,8 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                                             </MenuOptions>
                                         </Menu>
                                     </View>
-                                    
-                                    <WorkoutTimer showWorkout={showWorkout}/>
+
+                                    <WorkoutTimer showWorkout={showWorkout} />
                                 </View>
                             </View>
                         )}
@@ -285,7 +320,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                                     onPress={() => {
                                         setShowWorkout(false)
                                         setActiveWorkout(0)
-                                        
+
                                     }}>
                                     <Text className="text-red-400 font-bold text-center">Cancel Workout</Text>
                                 </TouchableOpacity>
@@ -302,7 +337,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                 {
                     showTimerPopup
                 }
-                
+
             </SafeAreaView>
 
         </Modal>

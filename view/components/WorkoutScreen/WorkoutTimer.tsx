@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { View, Text } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import useTimerContext from '@/hooks/useTimerContext';
+import { useSharedValue } from 'react-native-reanimated';
 
 
 interface TimerProps {
@@ -12,21 +13,24 @@ const WorkoutTimer = ({ showWorkout }: TimerProps) => {
 
     let { elapsedTime, setElapsedTime } = useTimerContext()
 
+    const timePassed = useSharedValue(elapsedTime)
+
     useEffect(() => {
         let intervalId: NodeJS.Timeout;
 
-        if (showWorkout) {
-            intervalId = setInterval(() => {
-                elapsedTime += 1
-                setElapsedTime(elapsedTime);
-            }, 1000)
-        }
+
+        intervalId = setInterval(() => {
+            elapsedTime += 1
+            setElapsedTime(elapsedTime);
+        }, 1000)
+
 
         return () => {
             clearInterval(intervalId);
+            setElapsedTime(0);
         }
 
-    }, [showWorkout])
+    }, [])
 
     const formatTime = (seconds: number) => {
         const minutes = Math.floor((seconds % 3600) / 60);
