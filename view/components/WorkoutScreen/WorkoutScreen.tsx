@@ -128,7 +128,8 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
 
         try {
             const response = await axiosPrivate.patch(SETS_URL, {
-                exerciseSets
+                exerciseSets,
+                workoutId,
             });
 
             console.log(response)
