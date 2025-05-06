@@ -20,13 +20,13 @@ const updateUserProfile = async (prevName, name, phone, email) => {
     return data;
 };
 
-const updateSets = async (sets) => {
+const updateSets = async (sets, workoutId) => {
+
+    // Clean refresh before updating sets
+    await removeAllSets(workoutId)
     const { data, error } = await supabase
       .from('workout_sets')
-      .upsert(sets, {
-        onConflict: 'id' // Use 'id' to resolve conflicts
-      });
-  
+      .insert(sets);
     if (error) throw error;
     return data;
   };
@@ -155,7 +155,7 @@ const createWorkoutExercises = async (workoutId, selectedExercises) => {
     }
 };
 
-//This function used when workout is initially created. addSet is used for all future set creations
+//This function used when workout is initially created. 
 const createSet = async (exercise) => {
     const { data, error } = await supabase
         .from('workout_sets')
@@ -167,13 +167,14 @@ const createSet = async (exercise) => {
     return data;
 };
 
-const addSet = async (exercise, workoutId) => {
+const addSetsToHistory = async (sets) => {
     const { data, error } = await supabase
-        .from('workout_sets')
-        .insert([{ exercise_id: exercise.id, exercise_reps: 0, exercise_weight: 0, workout_id: workoutId }]);
+        .from('sets_history')
+        .insert(sets)
     if (error) throw error;
-    return data;
-};
+    return data
+}
+
 
 //---------------------------- Delete Routes Queries ------------------------------//
 
@@ -247,12 +248,12 @@ module.exports = {
     getWorkouts,
     createWorkout,
     createWorkoutExercises,
+    addSetsToHistory,
     removeAllSets,
     removeAllExercises,
     removeWorkout,
     getWorkoutExercises,
     getWorkoutSets,
-    addSet,
     deleteSet,
     deleteExercise,
     updateSets,

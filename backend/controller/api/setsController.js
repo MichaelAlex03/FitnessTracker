@@ -1,16 +1,5 @@
 const pg = require('../../model/sql')
 
-// const updateSetsForWorkout = async (req, res) => {
-//     const { exercise, workoutId } = req.body;
-//     try {
-//         await pg.addSet(exercise, workoutId);
-//         return res.status(201).json({ 'message': 'set created!' });
-//     }
-//     catch (err) {
-//         return res.status(500).json({ 'message': err.message });
-//     }
-// }
-
 // const deleteSet = async (req, res) => {
 //     const { setId } = req.params;
 //     try {
@@ -45,9 +34,13 @@ const getWorkoutSets = async (req, res) => {
 }
 
 const updateSets = async (req, res) => {
-    const { exerciseSets } = req.body;
+    const { exerciseSets, workoutId} = req.body;
     try {
-        await pg.updateSets(exerciseSets);
+        //First update workout template
+        await pg.updateSets(exerciseSets, workoutId);
+
+        //Then add sets to history table
+        await pg.addSetsToHistory(exerciseSets);
         return res.status(200).json({ 'message': 'sets updated!' });
     } catch (err) {
         return res.status(500).json({ 'message': err.message });
@@ -58,7 +51,6 @@ const updateSets = async (req, res) => {
 module.exports = {
     removeAllSets,
     getWorkoutSets,
-    // updateSetsForWorkout,
     // deleteSet,
     getExerciseSets,
     updateSets,
