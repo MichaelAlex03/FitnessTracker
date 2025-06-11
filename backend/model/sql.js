@@ -20,21 +20,21 @@ const updateUserProfile = async (prevName, name, phone, email) => {
     return data;
 };
 
-const updateSets = async (sets, workoutId) => {
-
-    // Clean refresh before updating sets
-    await removeAllSets(workoutId)
-    const { data, error } = await supabase
-      .from('workout_sets')
-      .insert(sets);
-    if (error) throw error;
-    return data;
-  };
+const updateSets = async (sets) => {
+    sets.map(async set => {
+        const { data, error } = await supabase
+            .from('workout_sets')
+            .update({ exercise_reps: set.exercise_reps, exercise_weight: set.exercise_weight })
+            .eq('id', set.id);
+        if (error) throw error;
+        return data;
+    });
+};
 
 const updateWorkout = async (workoutId, workoutName) => {
     const { data, error } = await supabase
         .from('workouts')
-        .update({ workout_name: workoutName })
+        .update({workout_name: workoutName})
         .eq('id', workoutId)
     if (error) console.log(error);
     return data
@@ -155,26 +155,22 @@ const createWorkoutExercises = async (workoutId, selectedExercises) => {
     }
 };
 
-//This function used when workout is initially created. 
+//This function used when workout is initially created. addSet is used for all future set creations
 const createSet = async (exercise) => {
     const { data, error } = await supabase
         .from('workout_sets')
         .insert([{ exercise_id: exercise.id, exercise_reps: 0, exercise_weight: 0, workout_id: exercise.workout_id }]);
-    if (error) {
-        console.log(error)
-        throw error
-    };
+    if (error) throw error;
     return data;
 };
 
-const addSetsToHistory = async (sets) => {
+const addSet = async (exercise, workoutId) => {
     const { data, error } = await supabase
-        .from('sets_history')
-        .insert(sets)
+        .from('workout_sets')
+        .insert([{ exercise_id: exercise.id, exercise_reps: 0, exercise_weight: 0, workout_id: workoutId }]);
     if (error) throw error;
-    return data
-}
-
+    return data;
+};
 
 //---------------------------- Delete Routes Queries ------------------------------//
 
@@ -248,12 +244,12 @@ module.exports = {
     getWorkouts,
     createWorkout,
     createWorkoutExercises,
-    addSetsToHistory,
     removeAllSets,
     removeAllExercises,
     removeWorkout,
     getWorkoutExercises,
     getWorkoutSets,
+    addSet,
     deleteSet,
     deleteExercise,
     updateSets,
