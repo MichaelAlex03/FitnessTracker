@@ -22,19 +22,11 @@ const SETS_URL = '/api/sets';
 
 
 
-interface CreateWorkoutProps {
-  showCreateWorkout: boolean,
-  setShowCreateWorkout: React.Dispatch<React.SetStateAction<boolean>>,
-  exercises: Exercise[],
-  setRefresh: React.Dispatch<React.SetStateAction<number>>
-  refresh: number
-}
-
-
 interface Exercise {
-  id: number,
   exercise_name: string,
-  user_id: string
+  exercise_category: string,
+  exercise_instructions: string,
+  id: string
 }
 
 interface Workout {

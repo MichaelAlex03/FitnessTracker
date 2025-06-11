@@ -9,26 +9,32 @@ import { AntDesign } from '@expo/vector-icons';
 
 const EXERCISES_URL = '/api/exercises';
 const WORKOUT_URL = '/api/workouts';
-const SETS_URL = '/api/sets';
 
-interface Exercise {
+interface UserExercise {
     id: number,
     exercise_name: string,
-    user_id: string
+    workout_id: string
+}
+
+interface ExerciseList {
+    exercise_name: string,
+    exercise_category: string,
+    exercise_instructions: string,
+    id: string
 }
 
 
 interface CreateWorkoutProps {
     showCreateWorkout: boolean,
     setShowCreateWorkout: React.Dispatch<React.SetStateAction<boolean>>,
-    exercises: Exercise[],
+    exercises: ExerciseList[],
     setRefresh: React.Dispatch<React.SetStateAction<number>>
     refresh: number
 }
 
 const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises, setRefresh, refresh }: CreateWorkoutProps) => {
-    const [selectedExercises, setSelectedExercises] = useState<Exercise[]>([]);
-    const [selectedExercise, setSelectedExercise] = useState<Exercise>({} as Exercise);
+    const [selectedExercises, setSelectedExercises] = useState<UserExercise[]>([]);
+    const [selectedExercise, setSelectedExercise] = useState<UserExercise>({} as UserExercise);
     const [workoutName, setWorkoutName] = useState('');
 
     const axiosPrivate = useAxiosPrivate();
@@ -85,7 +91,7 @@ const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises, set
         )
     }
 
-    const handleAddExercise = (item: Exercise) => {
+    const handleAddExercise = (item: UserExercise) => {
         const found = selectedExercises.find(exercise => exercise.exercise_name === item.exercise_name);
         if (found) {
             Alert.alert("Duplicate Exercise", "You have already added this exercise to the workout");

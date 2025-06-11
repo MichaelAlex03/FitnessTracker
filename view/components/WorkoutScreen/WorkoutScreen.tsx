@@ -28,14 +28,9 @@ interface WorkoutScreenProps {
 interface Exercise {
     id: number,
     exercise_name: string,
-    user_id: string
+    workout_id: string
 }
 
-interface Workout {
-    id: number,
-    workout_name: string,
-    user_id: string
-}
 
 interface Sets {
     id: string,
@@ -45,23 +40,12 @@ interface Sets {
     exercise_weight: number,
 }
 
-interface SetProps {
-    set: Sets,
-    index: number,
-    handleRemoveSet: (id: String) => void
-    handleRepChange: (set: Sets, reps: number) => void
-    handleWeightChange: (set: Sets, weight: number) => void
-}
 
 const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkout, workoutName }: WorkoutScreenProps) => {
 
 
     const [exercises, setExercises] = useState<Exercise[]>([]);
     const [exerciseSets, setExerciseSets] = useState<Sets[]>([]);
-    const [workouts, setWorkouts] = useState<Workout[]>([]);
-    const [toggleAddExercise, setToggleAddExercise] = useState(false);
-    const [refreshSet, setRefreshSet] = useState(0);
-    const [refreshExercise, setRefreshExercise] = useState(0);
     const [editWorkoutName, setEditWorkoutName] = useState(false);
     const [refresh, setRefresh] = useState(0);
     const [addExercise, setAddExercise] = useState(false);
@@ -123,7 +107,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
         const nullSets = exerciseSets.filter(set => (set.exercise_reps === 0 || set.exercise_weight === 0));
         if (nullSets.length > 0) {
             Alert.alert("Empty Sets", "One or more sets have missing values");
-            return
+            return;
         }
 
         try {
@@ -138,7 +122,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
             setActiveWorkout(0);
             setShowWorkout(false);
         } catch (error) {
-
+            console.error(error)
         }
 
     }
@@ -327,12 +311,18 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                                 <TouchableOpacity
                                     className="bg-gray-600 rounded-xl w-full p-3 "
                                     onPress={() => {
-                                        setAddExercise(true)
+                                        setAddExercise(prev => !prev)
                                     }}
                                 >
                                     <Text className="text-white font-bold text-center">Add Exercise</Text>
                                 </TouchableOpacity>
-
+                                {
+                                    addExercise && (
+                                        <View className='relative w-full items-center'>
+                                            <AddExercisePopup addExercise={addExercise} setAddExercise={setAddExercise} workoutExercises={exercises} setWorkoutExercises={setExercises} />
+                                        </View>
+                                    )
+                                }
                                 <TouchableOpacity
                                     className="bg-red-400/20 rounded-xl w-full p-3"
                                     onPress={handleCancelWorkout}>
@@ -344,9 +334,6 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                 </MenuProvider>
                 {
                     editWorkoutName && <RenamePopup showRename={editWorkoutName} setShowRename={setEditWorkoutName} workoutId={workoutId} refresh={refresh} setRefresh={setRefresh} />
-                }
-                {
-                    addExercise && <AddExercisePopup />
                 }
                 {
                     showTimerPopup
