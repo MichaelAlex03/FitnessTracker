@@ -61,7 +61,7 @@ const RenderSet = ({ set, index, handleRemoveSet, handleRepChange, handleWeightC
                     optionsContainerStyle={{
                         backgroundColor: '#1E1E1E',
                         borderRadius: 8,
-                        marginTop: 80,
+                        marginTop: 40,
                     }}
                 >
                     <MenuOption

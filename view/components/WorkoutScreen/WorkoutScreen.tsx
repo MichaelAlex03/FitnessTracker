@@ -143,6 +143,23 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
 
     }
 
+    const handleCancelWorkout = () => {
+        Alert.alert("Canceling Workout", "Are you sure you want to cancel your workout?", [
+            {
+                text: "Ok",
+                onPress: () => {
+                    setShowWorkout(false)
+                    setActiveWorkout(0)
+                }
+            },
+            {
+                text: "Cancel",
+                onPress: () => {
+                }
+            }
+        ])
+    }
+
     console.log("SETS", exerciseSets)
 
     const handleRepChange = (set: Sets, reps: number) => {
@@ -318,11 +335,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
 
                                 <TouchableOpacity
                                     className="bg-red-400/20 rounded-xl w-full p-3"
-                                    onPress={() => {
-                                        setShowWorkout(false)
-                                        setActiveWorkout(0)
-
-                                    }}>
+                                    onPress={handleCancelWorkout}>
                                     <Text className="text-red-400 font-bold text-center">Cancel Workout</Text>
                                 </TouchableOpacity>
                             </View>
