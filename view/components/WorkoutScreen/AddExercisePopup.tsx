@@ -1,13 +1,23 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { View, Text, TouchableOpacity } from 'react-native'
 import { Dropdown } from 'react-native-element-dropdown';
 import fetchExercises from '@/hooks/fetchExercises';
 import Modal from 'react-native-modal';
 
+
+//Interface used for the exercise that are in their workout not list that they can choose from
 interface Exercise {
     id: number,
     exercise_name: string,
     workout_id: string
+}
+
+//Interface used for set of exercises that users can choose from not the exercises in their workout
+interface ExerciseList {
+    exercise_name: string,
+    exercise_category: string,
+    exercise_instructions: string,
+    id: string
 }
 
 interface AddExerciseProps {
@@ -22,12 +32,23 @@ interface AddExerciseProps {
 const AddExercisePopup = ({ addExercise, setAddExercise, workoutExercises, setWorkoutExercises }: AddExerciseProps) => {
 
     const [selectedExercises, setSelectedExercises] = useState<Exercise[]>([] as Exercise[])
+
     const { exercises } = fetchExercises();
+    const [filteredExercises, setFilteredExercises] = useState<ExerciseList[]>([] as ExerciseList[]);
+    const [searchData, setSearchData] = useState('');
 
 
     const handleAddExercise = (item: Exercise) => {
         setWorkoutExercises([...workoutExercises, item])
     }
+
+    useEffect(() => {
+        if (searchData.trim() === ''){
+            setFilteredExercises(exercises)
+        }
+
+
+    }, [searchData])
 
     return (
         <Modal
