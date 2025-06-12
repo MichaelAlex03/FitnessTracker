@@ -38,7 +38,7 @@ const updateSets = async (sets) => {
 const updateWorkout = async (workoutId, workoutName) => {
     const { data, error } = await supabase
         .from('workouts')
-        .update({workout_name: workoutName})
+        .update({ workout_name: workoutName })
         .eq('id', workoutId)
     if (error) console.log(error);
     return data
@@ -46,13 +46,19 @@ const updateWorkout = async (workoutId, workoutName) => {
 
 //---------------------------- Get Routes Queries ------------------------------//
 const findUser = async (user) => {
-    console.log(user)
-    const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('user_name', user);
-    if (error) throw error;
-    return data;
+
+    try {
+        console.log(user)
+        const { data, error } = await supabase
+            .from('users')
+            .select('*')
+            .eq('user_name', user);
+        if (error) throw error;
+        return data;
+    } catch (error) {
+        console.error(error);
+        return error
+    }
 };
 
 const findUserSecure = async (user) => {

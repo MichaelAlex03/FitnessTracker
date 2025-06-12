@@ -8,9 +8,10 @@ const handleLogin = async (req, res) => {
     if (!user || !pwd) return res.status(400).json({ 'message': 'Username and password are required' });
 
     console.log(user)
+    console.log(pwd)
 
     const foundUser = await pg.findUser(user);
-    console.log("USERRRR" , foundUser[0])
+    console.log("USERRRR" , foundUser)
     if (foundUser[0]?.user_name === '') return res.sendStatus(401); //user not found
     console.log("Hereee")
     //evaluate password
