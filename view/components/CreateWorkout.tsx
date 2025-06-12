@@ -11,9 +11,7 @@ const EXERCISES_URL = '/api/exercises';
 const WORKOUT_URL = '/api/workouts';
 
 interface UserExercise {
-    id: number,
     exercise_name: string,
-    workout_id: string
 }
 
 interface ExerciseList {
@@ -106,6 +104,7 @@ const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises, set
         setSelectedExercises(updatedExercises);
     }
 
+    console.log(selectedExercises)
 
     return (
         <Modal
