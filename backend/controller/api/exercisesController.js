@@ -14,6 +14,17 @@ const addExercisesToWorkout = async (req, res) => {
     res.status(201).json({ result });
 }
 
+const updateWorkoutExercises = async (req, res) => {
+    const { workoutId, selectedExercises } = req.body;
+
+    try {
+        await pg.updateUserSets(workoutId, selectedExercises)
+        res.status(200).json({ "message": "workout updated" })
+    } catch (error) {
+        res.sendStatus(500)
+    }
+}
+
 const deleteAllWorkoutExercises = async (req, res) => {
     const { workoutId } = req.query;
     await pg.removeAllExercises(workoutId);

@@ -9,6 +9,10 @@ const updateUser = async (user, refreshToken) => {
     return data;
 };
 
+const updateUserSets = async (workoutId, selectedExercises) => {
+    
+}
+
 //---------------------------- Patch Routes Queries ------------------------------//
 
 const updateUserProfile = async (prevName, name, phone, email) => {
@@ -253,5 +257,6 @@ module.exports = {
     deleteSet,
     deleteExercise,
     updateSets,
-    updateWorkout
+    updateWorkout,
+    updateUserSets
 }
