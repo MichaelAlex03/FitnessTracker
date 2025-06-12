@@ -46,6 +46,7 @@ const AddExercisePopup = ({ addExercise, setAddExercise, workoutExercises, setWo
     const [searchData, setSearchData] = useState('');
     const [currentExercises, setCurrentExercises] = useState<string[]>([]);
     const [showExerciseInfo, setShowExerciseInfo] = useState(false);
+    const [activeExercise, setActiveExercise] = useState<ExerciseList>({} as ExerciseList)
 
 
     useEffect(() => {
@@ -119,7 +120,10 @@ const AddExercisePopup = ({ addExercise, setAddExercise, workoutExercises, setWo
                                     color="#FF9C01"
                                 />
                                 :
-                                <TouchableOpacity onPress={() => setShowExerciseInfo(true)}>
+                                <TouchableOpacity onPress={() => {
+                                    setShowExerciseInfo(true);
+                                    setActiveExercise(item)
+                                }}>
                                     <AntDesign
                                         name="question"
                                         size={20}
@@ -169,13 +173,56 @@ const AddExercisePopup = ({ addExercise, setAddExercise, workoutExercises, setWo
                         </View>
                     </View>
 
-                    
+
                     <FlatList
                         data={filteredExercises}
                         renderItem={renderExercise}
                         keyExtractor={item => item.id}
                     />
                 </View>
+                {
+                    showExerciseInfo && (
+                        <Modal
+                            isVisible={showExerciseInfo}
+                            animationIn={"slideInUp"}
+                            animationOut={"slideOutDown"}
+                            onBackdropPress={() => setShowExerciseInfo(false)}
+                        >
+
+                            <View className="flex-1 bg-black/50 justify-center items-center">
+
+                                {/*Modal Content*/}
+                                <View className="bg-black-100 w-[90%] rounded-2xl p-6 mx-4">
+                                    <View className="flex-row justify-between items-center mb-4">
+                                        <Text className="text-white text-xl font-pmedium">
+                                            {activeExercise?.exercise_name}
+                                        </Text>
+                                        <TouchableOpacity
+                                            onPress={() => setShowExerciseInfo(false)}
+                                            className="p-2"
+                                        >
+                                            <AntDesign name="close" size={24} color="white" />
+                                        </TouchableOpacity>
+                                    </View>
+
+                                    <Text className="text-white text-lg font-pmedium mb-2">Instructions</Text>
+                                    <Text className="text-gray-100">
+                                        {activeExercise?.exercise_instructions.split('\n').map((step, index) => (
+                                            <View key={index} className="flex-row">
+                                                <Text className="text-secondary font-pmedium mr-2">
+                                                    {index + 1}.
+                                                </Text>
+                                                <Text className="text-gray-100 flex-1">
+                                                    {step.trim()}
+                                                </Text>
+                                            </View>
+                                        ))}
+                                    </Text>
+                                </View>
+                            </View>
+                        </Modal>
+                    )
+                }
             </View>
         </Modal>
     )
