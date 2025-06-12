@@ -27,13 +27,13 @@ interface AddExerciseProps {
     setAddExercise: (val: boolean) => void
     workoutExercises: Exercise[],
     setWorkoutExercises: (val: Exercise[]) => void
+    workoutId: Number
 }
 
 interface ExerciseItem {
     item: ExerciseList
 }
 
-const EXERCISES_URL = '/api/exercises';
 
 const AddExercisePopup = ({ addExercise, setAddExercise, workoutExercises, setWorkoutExercises }: AddExerciseProps) => {
 
@@ -69,7 +69,7 @@ const AddExercisePopup = ({ addExercise, setAddExercise, workoutExercises, setWo
     }
 
     const addSelectedExercisesToWorkout = async () => {
-        
+
     }
 
     console.log(selectedExercises)

@@ -316,13 +316,6 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                                 >
                                     <Text className="text-white font-bold text-center">Add Exercise</Text>
                                 </TouchableOpacity>
-                                {
-                                    addExercise && (
-                                        <View className='relative w-full items-center'>
-                                            <AddExercisePopup addExercise={addExercise} setAddExercise={setAddExercise} workoutExercises={exercises} setWorkoutExercises={setExercises} />
-                                        </View>
-                                    )
-                                }
                                 <TouchableOpacity
                                     className="bg-red-400/20 rounded-xl w-full p-3"
                                     onPress={handleCancelWorkout}>
@@ -337,6 +330,9 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                 }
                 {
                     showTimerPopup
+                }
+                {
+                    addExercise && <AddExercisePopup addExercise={addExercise} setAddExercise={setAddExercise} workoutExercises={exercises} setWorkoutExercises={setExercises} workoutId={workoutId}/>
                 }
 
             </SafeAreaView>
