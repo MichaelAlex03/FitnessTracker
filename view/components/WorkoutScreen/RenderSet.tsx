@@ -9,6 +9,7 @@ interface Sets {
     exercise_reps: number,
     workout_id: number,
     exercise_weight: number,
+    set_type: string
 }
 
 interface SetProps {

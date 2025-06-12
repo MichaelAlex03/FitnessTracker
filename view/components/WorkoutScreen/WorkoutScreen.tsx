@@ -38,6 +38,7 @@ interface Sets {
     exercise_reps: number,
     workout_id: number,
     exercise_weight: number,
+    set_type: string
 }
 
 
@@ -91,7 +92,8 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
             exercise_id: item.id,
             exercise_reps: 0,
             workout_id: workoutId,
-            exercise_weight: 0
+            exercise_weight: 0,
+            set_type: "default"
         }])
     }
 
