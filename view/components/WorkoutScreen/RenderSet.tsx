@@ -51,46 +51,48 @@ const RenderSet = ({ set, index, handleRemoveSet, handleRepChange, handleWeightC
 
     return (
         <View className='flex flex-row items-center gap-8 py-2'>
-            <Menu>
-                <MenuTrigger>
-                    <View className='items-center gap-4 justify-center'>
-                        {index === 0 && <Text className='text-white font-semibold text-lg'>Sets</Text>}
-                        { regularSet && <Text className='text-white font-semibold text-lg bg-secondary/20 px-4 py-1 rounded-lg'>{index + 1}</Text> }
-                    </View>
-                </MenuTrigger>
-                <MenuOptions
-                    optionsContainerStyle={{
-                        backgroundColor: '#1E1E1E',
-                        borderRadius: 8,
-                        marginTop: 40,
-                    }}
-                >
-                    <MenuOption
-                        style={{ padding: 12, flexDirection: 'row', alignItems: 'center', gap: 8 }}
-                    >
-                        <View className="bg-blue-500/30 w-8 h-8 rounded-full items-center justify-center">
-                            <Text className="text-blue-500 font-bold">W</Text>
+            <View className='items-center gap-4 justify-center'>
+                {index === 0 && <Text className='text-white font-semibold text-lg'>Sets</Text>}
+                <Menu>
+                    <MenuTrigger>
+                        <View className='items-center justify-center'>
+                            {regularSet && <Text className='text-white font-semibold text-lg bg-secondary/20 px-4 py-1 rounded-lg'>{index + 1}</Text>}
                         </View>
-                        <Text className="text-white text-base font-semibold">Warmup Set</Text>
-                    </MenuOption>
-                    <MenuOption
-                        style={{ padding: 12, flexDirection: 'row', alignItems: 'center', gap: 8 }}
+                    </MenuTrigger>
+                    <MenuOptions
+                        optionsContainerStyle={{
+                            backgroundColor: '#1E1E1E',
+                            borderRadius: 8,
+                            marginTop: 40,
+                        }}
                     >
-                        <View className="bg-purple-500/30 w-8 h-8 rounded-full items-center justify-center">
-                            <Text className="text-purple-500 font-bold">D</Text>
-                        </View>
-                        <Text className="text-white text-base font-semibold">Drop Set</Text>
-                    </MenuOption>
-                    <MenuOption
-                        style={{ padding: 12, flexDirection: 'row', alignItems: 'center', gap: 8 }}
-                    >
-                        <View className="bg-red-500/30 w-8 h-8 rounded-full items-center justify-center">
-                            <Text className="text-red-500 font-bold">F</Text>
-                        </View>
-                        <Text className="text-white text-base font-semibold">Failure Set</Text>
-                    </MenuOption>
-                </MenuOptions>
-            </Menu>
+                        <MenuOption
+                            style={{ padding: 12, flexDirection: 'row', alignItems: 'center', gap: 8 }}
+                        >
+                            <View className="bg-blue-500/30 w-8 h-8 rounded-full items-center justify-center">
+                                <Text className="text-blue-500 font-bold">W</Text>
+                            </View>
+                            <Text className="text-white text-base font-semibold">Warmup Set</Text>
+                        </MenuOption>
+                        <MenuOption
+                            style={{ padding: 12, flexDirection: 'row', alignItems: 'center', gap: 8 }}
+                        >
+                            <View className="bg-purple-500/30 w-8 h-8 rounded-full items-center justify-center">
+                                <Text className="text-purple-500 font-bold">D</Text>
+                            </View>
+                            <Text className="text-white text-base font-semibold">Drop Set</Text>
+                        </MenuOption>
+                        <MenuOption
+                            style={{ padding: 12, flexDirection: 'row', alignItems: 'center', gap: 8 }}
+                        >
+                            <View className="bg-red-500/30 w-8 h-8 rounded-full items-center justify-center">
+                                <Text className="text-red-500 font-bold">F</Text>
+                            </View>
+                            <Text className="text-white text-base font-semibold">Failure Set</Text>
+                        </MenuOption>
+                    </MenuOptions>
+                </Menu>
+            </View>
 
             <View className='flex-1 items-center gap-4 justify-center'>
                 {index === 0 && <Text className='text-white font-semibold text-lg'>Prev</Text>}

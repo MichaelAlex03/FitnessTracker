@@ -331,7 +331,15 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                     />
                 </MenuProvider>
                 {
-                    editWorkoutName && <RenamePopup showRename={editWorkoutName} setShowRename={setEditWorkoutName} workoutId={workoutId} refresh={refresh} setRefresh={setRefresh} />
+                    editWorkoutName && (
+                        <RenamePopup
+                            showRename={editWorkoutName}
+                            setShowRename={setEditWorkoutName}
+                            workoutId={workoutId}
+                            refresh={refresh}
+                            setRefresh={setRefresh}
+                        />
+                    )
                 }
                 {
                     showTimerPopup
