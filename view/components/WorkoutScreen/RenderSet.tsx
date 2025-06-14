@@ -101,15 +101,31 @@ const RenderSet = ({ set, index, handleRemoveSet, handleRepChange, handleWeightC
             <View className='flex-1 items-center gap-4 justify-center'>
                 {index === 0 && <Text className='text-white font-semibold text-lg'>Reps</Text>}
                 <TextInput
-                    className='text-white font-semibold text-lg px-6 py-1 bg-secondary/20 rounded-lg'
+                    className='text-white font-semibold text-lg px-2 py-1 bg-secondary/20 rounded-lg w-16 text-center'
+                    style={{ 
+                        textAlignVertical: 'center',
+                        paddingVertical: 0,
+                        height: 30,
+                        includeFontPadding: false
+                    }}
                     onChangeText={(e) => handleRepChange(set, Number(e))}
+                    maxLength={3}
+                    keyboardType="numeric"
                 />
             </View>
             <View className='flex-1 items-center gap-4 justify-center'>
                 {index === 0 && <Text className='text-white font-semibold text-lg'>Weight</Text>}
                 <TextInput
-                    className='text-white font-semibold text-lg px-6 py-1 bg-secondary/20 rounded-lg '
+                    className='text-white font-semibold text-lg px-2 py-1 bg-secondary/20 rounded-lg w-16 text-center'
+                    style={{ 
+                        textAlignVertical: 'center',
+                        paddingVertical: 0,
+                        height: 30,
+                        includeFontPadding: false
+                    }}
                     onChangeText={(e) => handleWeightChange(set, Number(e))}
+                    maxLength={4}
+                    keyboardType="numeric"
                 />
             </View>
             <View className='flex-1 items-center gap-4 justify-center'>

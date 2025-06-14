@@ -8,7 +8,7 @@ import { Menu, MenuOption, MenuOptions, MenuProvider, MenuTrigger } from 'react-
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import RenamePopup from '@/components/RenamePopup';
 import RenderSet from '@/components/WorkoutScreen/RenderSet';
-import AddExercisePopup from '@/components/WorkoutScreen/AddExercisePopup';
+import ExerciseListPopup from '@/components/WorkoutScreen/ExerciseListPopup';
 import WorkoutTimer from './WorkoutTimer'
 import uuid from 'react-native-uuid';
 
@@ -49,8 +49,10 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
     const [exerciseSets, setExerciseSets] = useState<Sets[]>([]);
     const [editWorkoutName, setEditWorkoutName] = useState(false);
     const [refresh, setRefresh] = useState(0);
-    const [addExercise, setAddExercise] = useState(false);
+    const [toggleAddExercise, setToggleAddExercise] = useState(false);
+    const [toggleReplaceExercise, setToggleReplaceExercise] = useState(false)
     const [showTimerPopup, setShowTimerPopup] = useState(false);
+    const [exerciseToReplace, setExerciseToReplace] = useState<string>('');
 
 
     const axiosPrivate = useAxiosPrivate();
@@ -192,7 +194,8 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                             </MenuOption>
                             <MenuOption
                                 onSelect={() => {
-
+                                    setToggleReplaceExercise(true)
+                                    setExerciseToReplace(item.exercise_name)
                                 }}
                                 style={{ padding: 12, flexDirection: 'row', alignItems: 'center' }}
                             >
@@ -313,7 +316,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                                 <TouchableOpacity
                                     className="bg-gray-600 rounded-xl w-full p-3 "
                                     onPress={() => {
-                                        setAddExercise(prev => !prev)
+                                        setToggleAddExercise(prev => !prev)
                                     }}
                                 >
                                     <Text className="text-white font-bold text-center">Add Exercise</Text>
@@ -334,7 +337,19 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                     showTimerPopup
                 }
                 {
-                    addExercise && <AddExercisePopup addExercise={addExercise} setAddExercise={setAddExercise} workoutExercises={exercises} setWorkoutExercises={setExercises} workoutId={workoutId}/>
+                    (toggleAddExercise || toggleReplaceExercise) && (
+
+                        <ExerciseListPopup
+                            toggleAddExercise={toggleAddExercise}
+                            setToggleAddExercise={setToggleAddExercise}
+                            workoutExercises={exercises}
+                            setWorkoutExercises={setExercises}
+                            toggleReplaceExercise={toggleReplaceExercise}
+                            setToggleReplaceExercise={setToggleReplaceExercise}
+                            workoutId={workoutId}
+                            exerciseToReplace={exerciseToReplace ?? ''}
+                        />
+                    )
                 }
 
             </SafeAreaView>

@@ -23,10 +23,13 @@ interface ExerciseList {
 }
 
 interface AddExerciseProps {
-    addExercise: boolean
-    setAddExercise: (val: boolean) => void
-    workoutExercises: Exercise[],
+    toggleAddExercise: boolean
+    setToggleAddExercise: (val: boolean) => void
+    workoutExercises: Exercise[]
     setWorkoutExercises: (val: Exercise[]) => void
+    toggleReplaceExercise: boolean
+    setToggleReplaceExercise: (val: boolean) => void
+    exerciseToReplace?: string
     workoutId: Number
 }
 
@@ -35,7 +38,7 @@ interface ExerciseItem {
 }
 
 
-const AddExercisePopup = ({ addExercise, setAddExercise, workoutExercises, setWorkoutExercises }: AddExerciseProps) => {
+const ExerciseListPopup = ({ toggleAddExercise, setToggleAddExercise, workoutExercises, setWorkoutExercises, toggleReplaceExercise, setToggleReplaceExercise, exerciseToReplace }: AddExerciseProps) => {
 
     console.log(workoutExercises)
 
@@ -50,12 +53,23 @@ const AddExercisePopup = ({ addExercise, setAddExercise, workoutExercises, setWo
 
 
     useEffect(() => {
-        const names = workoutExercises.map((exercise) => exercise.exercise_name);
-        setCurrentExercises(names);
+        if (exerciseToReplace) {
+            const newExercises = workoutExercises.filter((exercise) => exercise.exercise_name !== exerciseToReplace);
+            setCurrentExercises(newExercises.map((exercise) => exercise.exercise_name));
+        }
+        else {
+            const names = workoutExercises.map((exercise) => exercise.exercise_name);
+            setCurrentExercises(names);
+        }
     }, [])
 
 
     const handleAddExercise = (exerciseName: string) => {
+
+        if (toggleReplaceExercise && selectedExercises.length > 0) {
+            setSelectedExercises([exerciseName])
+            return;
+        }
 
         if (selectedExercises.includes(exerciseName)) {
             const updatedExercises = selectedExercises.filter((name) =>
@@ -139,15 +153,21 @@ const AddExercisePopup = ({ addExercise, setAddExercise, workoutExercises, setWo
 
     return (
         <Modal
-            isVisible={addExercise}
+            isVisible={toggleAddExercise || toggleReplaceExercise}
             animationIn={'slideInUp'}
             animationOut={'slideOutDown'}
-            onBackdropPress={() => setAddExercise(false)}
+            onBackdropPress={() => {
+                setToggleAddExercise(false)
+                setToggleReplaceExercise(false)
+            }}
         >
             <View className='bg-red flex-1 justify-center items-center'>
                 <View className='bg-primary w-full h-3/4 rounded-2xl items-center'>
                     <View className='flex flex-row justify-between items-center w-full p-6'>
-                        <TouchableOpacity className='bg-secondary py-2 px-3 rounded-lg' onPress={() => setAddExercise(false)}>
+                        <TouchableOpacity className='bg-secondary py-2 px-3 rounded-lg' onPress={() => {
+                            setToggleAddExercise(false)
+                            setToggleReplaceExercise(false)
+                        }}>
                             <Text className='text-white'>Back</Text>
                         </TouchableOpacity>
 
@@ -155,9 +175,19 @@ const AddExercisePopup = ({ addExercise, setAddExercise, workoutExercises, setWo
                             disabled={selectedExercises.length < 1}
                         >
                             <View className='flex flex-row gap-1'>
-                                <Text className={selectedExercises.length > 0 ? 'text-white font-bold text-lg' : 'text-gray-500 text-lg'}>Add</Text>
+
+                                {toggleReplaceExercise
+                                    ?
+                                    <Text className={selectedExercises.length > 0 ? 'text-white font-bold text-lg' : 'text-gray-500 text-lg'}>
+                                        Replace
+                                    </Text>
+                                    :
+                                    <Text className={selectedExercises.length > 0 ? 'text-white font-bold text-lg' : 'text-gray-500 text-lg'}>
+                                        Add
+                                    </Text>
+                                }
                                 {
-                                    selectedExercises.length > 0 && <Text className='text-white font-bold text-lg'>({selectedExercises.length})</Text>
+                                    (selectedExercises.length > 0 && toggleAddExercise) && <Text className='text-white font-bold text-lg'>({selectedExercises.length})</Text>
                                 }
                             </View>
                         </TouchableOpacity>
@@ -228,4 +258,4 @@ const AddExercisePopup = ({ addExercise, setAddExercise, workoutExercises, setWo
     )
 }
 
-export default AddExercisePopup;
+export default ExerciseListPopup;
