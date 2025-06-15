@@ -319,6 +319,8 @@ const deleteExercise = async (exerciseId) => {
     }
 };
 
+
+
 //Exports
 
 module.exports = {

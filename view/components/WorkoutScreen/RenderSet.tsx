@@ -50,7 +50,7 @@ const RenderSet = ({ set, index, handleRemoveSet, handleRepChange, handleWeightC
     }
 
     return (
-        <View className='flex flex-row items-center gap-8 py-2'>
+        <View className='flex flex-row items-center gap-4 py-2'>
             <View className='items-center gap-4 justify-center'>
                 {index === 0 && <Text className='text-white font-semibold text-lg'>Sets</Text>}
                 <Menu>
@@ -94,10 +94,11 @@ const RenderSet = ({ set, index, handleRemoveSet, handleRepChange, handleWeightC
                 </Menu>
             </View>
 
-            <View className='flex-1 items-center gap-4 justify-center'>
+            <View className='flex-1 items-center gap-4 justify-center w-16'>
                 {index === 0 && <Text className='text-white font-semibold text-lg'>Prev</Text>}
-                <Text className='text-white font-semibold text-lg px-4 py-1'>
-                    <AntDesign name="minus" size={20} color="white" />
+                <Text className='text-white font-semibold text-lg py-1'>
+                    {/* <AntDesign name="minus" size={20} color="white" /> */}
+                    {set.exercise_reps} lb  x {set.exercise_weight}
                 </Text>
             </View>
             <View className='flex-1 items-center gap-4 justify-center'>
