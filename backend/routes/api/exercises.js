@@ -6,6 +6,7 @@ router.route('/')
     .get(exerciseController.getExercises)
     .post(exerciseController.addExercisesToWorkout)
     .delete(exerciseController.deleteAllWorkoutExercises)
+    .patch(exerciseController.updateWorkoutExercises)
 
 router.route('/getWorkoutExercises/:workoutId')
     .get(exerciseController.getWorkoutExercises)

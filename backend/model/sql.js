@@ -9,11 +9,42 @@ const updateUser = async (user, refreshToken) => {
     return data;
 };
 
-const updateUserSets = async (workoutId, selectedExercises) => {
-    
-}
 
 //---------------------------- Patch Routes Queries ------------------------------//
+
+const updateUserExercises = async (workoutId, selectedExercises) => {
+    try {
+        // Batch insert new exercises
+        const { data: insertedExercises, error: insertError } = await supabase
+            .from('user_exercises')
+            .insert(selectedExercises.map(ex => ({
+                exercise_name: ex,
+                workout_id: workoutId
+            })))
+            .select();
+
+        if (insertError) throw insertError;
+
+        // Batch insert corresponding sets
+        const { error: setsError } = await supabase
+            .from('workout_sets')
+            .insert(insertedExercises.map(ex => ({
+                exercise_id: ex.id,
+                exercise_reps: 0,
+                exercise_weight: 0,
+                workout_id: workoutId,
+                set_type: "default"
+            })));
+
+        if (setsError) throw setsError;
+
+        return true;
+    } catch (error) {
+        console.error('Error in updateUserExercises:', error);
+        throw error;
+    }
+};
+
 
 const updateUserProfile = async (prevName, name, phone, email) => {
     const { data, error } = await supabase
@@ -169,7 +200,7 @@ const createWorkoutExercises = async (workoutId, selectedExercises) => {
 const createSet = async (exercise) => {
     const { data, error } = await supabase
         .from('workout_sets')
-        .insert([{ exercise_id: exercise.id, exercise_reps: 0, exercise_weight: 0, workout_id: exercise.workout_id }]);
+        .insert([{ exercise_id: exercise.id, exercise_reps: 0, exercise_weight: 0, workout_id: exercise.workout_id, set_type: "default" }]);
     if (error) throw error;
     return data;
 };
@@ -177,7 +208,7 @@ const createSet = async (exercise) => {
 const addSet = async (exercise, workoutId) => {
     const { data, error } = await supabase
         .from('workout_sets')
-        .insert([{ exercise_id: exercise.id, exercise_reps: 0, exercise_weight: 0, workout_id: workoutId }]);
+        .insert([{ exercise_id: exercise.id, exercise_reps: 0, exercise_weight: 0, workout_id: workoutId, set_type: "default" }]);
     if (error) throw error;
     return data;
 };
@@ -264,5 +295,5 @@ module.exports = {
     deleteExercise,
     updateSets,
     updateWorkout,
-    updateUserSets
+    updateUserExercises
 }

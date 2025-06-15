@@ -18,7 +18,7 @@ const updateWorkoutExercises = async (req, res) => {
     const { workoutId, selectedExercises } = req.body;
 
     try {
-        await pg.updateUserSets(workoutId, selectedExercises)
+        await pg.updateUserExercises(workoutId, selectedExercises)
         res.status(200).json({ "message": "workout updated" })
     } catch (error) {
         res.sendStatus(500)
@@ -53,5 +53,6 @@ module.exports = {
     addExercisesToWorkout,
     deleteAllWorkoutExercises,
     getWorkoutExercises,
-    deleteExercise
+    deleteExercise,
+    updateWorkoutExercises
 }
