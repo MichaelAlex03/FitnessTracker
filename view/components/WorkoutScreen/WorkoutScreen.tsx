@@ -301,31 +301,6 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                                     <View className='flex flex-col gap-2 mt-10'>
                                         <View className='flex flex-row items-center gap-4'>
                                             <TextInput className='text-white font-bold text-2xl' editable={false}>{workoutName}</TextInput>
-                                            <Menu>
-                                                <MenuTrigger>
-                                                    <View className="bg-secondary/20 p-2 rounded-xl">
-                                                        <AntDesign name="ellipsis1" size={16} color="#FF9C01" />
-                                                    </View>
-                                                </MenuTrigger>
-                                                <MenuOptions
-                                                    optionsContainerStyle={{
-                                                        backgroundColor: '#1E1E1E',
-                                                        borderRadius: 8,
-                                                        marginTop: 40,
-                                                        zIndex: 10000,
-                                                    }}
-                                                >
-                                                    <MenuOption
-                                                        onSelect={() => {
-                                                            setEditWorkoutName(true)
-                                                        }}
-                                                        style={{ padding: 12, flexDirection: 'row', alignItems: 'center' }}
-                                                    >
-                                                        <Icon name="edit" size={20} color="white" className='mr-2' />
-                                                        <Text className="text-white text-base">Rename Workout</Text>
-                                                    </MenuOption>
-                                                </MenuOptions>
-                                            </Menu>
                                         </View>
 
                                         <WorkoutTimer showWorkout={showWorkout} />
