@@ -30,7 +30,9 @@ interface AddExerciseProps {
     toggleReplaceExercise: boolean
     setToggleReplaceExercise: (val: boolean) => void
     exerciseToReplace?: string
-    workoutId: Number
+    workoutId: Number,
+    refresh: number,
+    setRefresh: (val: number) => void
 }
 
 interface ExerciseItem {
@@ -38,7 +40,18 @@ interface ExerciseItem {
 }
 
 
-const ExerciseListPopup = ({ toggleAddExercise, setToggleAddExercise, workoutExercises, setWorkoutExercises, toggleReplaceExercise, setToggleReplaceExercise, exerciseToReplace, workoutId }: AddExerciseProps) => {
+const ExerciseListPopup = ({ 
+    toggleAddExercise, 
+    setToggleAddExercise, 
+    workoutExercises, 
+    setWorkoutExercises, 
+    toggleReplaceExercise, 
+    setToggleReplaceExercise, 
+    exerciseToReplace, 
+    workoutId,
+    refresh,
+    setRefresh
+}: AddExerciseProps) => {
 
     console.log(workoutExercises)
 
@@ -67,7 +80,11 @@ const ExerciseListPopup = ({ toggleAddExercise, setToggleAddExercise, workoutExe
 
     const handleAddExercise = (exerciseName: string) => {
 
-        if (toggleReplaceExercise && selectedExercises.length > 0) {
+        if (toggleReplaceExercise && exerciseName === exerciseToReplace) {
+            setSelectedExercises([])
+            Alert.alert("Duplicate Exercise", "You cannot replace an exercise with itself");
+            return;
+        } else if (toggleReplaceExercise && selectedExercises.length > 0) {
             setSelectedExercises([exerciseName])
             return;
         }
@@ -86,9 +103,11 @@ const ExerciseListPopup = ({ toggleAddExercise, setToggleAddExercise, workoutExe
 
     const addSelectedExercisesToWorkout = async () => {
         try {
-            const response = await axiosPrivate.patch(`${EXERCISE_API}`, {
+            await axiosPrivate.patch(EXERCISE_API, {
                 workoutId: workoutId,
-                selectedExercises: selectedExercises
+                selectedExercises: selectedExercises,
+                replace: toggleReplaceExercise,
+                exerciseToReplace: exerciseToReplace
             })
 
             setToggleAddExercise(false)
@@ -97,6 +116,7 @@ const ExerciseListPopup = ({ toggleAddExercise, setToggleAddExercise, workoutExe
             setSearchData('')
             setFilteredExercises([])
             setActiveExercise({} as ExerciseList)
+            setRefresh(refresh + 1)
         } catch (error) {
             console.error(error)
         }

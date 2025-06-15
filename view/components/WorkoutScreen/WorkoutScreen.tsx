@@ -71,7 +71,9 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
         };
 
         fetchExercises();
-    }, []);
+    }, [refresh]);
+
+    console.log("EXERCISES", exercises)
 
     /* Retrieves sets for the workout */
     useEffect(() => {
@@ -84,7 +86,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
             }
         }
         fetchSets();
-    }, []);
+    }, [refresh]);
 
     const handleAddSet = (item: Exercise) => {
         let setID = uuid.v4();
@@ -356,6 +358,8 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                             setToggleReplaceExercise={setToggleReplaceExercise}
                             workoutId={workoutId}
                             exerciseToReplace={exerciseToReplace ?? ''}
+                            refresh={refresh}
+                            setRefresh={setRefresh}
                         />
                     )
                 }

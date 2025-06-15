@@ -14,7 +14,7 @@ const updateUser = async (user, refreshToken) => {
 
 const updateUserExercises = async (workoutId, selectedExercises) => {
     try {
-        // Batch insert new exercises
+        
         const { data: insertedExercises, error: insertError } = await supabase
             .from('user_exercises')
             .insert(selectedExercises.map(ex => ({
@@ -25,7 +25,7 @@ const updateUserExercises = async (workoutId, selectedExercises) => {
 
         if (insertError) throw insertError;
 
-        // Batch insert corresponding sets
+        
         const { error: setsError } = await supabase
             .from('workout_sets')
             .insert(insertedExercises.map(ex => ({
@@ -44,6 +44,54 @@ const updateUserExercises = async (workoutId, selectedExercises) => {
         throw error;
     }
 };
+
+const replaceExercise = async (workoutId, exerciseToReplace, newExercise) => {
+    try {
+        // First get the exercise ID we're replacing
+        const { data: oldExercise, error: findError } = await supabase
+            .from('user_exercises')
+            .select('id')
+            .eq('workout_id', workoutId)
+            .eq('exercise_name', exerciseToReplace)
+            .single();
+        
+        if (findError) throw findError;
+
+        // Update the exercise name
+        const { error: updateError } = await supabase
+            .from('user_exercises')
+            .update({ exercise_name: newExercise[0] })
+            .eq('workout_id', workoutId)
+            .eq('exercise_name', exerciseToReplace);
+        
+        if (updateError) throw updateError;
+
+        // Now we can run the set operations in parallel using the ID we know is correct
+        await Promise.all([
+            // Delete old sets
+            supabase
+                .from('workout_sets')
+                .delete()
+                .eq('exercise_id', oldExercise.id),
+            
+            // Create new set
+            supabase
+                .from('workout_sets')
+                .insert([{
+                    exercise_id: oldExercise.id,
+                    exercise_reps: 0,
+                    exercise_weight: 0,
+                    workout_id: workoutId,
+                    set_type: "default"
+                }])
+        ]);
+
+        return { id: oldExercise.id, exercise_name: newExercise };
+    } catch (error) {
+        console.error('Error in replaceExercise:', error);
+        throw error;
+    }
+}
 
 
 const updateUserProfile = async (prevName, name, phone, email) => {
@@ -295,5 +343,6 @@ module.exports = {
     deleteExercise,
     updateSets,
     updateWorkout,
-    updateUserExercises
+    updateUserExercises,
+    replaceExercise
 }

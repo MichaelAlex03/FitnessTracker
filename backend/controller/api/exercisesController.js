@@ -15,10 +15,14 @@ const addExercisesToWorkout = async (req, res) => {
 }
 
 const updateWorkoutExercises = async (req, res) => {
-    const { workoutId, selectedExercises } = req.body;
+    const { workoutId, selectedExercises, replace, exerciseToReplace } = req.body;
 
     try {
-        await pg.updateUserExercises(workoutId, selectedExercises)
+        if (replace) {
+            await pg.replaceExercise(workoutId, exerciseToReplace, selectedExercises);
+        } else {
+            await pg.updateUserExercises(workoutId, selectedExercises);
+        }
         res.status(200).json({ "message": "workout updated" })
     } catch (error) {
         res.sendStatus(500)
