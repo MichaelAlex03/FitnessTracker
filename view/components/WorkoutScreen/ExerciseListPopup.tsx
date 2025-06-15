@@ -5,7 +5,7 @@ import Modal from 'react-native-modal';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import useAxiosPrivate from '@/hooks/useAxiosPrivate';
 
-
+const EXERCISE_API = '/api/exercises';
 
 //Interface used for the exercise that are in their workout not list that they can choose from
 interface Exercise {
@@ -38,7 +38,7 @@ interface ExerciseItem {
 }
 
 
-const ExerciseListPopup = ({ toggleAddExercise, setToggleAddExercise, workoutExercises, setWorkoutExercises, toggleReplaceExercise, setToggleReplaceExercise, exerciseToReplace }: AddExerciseProps) => {
+const ExerciseListPopup = ({ toggleAddExercise, setToggleAddExercise, workoutExercises, setWorkoutExercises, toggleReplaceExercise, setToggleReplaceExercise, exerciseToReplace, workoutId }: AddExerciseProps) => {
 
     console.log(workoutExercises)
 
@@ -49,7 +49,8 @@ const ExerciseListPopup = ({ toggleAddExercise, setToggleAddExercise, workoutExe
     const [searchData, setSearchData] = useState('');
     const [currentExercises, setCurrentExercises] = useState<string[]>([]);
     const [showExerciseInfo, setShowExerciseInfo] = useState(false);
-    const [activeExercise, setActiveExercise] = useState<ExerciseList>({} as ExerciseList)
+    const [activeExercise, setActiveExercise] = useState<ExerciseList>({} as ExerciseList);
+    const axiosPrivate = useAxiosPrivate();
 
 
     useEffect(() => {
@@ -84,7 +85,21 @@ const ExerciseListPopup = ({ toggleAddExercise, setToggleAddExercise, workoutExe
     }
 
     const addSelectedExercisesToWorkout = async () => {
+        try {
+            const response = await axiosPrivate.patch(`${EXERCISE_API}`, {
+                workoutId: workoutId,
+                selectedExercises: selectedExercises
+            })
 
+            setToggleAddExercise(false)
+            setToggleReplaceExercise(false)
+            setSelectedExercises([])
+            setSearchData('')
+            setFilteredExercises([])
+            setActiveExercise({} as ExerciseList)
+        } catch (error) {
+            console.error(error)
+        }
     }
 
     console.log(selectedExercises)
@@ -173,6 +188,9 @@ const ExerciseListPopup = ({ toggleAddExercise, setToggleAddExercise, workoutExe
 
                         <TouchableOpacity
                             disabled={selectedExercises.length < 1}
+                            onPress={() => {
+                                addSelectedExercisesToWorkout()
+                            }}
                         >
                             <View className='flex flex-row gap-1'>
 
