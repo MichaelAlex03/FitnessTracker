@@ -73,6 +73,14 @@ const RenderSet = ({ set, index, handleRemoveSet, handleRepChange, handleWeightC
                                 <Text className="text-blue-500 font-bold">W</Text>
                             </View>
                             <Text className="text-white text-base font-semibold">Warmup Set</Text>
+                            <TouchableOpacity className='bg-secondary/20 p-1 rounded-full ml-auto' onPress={() => {
+                            }}>
+                                <AntDesign
+                                    name="question"
+                                    size={20}
+                                    color="#FF9C01"
+                                />
+                            </TouchableOpacity>
                         </MenuOption>
                         <MenuOption
                             style={{ padding: 12, flexDirection: 'row', alignItems: 'center', gap: 8 }}
@@ -81,6 +89,14 @@ const RenderSet = ({ set, index, handleRemoveSet, handleRepChange, handleWeightC
                                 <Text className="text-purple-500 font-bold">D</Text>
                             </View>
                             <Text className="text-white text-base font-semibold">Drop Set</Text>
+                            <TouchableOpacity className='bg-secondary/20 p-1 rounded-full ml-auto' onPress={() => {
+                            }}>
+                                <AntDesign
+                                    name="question"
+                                    size={20}
+                                    color="#FF9C01"
+                                />
+                            </TouchableOpacity>
                         </MenuOption>
                         <MenuOption
                             style={{ padding: 12, flexDirection: 'row', alignItems: 'center', gap: 8 }}
@@ -89,6 +105,15 @@ const RenderSet = ({ set, index, handleRemoveSet, handleRepChange, handleWeightC
                                 <Text className="text-red-500 font-bold">F</Text>
                             </View>
                             <Text className="text-white text-base font-semibold">Failure Set</Text>
+
+                            <TouchableOpacity className='bg-secondary/20 p-1 rounded-full ml-auto' onPress={() => {
+                            }}>
+                                <AntDesign
+                                    name="question"
+                                    size={20}
+                                    color="#FF9C01"
+                                />
+                            </TouchableOpacity>
                         </MenuOption>
                     </MenuOptions>
                 </Menu>
@@ -105,7 +130,7 @@ const RenderSet = ({ set, index, handleRemoveSet, handleRepChange, handleWeightC
                 {index === 0 && <Text className='text-white font-semibold text-lg'>Reps</Text>}
                 <TextInput
                     className='text-white font-semibold text-lg px-2 py-1 bg-secondary/20 rounded-lg w-16 text-center'
-                    style={{ 
+                    style={{
                         textAlignVertical: 'center',
                         paddingVertical: 0,
                         height: 30,
@@ -120,7 +145,7 @@ const RenderSet = ({ set, index, handleRemoveSet, handleRepChange, handleWeightC
                 {index === 0 && <Text className='text-white font-semibold text-lg'>Weight</Text>}
                 <TextInput
                     className='text-white font-semibold text-lg px-2 py-1 bg-secondary/20 rounded-lg w-16 text-center'
-                    style={{ 
+                    style={{
                         textAlignVertical: 'center',
                         paddingVertical: 0,
                         height: 30,
