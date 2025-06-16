@@ -6,7 +6,6 @@ import useAxiosPrivate from '@/hooks/useAxiosPrivate'
 import { AntDesign } from '@expo/vector-icons';
 import { Menu, MenuOption, MenuOptions, MenuProvider, MenuTrigger } from 'react-native-popup-menu';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import RenamePopup from '@/components/RenamePopup';
 import RenderSet from '@/components/WorkoutScreen/RenderSet';
 import ExerciseListPopup from '@/components/WorkoutScreen/ExerciseListPopup';
 import WorkoutTimer from './WorkoutTimer'
@@ -47,7 +46,6 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
 
     const [exercises, setExercises] = useState<Exercise[]>([]);
     const [exerciseSets, setExerciseSets] = useState<Sets[]>([]);
-    const [editWorkoutName, setEditWorkoutName] = useState(false);
     const [refresh, setRefresh] = useState(0);
     const [toggleAddExercise, setToggleAddExercise] = useState(false);
     const [toggleReplaceExercise, setToggleReplaceExercise] = useState(false)
@@ -87,6 +85,8 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
         }
         fetchSets();
     }, [refresh]);
+
+    console.log("SETS", exerciseSets)
 
     const handleAddSet = (item: Exercise) => {
         let setID = uuid.v4();
@@ -283,7 +283,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                             renderItem={({ item }) => renderItem(item)}
                             keyExtractor={(item) => item.id.toString()}
                             ListHeaderComponent={() => (
-                                <View className='px-6 py-6 gap-4 mt-5'>
+                                <View className='px-6 py-6 gap-4 mt-10'>
                                     <View className="flex flex-row justify-evenly items-center">
                                         <TouchableOpacity
                                             className='bg-gray-400 px-6 py-2 rounded-lg mr-auto'
@@ -291,7 +291,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                                                 setShowTimerPopup(true)
                                             }}
                                         >
-                                            <Icon name="access-time" size={20} color="#000000" />
+                                            <Icon name="access-time" size={16} color="#000000" />
                                         </TouchableOpacity>
 
                                         <TouchableOpacity
@@ -314,7 +314,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
 
                                             }}
                                         >
-                                            <Text className='text-xl text-white'>Finish</Text>
+                                            <Text className=' text-white'>Finish</Text>
                                         </TouchableOpacity>
                                     </View>
 
@@ -346,17 +346,6 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                             )}
                         />
                     </MenuProvider>
-                    {
-                        editWorkoutName && (
-                            <RenamePopup
-                                showRename={editWorkoutName}
-                                setShowRename={setEditWorkoutName}
-                                workoutId={workoutId}
-                                refresh={refresh}
-                                setRefresh={setRefresh}
-                            />
-                        )
-                    }
                     {
                         showTimerPopup
                     }

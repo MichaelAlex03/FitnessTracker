@@ -1,4 +1,4 @@
-import { Text, View, FlatList, Modal, TextInput, Alert } from 'react-native'
+import { Text, View, FlatList, Modal, TextInput, Alert, StatusBar } from 'react-native'
 import React, { useState, useEffect, useRef } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { TouchableOpacity } from 'react-native'
@@ -16,11 +16,13 @@ const EXERCISES_URL = '/api/exercises';
 const WORKOUT_URL = '/api/workouts';
 const SETS_URL = '/api/sets';
 
-interface WorkoutScreenProps {
-    showWorkout: boolean,
-    setShowWorkout: React.Dispatch<React.SetStateAction<boolean>>,
+interface EditWorkoutProps {
+    editWorkout: boolean,
+    setEditWorkout: React.Dispatch<React.SetStateAction<boolean>>,
     workoutId: number,
     setActiveWorkout: React.Dispatch<React.SetStateAction<number>>,
+    refresh: number,
+    setRefresh: React.Dispatch<React.SetStateAction<number>>,
     workoutName: string
 }
 
@@ -41,17 +43,17 @@ interface Sets {
 }
 
 
-const EditWorkout = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkout, workoutName }: WorkoutScreenProps) => {
+const EditWorkout = ({ editWorkout, setEditWorkout, workoutId, setActiveWorkout, refresh, setRefresh, workoutName }: EditWorkoutProps) => {
 
 
     const [exercises, setExercises] = useState<Exercise[]>([]);
     const [exerciseSets, setExerciseSets] = useState<Sets[]>([]);
     const [editWorkoutName, setEditWorkoutName] = useState(false);
-    const [refresh, setRefresh] = useState(0);
     const [toggleAddExercise, setToggleAddExercise] = useState(false);
     const [toggleReplaceExercise, setToggleReplaceExercise] = useState(false)
     const [showTimerPopup, setShowTimerPopup] = useState(false);
     const [exerciseToReplace, setExerciseToReplace] = useState<string>('');
+    const [currentWorkoutName, setCurrentWorkoutName] = useState<string>(workoutName);
 
 
     const axiosPrivate = useAxiosPrivate();
@@ -108,13 +110,6 @@ const EditWorkout = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkout,
 
     const handleSave = async () => {
 
-        //Check if there are any null values
-        const nullSets = exerciseSets.filter(set => (set.exercise_reps === 0 || set.exercise_weight === 0));
-        if (nullSets.length > 0) {
-            Alert.alert("Empty Sets", "One or more sets have missing values");
-            return;
-        }
-
         try {
             const response = await axiosPrivate.patch(SETS_URL, {
                 exerciseSets,
@@ -123,44 +118,23 @@ const EditWorkout = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkout,
 
             console.log(response)
 
-            Alert.alert("Finished Workout", "Your workout is complete!");
+            Alert.alert("Saved Workout", "Your workout is saved!");
             setActiveWorkout(0);
-            setShowWorkout(false);
+            setEditWorkout(false);
         } catch (error) {
             console.error(error)
         }
 
     }
 
-    const handleCancelWorkout = () => {
-        Alert.alert("Canceling Workout", "Are you sure you want to cancel your workout?", [
-            {
-                text: "Ok",
-                onPress: () => {
-                    setShowWorkout(false)
-                    setActiveWorkout(0)
-                }
-            },
-            {
-                text: "Cancel",
-                onPress: () => {
-                }
-            }
-        ])
-    }
 
     console.log("SETS", exerciseSets)
 
-    const handleRepChange = (set: Sets, reps: number) => {
+    const handleSetTypeChange = (id: string, type: string) => {
         setExerciseSets(prevSets => prevSets.map(s =>
-            s.id === set.id ? { ...s, exercise_reps: reps } : s))
+            s.id === id ? { ...s, set_type: type } : s))
     }
 
-    const handleWeightChange = (set: Sets, weight: number) => {
-        setExerciseSets(prevSets => prevSets.map(s => (
-            s.id === set.id ? { ...s, exercise_weight: weight } : s
-        )))
-    }
 
 
     const renderItem = (item: Exercise) => {
@@ -222,8 +196,8 @@ const EditWorkout = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkout,
                             set={set}
                             index={index}
                             handleRemoveSet={handleRemoveSet}
-                            handleRepChange={handleRepChange}
-                            handleWeightChange={handleWeightChange}
+                            handleSetTypeChange={handleSetTypeChange}
+                            editWorkout={true}
                         />
                     ))}
 
@@ -241,10 +215,10 @@ const EditWorkout = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkout,
 
     return (
         <Modal
-            visible={showWorkout}
+            visible={editWorkout}
             animationType="slide"
             onRequestClose={() => {
-                setShowWorkout(false)
+                setEditWorkout(false)
                 setActiveWorkout(0)
             }}
         >
@@ -255,15 +229,16 @@ const EditWorkout = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkout,
                         renderItem={({ item }) => renderItem(item)}
                         keyExtractor={(item) => item.id.toString()}
                         ListHeaderComponent={() => (
-                            <View className='px-6 py-6 gap-4 mt-5'>
+                            <View className='px-6 py-6 gap-4 mt-16'>
                                 <View className="flex flex-row justify-evenly items-center">
                                     <TouchableOpacity
                                         className='bg-gray-400 px-6 py-2 rounded-lg mr-auto'
                                         onPress={() => {
-                                            setShowTimerPopup(true)
+                                            setEditWorkout(false)
+                                            setActiveWorkout(0)
                                         }}
                                     >
-                                        <Icon name="access-time" size={20} color="#000000" />
+                                       <Text className='text-white'>Back</Text>
                                     </TouchableOpacity>
 
                                     <TouchableOpacity
@@ -274,13 +249,13 @@ const EditWorkout = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkout,
 
                                         }}
                                     >
-                                        <Text className='text-xl text-white'>Finish</Text>
+                                        <Text className=' text-white'>Save</Text>
                                     </TouchableOpacity>
                                 </View>
 
                                 <View className='flex flex-col gap-2 mt-10'>
                                     <View className='flex flex-row items-center gap-4'>
-                                        <TextInput className='text-white font-bold text-2xl' editable={false}>{workoutName}</TextInput>
+                                        <TextInput className='text-white font-bold text-2xl' editable={false}>{currentWorkoutName}</TextInput>
                                         <Menu>
                                             <MenuTrigger>
                                                 <View className="bg-secondary/20 p-2 rounded-xl">
@@ -322,11 +297,7 @@ const EditWorkout = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkout,
                                 >
                                     <Text className="text-white font-bold text-center">Add Exercise</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity
-                                    className="bg-red-400/20 rounded-xl w-full p-3"
-                                    onPress={handleCancelWorkout}>
-                                    <Text className="text-red-400 font-bold text-center">Cancel Workout</Text>
-                                </TouchableOpacity>
+                               
                             </View>
                         )}
                     />
@@ -339,12 +310,12 @@ const EditWorkout = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkout,
                             workoutId={workoutId}
                             refresh={refresh}
                             setRefresh={setRefresh}
+                            currentWorkoutName={currentWorkoutName}
+                            setCurrentWorkoutName={setCurrentWorkoutName}
                         />
                     )
                 }
-                {
-                    showTimerPopup
-                }
+
                 {
                     (toggleAddExercise || toggleReplaceExercise) && (
 
@@ -362,7 +333,7 @@ const EditWorkout = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkout,
                         />
                     )
                 }
-
+                <StatusBar />
             </SafeAreaView>
 
         </Modal>

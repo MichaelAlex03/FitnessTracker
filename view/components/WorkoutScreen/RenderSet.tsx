@@ -17,42 +17,16 @@ interface SetProps {
     set: Sets;
     index: number;
     handleRemoveSet: (id: String) => void;
-    handleRepChange: (set: Sets, reps: number) => void
-    handleWeightChange: (set: Sets, weight: number) => void
-    handleSetTypeChange: (id: string, type: string) => void
+    handleRepChange?: (set: Sets, reps: number) => void
+    handleWeightChange?: (set: Sets, weight: number) => void
+    handleSetTypeChange: (id: string, type: string) => void,
+    editWorkout?: boolean
 }
 
-const RenderSet = ({ set, index, handleRemoveSet, handleRepChange, handleWeightChange, handleSetTypeChange }: SetProps) => {
+const RenderSet = ({ set, index, handleRemoveSet, handleRepChange, handleWeightChange, handleSetTypeChange, editWorkout }: SetProps) => {
 
-
-    const [regularSet, setRegularSet] = useState(true);
-    const [warmUpSet, setWarmUpSet] = useState(false);
-    const [dropSet, setDropSet] = useState(false);
-    const [failureSet, setFailureSet] = useState(false);
     const [showSetTypeInfo, setShowSetTypeInfo] = useState(false);
     const [setTypeInfo, setSetTypeInfo] = useState('');
-
-
-    const handleWarmUpSet = () => {
-        setWarmUpSet(true);
-        setRegularSet(false);
-        setFailureSet(false);
-        setDropSet(false);
-    }
-
-    const handleDropSet = () => {
-        setWarmUpSet(false);
-        setRegularSet(false);
-        setFailureSet(false);
-        setDropSet(true);
-    }
-
-    const handleFailureSet = () => {
-        setWarmUpSet(false);
-        setRegularSet(false);
-        setFailureSet(true);
-        setDropSet(false);
-    }
 
     return (
         <View className='flex flex-row items-center gap-4 py-2'>
@@ -170,9 +144,10 @@ const RenderSet = ({ set, index, handleRemoveSet, handleRepChange, handleWeightC
                         height: 30,
                         includeFontPadding: false
                     }}
-                    onChangeText={(e) => handleRepChange(set, Number(e))}
+                    onChangeText={(e) => handleRepChange?.(set, Number(e))}
                     maxLength={3}
                     keyboardType="numeric"
+                    editable={!editWorkout}
                 />
             </View>
             <View className='flex-1 items-center gap-4 justify-center'>
@@ -185,9 +160,10 @@ const RenderSet = ({ set, index, handleRemoveSet, handleRepChange, handleWeightC
                         height: 30,
                         includeFontPadding: false
                     }}
-                    onChangeText={(e) => handleWeightChange(set, Number(e))}
+                    onChangeText={(e) => handleWeightChange?.(set, Number(e))}
                     maxLength={4}
                     keyboardType="numeric"
+                    editable={!editWorkout}
                 />
             </View>
             <View className='flex-1 items-center gap-4 justify-center'>

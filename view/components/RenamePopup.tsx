@@ -9,19 +9,20 @@ interface PopupScreenProps {
     setShowRename: React.Dispatch<React.SetStateAction<boolean>>,
     workoutId: number,
     refresh: number,
-    setRefresh: React.Dispatch<React.SetStateAction<number>>
+    setRefresh: React.Dispatch<React.SetStateAction<number>>,
+    currentWorkoutName: string,
+    setCurrentWorkoutName: React.Dispatch<React.SetStateAction<string>>
 }
 
-const RenamePopup = ({ showRename, setShowRename, workoutId, refresh, setRefresh }: PopupScreenProps) => {
+const RenamePopup = ({ showRename, setShowRename, workoutId, refresh, setRefresh, currentWorkoutName, setCurrentWorkoutName }: PopupScreenProps) => {
 
-    const [workoutName, setWorkoutName] = useState('');
     const axiosPrivate = useAxiosPrivate()
 
     const handleUpdateWorkoutName = async () => {
 
         try {
             await axiosPrivate.patch(`${WORKOUT_URL}/${workoutId}`, {
-                workoutName
+                workoutName: currentWorkoutName
             });
 
             setShowRename(false);
@@ -45,8 +46,8 @@ const RenamePopup = ({ showRename, setShowRename, workoutId, refresh, setRefresh
 
                     <View className='border border-gray-600 w-full h-16 px-4 bg-black/20 rounded-2xl flex flex-row items-center mt-1 mb-6'>
                         <TextInput
-                            value={workoutName}
-                            onChangeText={(e) => setWorkoutName(e)}
+                            value={currentWorkoutName}
+                            onChangeText={(e) => setCurrentWorkoutName(e)}
                             placeholder="Enter workout name"
                             placeholderTextColor="#94a3b8"
                             className="text-white w-full"

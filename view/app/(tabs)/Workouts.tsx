@@ -11,7 +11,6 @@ import { Menu, MenuOption, MenuOptions, MenuProvider, MenuTrigger } from 'react-
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import RenamePopup from '@/components/RenamePopup';
 import EditWorkout from '@/components/EditWorkout';
-import { axiosPrivate } from '@/api/axios';
 import WorkoutScreen from '@/components/WorkoutScreen/WorkoutScreen';
 import CreateWorkout from '@/components/CreateWorkout';
 
@@ -109,14 +108,16 @@ export default function Workouts() {
     setShowWorkout(true)
   }
 
-  const handleRename = (id: number) => {
+  const handleRename = (id: number, workoutName: string) => {
     setShowRename(true)
     setActiveWorkout(id)
+    setWorkoutName(workoutName)
   }
 
-  const handleEditWorkout = (id: number) => {
+  const handleEditWorkout = (id: number, workoutName: string) => {
     setEditWorkout(true);
     setActiveWorkout(id)
+    setWorkoutName(workoutName)
   }
 
 
@@ -155,7 +156,7 @@ export default function Workouts() {
               </MenuOption>
               <MenuOption
                 onSelect={() => {
-                  handleRename(item.id)
+                  handleRename(item.id, item.workout_name)
                 }}
                 style={{ padding: 12, flexDirection: 'row', alignItems: 'center' }}
               >
@@ -163,7 +164,7 @@ export default function Workouts() {
                 <Text className="text-white text-base">Rename</Text>
               </MenuOption>
               <MenuOption
-                onSelect={() => handleEditWorkout(item.id)}
+                onSelect={() => handleEditWorkout(item.id, item.workout_name)}
                 style={{ padding: 12, flexDirection: 'row', alignItems: 'center' }}
               >
                 <Icon name="edit" size={20} color="white" className='mr-2' />
@@ -221,10 +222,10 @@ export default function Workouts() {
         showWorkout && <WorkoutScreen showWorkout={showWorkout} setShowWorkout={setShowWorkout} workoutId={activeWorkout} setActiveWorkout={setActiveWorkout} workoutName={workoutName} />
       }
       {
-        showRename && <RenamePopup showRename={showRename} setShowRename={setShowRename} workoutId={activeWorkout} refresh={refresh} setRefresh={setRefresh} />
+        showRename && <RenamePopup showRename={showRename} setShowRename={setShowRename} workoutId={activeWorkout} refresh={refresh} setRefresh={setRefresh} currentWorkoutName={workoutName} setCurrentWorkoutName={setWorkoutName} />
       }
       {
-        // editWorkout && <EditWorkout editWorkout={editWorkout} setEditWorkout={setEditWorkout} workoutId={activeWorkout} setActiveWorkout={setActiveWorkout} refresh={refresh} setRefresh={setRefresh} />
+        editWorkout && <EditWorkout editWorkout={editWorkout} setEditWorkout={setEditWorkout} workoutId={activeWorkout} setActiveWorkout={setActiveWorkout} refresh={refresh} setRefresh={setRefresh} workoutName={workoutName} />
       }
 
     </SafeAreaView>
