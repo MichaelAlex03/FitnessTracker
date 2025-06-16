@@ -14,7 +14,7 @@ const updateUser = async (user, refreshToken) => {
 
 const updateUserExercises = async (workoutId, selectedExercises) => {
     try {
-        
+
         const { data: insertedExercises, error: insertError } = await supabase
             .from('user_exercises')
             .insert(selectedExercises.map(ex => ({
@@ -25,7 +25,7 @@ const updateUserExercises = async (workoutId, selectedExercises) => {
 
         if (insertError) throw insertError;
 
-        
+
         const { error: setsError } = await supabase
             .from('workout_sets')
             .insert(insertedExercises.map(ex => ({
@@ -54,7 +54,7 @@ const replaceExercise = async (workoutId, exerciseToReplace, newExercise) => {
             .eq('workout_id', workoutId)
             .eq('exercise_name', exerciseToReplace)
             .single();
-        
+
         if (findError) throw findError;
 
         // Delete old sets
@@ -71,7 +71,7 @@ const replaceExercise = async (workoutId, exerciseToReplace, newExercise) => {
             .update({ exercise_name: newExercise[0] })
             .eq('workout_id', workoutId)
             .eq('exercise_name', exerciseToReplace);
-        
+
         if (updateError) throw updateError;
 
         // Create new set
@@ -262,6 +262,52 @@ const addSet = async (exercise, workoutId) => {
     return data;
 };
 
+const addSetsToHistory = async (workoutId, sets, exerciseHistoryMap) => {
+    console.log(sets)
+    const { data, error } = await supabase
+        .from('sets_history')
+        .insert(sets.map(set => ({
+            workout_id: workoutId,
+            exercise_id: exerciseHistoryMap[set.exercise_id],
+            exercise_reps: set.exercise_reps,
+            exercise_weight: set.exercise_weight,
+            set_type: set.set_type
+        })));
+    console.log(error)
+    if (error) throw error;
+    return data;
+};
+
+const addExercisesToHistory = async (workoutHistoryId, exercises) => {
+    console.log(exercises)
+    const { data, error } = await supabase
+        .from('exercise_history')
+        .insert(exercises.map(exercise => ({
+            workout_id: workoutHistoryId,
+            exercise_name: exercise.exercise_name
+        })))
+        .select()
+       
+    console.log("ERRROR" , data)
+    if (error) throw error;
+    return data;
+};
+
+const addWorkoutToHistory = async ( userId, workoutName) => {
+    const { data, error } = await supabase
+        .from('workout_history')
+        .insert([{
+            user_id: userId,
+            workout_name: workoutName,
+            created_at: new Date().toISOString(),
+        }])
+        .select();
+    console.log(data)
+    console.log(error)
+    if (error) throw error;
+    return data[0].id;
+};
+
 //---------------------------- Delete Routes Queries ------------------------------//
 
 const removeAllSets = async (workoutId) => {
@@ -347,5 +393,8 @@ module.exports = {
     updateSets,
     updateWorkout,
     updateUserExercises,
-    replaceExercise
+    replaceExercise,
+    addSetsToHistory,
+    addExercisesToHistory,
+    addWorkoutToHistory
 }

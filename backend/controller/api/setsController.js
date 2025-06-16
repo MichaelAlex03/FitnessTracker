@@ -24,14 +24,36 @@ const getWorkoutSets = async (req, res) => {
 }
 
 const updateSets = async (req, res) => {
-    const { exerciseSets, workoutId} = req.body;
+    const { exerciseSets, exercises, workoutId, workoutName, save, userId } = req.body;
+
+    console.log(save)
     try {
         //First update workout template
         await pg.updateSets(exerciseSets, workoutId);
 
-    
+        if (save === false) {
+
+            //Add workout to history
+            const workoutHistoryId = await pg.addWorkoutToHistory(userId, workoutName);
+            
+            //Add exercises to history
+            const exerciseHistoryData = await pg.addExercisesToHistory(workoutHistoryId, exercises);
+
+            // Create a mapping of old exercise IDs to new exercise history IDs
+            const exerciseHistoryMap = {};  
+            exercises.forEach((exercise, index) => {
+                exerciseHistoryMap[exercise.id] = exerciseHistoryData[index].id
+            })
+
+
+            //Add sets to history
+            await pg.addSetsToHistory(workoutHistoryId, exerciseSets, exerciseHistoryMap);
+
+
+        }
         return res.status(200).json({ 'message': 'sets updated!' });
     } catch (err) {
+        console.log(err)
         return res.status(500).json({ 'message': err.message });
     }
 }
