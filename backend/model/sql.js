@@ -57,6 +57,14 @@ const replaceExercise = async (workoutId, exerciseToReplace, newExercise) => {
         
         if (findError) throw findError;
 
+        // Delete old sets
+        const { error: deleteError } = await supabase
+            .from('workout_sets')
+            .delete()
+            .eq('exercise_id', oldExercise.id);
+
+        if (deleteError) throw deleteError;
+
         // Update the exercise name
         const { error: updateError } = await supabase
             .from('user_exercises')
@@ -66,25 +74,18 @@ const replaceExercise = async (workoutId, exerciseToReplace, newExercise) => {
         
         if (updateError) throw updateError;
 
-        // Now we can run the set operations in parallel using the ID we know is correct
-        await Promise.all([
-            // Delete old sets
-            supabase
-                .from('workout_sets')
-                .delete()
-                .eq('exercise_id', oldExercise.id),
-            
-            // Create new set
-            supabase
-                .from('workout_sets')
-                .insert([{
-                    exercise_id: oldExercise.id,
-                    exercise_reps: 0,
-                    exercise_weight: 0,
-                    workout_id: workoutId,
-                    set_type: "default"
-                }])
-        ]);
+        // Create new set
+        const { error: insertError } = await supabase
+            .from('workout_sets')
+            .insert([{
+                exercise_id: oldExercise.id,
+                exercise_reps: 0,
+                exercise_weight: 0,
+                workout_id: workoutId,
+                set_type: "default"
+            }]);
+
+        if (insertError) throw insertError;
 
         return { id: oldExercise.id, exercise_name: newExercise };
     } catch (error) {
