@@ -114,6 +114,8 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
 
     const handleSave = async () => {
 
+
+
         //Check if there are any null values
         const nullSets = exerciseSets.filter(set => (set.exercise_reps === 0 || set.exercise_weight === 0));
         if (nullSets.length > 0) {
@@ -295,8 +297,20 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                                         <TouchableOpacity
                                             className='bg-secondary px-4 py-2 rounded-lg'
                                             onPress={() => {
-                                                handleSave()
-                                                setActiveWorkout(0)
+                                                Alert.alert("Finishing Workout", "Are you sure you want to finish your workout?", [
+                                                    {
+                                                        text: "Ok",
+                                                        onPress: () => {
+                                                            handleSave()
+                                                            setActiveWorkout(0)
+                                                        }
+                                                    },
+                                                    {
+                                                        text: "Cancel",
+                                                        onPress: () => {
+                                                        }
+                                                    }
+                                                ])
 
                                             }}
                                         >

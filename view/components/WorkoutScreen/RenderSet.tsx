@@ -61,7 +61,7 @@ const RenderSet = ({ set, index, handleRemoveSet, handleRepChange, handleWeightC
                 <Menu>
                     <MenuTrigger>
                         <View className='items-center justify-center'>
-                            {set.set_type === 'regular' && <Text className='text-white font-semibold text-lg bg-secondary/20 px-4 py-1 rounded-lg'>{index + 1}</Text>}
+                            {set.set_type === 'default' && <Text className='text-white font-semibold text-lg bg-secondary/20 px-4 py-1 rounded-lg'>{index + 1}</Text>}
                             {set.set_type === 'warmup' && <View className="bg-blue-500/30 w-8 h-8 rounded-lg items-center justify-center">
                                 <Text className="text-blue-500  font-bold">W</Text>
                             </View>}
