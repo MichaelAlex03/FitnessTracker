@@ -263,7 +263,6 @@ const addSet = async (exercise, workoutId) => {
 };
 
 const addSetsToHistory = async (workoutId, sets, exerciseHistoryMap) => {
-    console.log(sets)
     const { data, error } = await supabase
         .from('sets_history')
         .insert(sets.map(set => ({
@@ -273,13 +272,11 @@ const addSetsToHistory = async (workoutId, sets, exerciseHistoryMap) => {
             exercise_weight: set.exercise_weight,
             set_type: set.set_type
         })));
-    console.log(error)
     if (error) throw error;
     return data;
 };
 
 const addExercisesToHistory = async (workoutHistoryId, exercises) => {
-    console.log(exercises)
     const { data, error } = await supabase
         .from('exercise_history')
         .insert(exercises.map(exercise => ({
@@ -288,7 +285,6 @@ const addExercisesToHistory = async (workoutHistoryId, exercises) => {
         })))
         .select()
        
-    console.log("ERRROR" , data)
     if (error) throw error;
     return data;
 };
@@ -302,8 +298,6 @@ const addWorkoutToHistory = async ( userId, workoutName) => {
             created_at: new Date().toISOString(),
         }])
         .select();
-    console.log(data)
-    console.log(error)
     if (error) throw error;
     return data[0].id;
 };

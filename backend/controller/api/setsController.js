@@ -26,7 +26,6 @@ const getWorkoutSets = async (req, res) => {
 const updateSets = async (req, res) => {
     const { exerciseSets, exercises, workoutId, workoutName, save, userId } = req.body;
 
-    console.log(save)
     try {
         //First update workout template
         await pg.updateSets(exerciseSets, workoutId);
