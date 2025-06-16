@@ -4,8 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 const History = () => {
   return (
-    <SafeAreaView className="bg-primary flex-1">
-      <Text className='text-white'>Historyyyyyy</Text>
+    <SafeAreaView className="bg-primary flex-1 p-5">
+      <Text className='text-white font-bold text-4xl'>History</Text>
     </SafeAreaView>
   )
 }

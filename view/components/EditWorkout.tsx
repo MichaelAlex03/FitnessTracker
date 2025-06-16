@@ -10,6 +10,7 @@ import RenamePopup from '@/components/RenamePopup';
 import RenderSet from '@/components/WorkoutScreen/RenderSet';
 import ExerciseListPopup from '@/components/WorkoutScreen/ExerciseListPopup';
 import uuid from 'react-native-uuid';
+import useAuth from '@/hooks/useAuth';
 
 
 const EXERCISES_URL = '/api/exercises';
@@ -51,13 +52,12 @@ const EditWorkout = ({ editWorkout, setEditWorkout, workoutId, setActiveWorkout,
     const [editWorkoutName, setEditWorkoutName] = useState(false);
     const [toggleAddExercise, setToggleAddExercise] = useState(false);
     const [toggleReplaceExercise, setToggleReplaceExercise] = useState(false)
-    const [showTimerPopup, setShowTimerPopup] = useState(false);
     const [exerciseToReplace, setExerciseToReplace] = useState<string>('');
     const [currentWorkoutName, setCurrentWorkoutName] = useState<string>(workoutName);
 
 
     const axiosPrivate = useAxiosPrivate();
-
+    const { auth } = useAuth();
 
     /* Retrieves exercises for the workout */
     useEffect(() => {
@@ -114,6 +114,10 @@ const EditWorkout = ({ editWorkout, setEditWorkout, workoutId, setActiveWorkout,
             const response = await axiosPrivate.patch(SETS_URL, {
                 exerciseSets,
                 workoutId,
+                exercises,
+                workoutName,
+                save: false,
+                userId: auth.userId
             });
 
             console.log(response)
@@ -238,7 +242,7 @@ const EditWorkout = ({ editWorkout, setEditWorkout, workoutId, setActiveWorkout,
                                             setActiveWorkout(0)
                                         }}
                                     >
-                                       <Text className='text-white'>Back</Text>
+                                        <Text className='text-white'>Back</Text>
                                     </TouchableOpacity>
 
                                     <TouchableOpacity
@@ -283,7 +287,7 @@ const EditWorkout = ({ editWorkout, setEditWorkout, workoutId, setActiveWorkout,
                                         </Menu>
                                     </View>
 
-                                   
+
                                 </View>
                             </View>
                         )}
@@ -297,7 +301,7 @@ const EditWorkout = ({ editWorkout, setEditWorkout, workoutId, setActiveWorkout,
                                 >
                                     <Text className="text-white font-bold text-center">Add Exercise</Text>
                                 </TouchableOpacity>
-                               
+
                             </View>
                         )}
                     />

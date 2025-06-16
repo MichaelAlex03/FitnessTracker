@@ -10,6 +10,7 @@ import RenderSet from '@/components/WorkoutScreen/RenderSet';
 import ExerciseListPopup from '@/components/WorkoutScreen/ExerciseListPopup';
 import WorkoutTimer from './WorkoutTimer'
 import uuid from 'react-native-uuid';
+import useAuth from '@/hooks/useAuth'
 
 
 const EXERCISES_URL = '/api/exercises';
@@ -54,6 +55,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
 
 
     const axiosPrivate = useAxiosPrivate();
+    const { auth } = useAuth();
 
 
     /* Retrieves exercises for the workout */
@@ -114,8 +116,6 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
 
     const handleSave = async () => {
 
-
-
         //Check if there are any null values
         const nullSets = exerciseSets.filter(set => (set.exercise_reps === 0 || set.exercise_weight === 0));
         if (nullSets.length > 0) {
@@ -127,6 +127,10 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
             const response = await axiosPrivate.patch(SETS_URL, {
                 exerciseSets,
                 workoutId,
+                exercises,
+                workoutName,
+                save: false,
+                userId: auth.userId
             });
 
             console.log(response)
@@ -134,8 +138,8 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
             Alert.alert("Finished Workout", "Your workout is complete!");
             setActiveWorkout(0);
             setShowWorkout(false);
-        } catch (error) {
-            console.error(error)
+        } catch (error: any) {
+            console.error(error.message)
         }
 
     }
@@ -151,227 +155,227 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                 setExerciseSets(updatedSets);
                 setExercises(updatedExercises);
             }
-            } catch (error) {
-                console.error(error)
-            }
+        } catch (error) {
+            console.error(error)
         }
+    }
 
     const handleCancelWorkout = () => {
-            Alert.alert("Canceling Workout", "Are you sure you want to cancel your workout?", [
-                {
-                    text: "Ok",
-                    onPress: () => {
-                        setShowWorkout(false)
-                        setActiveWorkout(0)
-                    }
-                },
-                {
-                    text: "Cancel",
-                    onPress: () => {
-                    }
+        Alert.alert("Canceling Workout", "Are you sure you want to cancel your workout?", [
+            {
+                text: "Ok",
+                onPress: () => {
+                    setShowWorkout(false)
+                    setActiveWorkout(0)
                 }
-            ])
-        }
+            },
+            {
+                text: "Cancel",
+                onPress: () => {
+                }
+            }
+        ])
+    }
 
-        console.log("SETS", exerciseSets)
+    console.log("SETS", exerciseSets)
 
-        const handleRepChange = (set: Sets, reps: number) => {
-            setExerciseSets(prevSets => prevSets.map(s =>
-                s.id === set.id ? { ...s, exercise_reps: reps } : s))
-        }
+    const handleRepChange = (set: Sets, reps: number) => {
+        setExerciseSets(prevSets => prevSets.map(s =>
+            s.id === set.id ? { ...s, exercise_reps: reps } : s))
+    }
 
-        const handleWeightChange = (set: Sets, weight: number) => {
-            setExerciseSets(prevSets => prevSets.map(s => (
-                s.id === set.id ? { ...s, exercise_weight: weight } : s
-            )))
-        }
-
-
-        const renderItem = (item: Exercise) => {
-            // Filter sets for this specific exercise
-            const exerciseSetsFiltered = exerciseSets.filter(set => set.exercise_id === item.id);
+    const handleWeightChange = (set: Sets, weight: number) => {
+        setExerciseSets(prevSets => prevSets.map(s => (
+            s.id === set.id ? { ...s, exercise_weight: weight } : s
+        )))
+    }
 
 
-            return (
-                <View className='p-4'>
-                    <View className='flex flex-row items-center'>
-                        <TouchableOpacity className='mr-auto'>
-                            <Text className='text-secondary font-semibold text-2xl'>{item.exercise_name}</Text>
-                        </TouchableOpacity>
-                        <Menu>
-                            <MenuTrigger>
-                                <View className="bg-secondary/20 p-2 rounded-xl">
-                                    <AntDesign name="ellipsis1" size={20} color="#FF9C01" />
-                                </View>
-                            </MenuTrigger>
-                            <MenuOptions
-                                optionsContainerStyle={{
-                                    backgroundColor: '#1E1E1E',
-                                    borderRadius: 8,
-                                    marginTop: 40,
-                                }}
-                            >
-                                <MenuOption
-                                    style={{ padding: 12, flexDirection: 'row', alignItems: 'center' }}
-                                    onSelect={() => {
-                                        handleDeleteExercise(item.id)
-                                    }}
-                                >
-                                    <AntDesign name="delete" size={20} color="red" className='mr-2' />
-                                    <Text className="text-white text-base">Remove Exercise</Text>
-                                </MenuOption>
-                                <MenuOption
-                                    onSelect={() => {
-                                        setToggleReplaceExercise(true)
-                                        setExerciseToReplace(item.exercise_name)
-                                    }}
-                                    style={{ padding: 12, flexDirection: 'row', alignItems: 'center' }}
-                                >
-                                    <Icon name="edit" size={20} color="white" className='mr-2' />
-                                    <Text className="text-white text-base">Replace Exercise</Text>
-                                </MenuOption>
-                                <MenuOption
-                                    onSelect={() => { }}
-                                    style={{ padding: 12, flexDirection: 'row', alignItems: 'center' }}
-                                >
-                                    <Icon name="edit" size={20} color="white" className='mr-2' />
-                                    <Text className="text-white text-base">History</Text>
-                                </MenuOption>
-                            </MenuOptions>
-                        </Menu>
-                    </View>
-
-                    <View className='mt-4'>
-
-                        {exerciseSetsFiltered.map((set, index) => (
-                            <RenderSet
-                                key={set.id}
-                                set={set}
-                                index={index}
-                                handleRemoveSet={handleRemoveSet}
-                                handleRepChange={handleRepChange}
-                                handleWeightChange={handleWeightChange}
-                                handleSetTypeChange={handleSetTypeChange}
-                            />
-                        ))}
-
-                        <TouchableOpacity
-                            className='mt-2 bg-secondary/20 p-2 rounded-xl'
-                            onPress={() => { handleAddSet(item) }}
-                        >
-                            <Text className='text-secondary text-center'>Add Set</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            )
-        }
+    const renderItem = (item: Exercise) => {
+        // Filter sets for this specific exercise
+        const exerciseSetsFiltered = exerciseSets.filter(set => set.exercise_id === item.id);
 
 
         return (
-            <Modal
-                visible={showWorkout}
-                animationType="slide"
-                onRequestClose={() => {
-                    setShowWorkout(false)
-                    setActiveWorkout(0)
-                }}
-            >
-                <SafeAreaView className="flex-1 bg-primary">
-                    <MenuProvider skipInstanceCheck={true}>
-                        <FlatList
-                            data={exercises}
-                            renderItem={({ item }) => renderItem(item)}
-                            keyExtractor={(item) => item.id.toString()}
-                            ListHeaderComponent={() => (
-                                <View className='px-6 py-6 gap-4 mt-10'>
-                                    <View className="flex flex-row justify-evenly items-center">
-                                        <TouchableOpacity
-                                            className='bg-gray-400 px-6 py-2 rounded-lg mr-auto'
-                                            onPress={() => {
-                                                setShowTimerPopup(true)
-                                            }}
-                                        >
-                                            <Icon name="access-time" size={16} color="#000000" />
-                                        </TouchableOpacity>
+            <View className='p-4'>
+                <View className='flex flex-row items-center'>
+                    <TouchableOpacity className='mr-auto'>
+                        <Text className='text-secondary font-semibold text-2xl'>{item.exercise_name}</Text>
+                    </TouchableOpacity>
+                    <Menu>
+                        <MenuTrigger>
+                            <View className="bg-secondary/20 p-2 rounded-xl">
+                                <AntDesign name="ellipsis1" size={20} color="#FF9C01" />
+                            </View>
+                        </MenuTrigger>
+                        <MenuOptions
+                            optionsContainerStyle={{
+                                backgroundColor: '#1E1E1E',
+                                borderRadius: 8,
+                                marginTop: 40,
+                            }}
+                        >
+                            <MenuOption
+                                style={{ padding: 12, flexDirection: 'row', alignItems: 'center' }}
+                                onSelect={() => {
+                                    handleDeleteExercise(item.id)
+                                }}
+                            >
+                                <AntDesign name="delete" size={20} color="red" className='mr-2' />
+                                <Text className="text-white text-base">Remove Exercise</Text>
+                            </MenuOption>
+                            <MenuOption
+                                onSelect={() => {
+                                    setToggleReplaceExercise(true)
+                                    setExerciseToReplace(item.exercise_name)
+                                }}
+                                style={{ padding: 12, flexDirection: 'row', alignItems: 'center' }}
+                            >
+                                <Icon name="edit" size={20} color="white" className='mr-2' />
+                                <Text className="text-white text-base">Replace Exercise</Text>
+                            </MenuOption>
+                            <MenuOption
+                                onSelect={() => { }}
+                                style={{ padding: 12, flexDirection: 'row', alignItems: 'center' }}
+                            >
+                                <Icon name="edit" size={20} color="white" className='mr-2' />
+                                <Text className="text-white text-base">History</Text>
+                            </MenuOption>
+                        </MenuOptions>
+                    </Menu>
+                </View>
 
-                                        <TouchableOpacity
-                                            className='bg-secondary px-4 py-2 rounded-lg'
-                                            onPress={() => {
-                                                Alert.alert("Finishing Workout", "Are you sure you want to finish your workout?", [
-                                                    {
-                                                        text: "Ok",
-                                                        onPress: () => {
-                                                            handleSave()
-                                                            setActiveWorkout(0)
-                                                        }
-                                                    },
-                                                    {
-                                                        text: "Cancel",
-                                                        onPress: () => {
-                                                        }
-                                                    }
-                                                ])
+                <View className='mt-4'>
 
-                                            }}
-                                        >
-                                            <Text className=' text-white'>Finish</Text>
-                                        </TouchableOpacity>
-                                    </View>
-
-                                    <View className='flex flex-col gap-2 mt-10'>
-                                        <View className='flex flex-row items-center gap-4'>
-                                            <TextInput className='text-white font-bold text-2xl' editable={false}>{workoutName}</TextInput>
-                                        </View>
-
-                                        <WorkoutTimer showWorkout={showWorkout} />
-                                    </View>
-                                </View>
-                            )}
-                            ListFooterComponent={() => (
-                                <View className='flex gap-8 items-center p-6'>
-                                    <TouchableOpacity
-                                        className="bg-gray-600 rounded-xl w-full p-3 "
-                                        onPress={() => {
-                                            setToggleAddExercise(prev => !prev)
-                                        }}
-                                    >
-                                        <Text className="text-white font-bold text-center">Add Exercise</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity
-                                        className="bg-red-400/20 rounded-xl w-full p-3"
-                                        onPress={handleCancelWorkout}>
-                                        <Text className="text-red-400 font-bold text-center">Cancel Workout</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            )}
+                    {exerciseSetsFiltered.map((set, index) => (
+                        <RenderSet
+                            key={set.id}
+                            set={set}
+                            index={index}
+                            handleRemoveSet={handleRemoveSet}
+                            handleRepChange={handleRepChange}
+                            handleWeightChange={handleWeightChange}
+                            handleSetTypeChange={handleSetTypeChange}
                         />
-                    </MenuProvider>
-                    {
-                        showTimerPopup
-                    }
-                    {
-                        (toggleAddExercise || toggleReplaceExercise) && (
+                    ))}
 
-                            <ExerciseListPopup
-                                toggleAddExercise={toggleAddExercise}
-                                setToggleAddExercise={setToggleAddExercise}
-                                workoutExercises={exercises}
-                                setWorkoutExercises={setExercises}
-                                toggleReplaceExercise={toggleReplaceExercise}
-                                setToggleReplaceExercise={setToggleReplaceExercise}
-                                workoutId={workoutId}
-                                exerciseToReplace={exerciseToReplace ?? ''}
-                                refresh={refresh}
-                                setRefresh={setRefresh}
-                            />
-                        )
-                    }
-
-                </SafeAreaView>
-
-            </Modal>
+                    <TouchableOpacity
+                        className='mt-2 bg-secondary/20 p-2 rounded-xl'
+                        onPress={() => { handleAddSet(item) }}
+                    >
+                        <Text className='text-secondary text-center'>Add Set</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
         )
     }
 
-    export default WorkoutScreen
+
+    return (
+        <Modal
+            visible={showWorkout}
+            animationType="slide"
+            onRequestClose={() => {
+                setShowWorkout(false)
+                setActiveWorkout(0)
+            }}
+        >
+            <SafeAreaView className="flex-1 bg-primary">
+                <MenuProvider skipInstanceCheck={true}>
+                    <FlatList
+                        data={exercises}
+                        renderItem={({ item }) => renderItem(item)}
+                        keyExtractor={(item) => item.id.toString()}
+                        ListHeaderComponent={() => (
+                            <View className='px-6 py-6 gap-4 mt-10'>
+                                <View className="flex flex-row justify-evenly items-center">
+                                    <TouchableOpacity
+                                        className='bg-gray-400 px-6 py-2 rounded-lg mr-auto'
+                                        onPress={() => {
+                                            setShowTimerPopup(true)
+                                        }}
+                                    >
+                                        <Icon name="access-time" size={16} color="#000000" />
+                                    </TouchableOpacity>
+
+                                    <TouchableOpacity
+                                        className='bg-secondary px-4 py-2 rounded-lg'
+                                        onPress={() => {
+                                            Alert.alert("Finishing Workout", "Are you sure you want to finish your workout?", [
+                                                {
+                                                    text: "Ok",
+                                                    onPress: () => {
+                                                        handleSave()
+                                                        setActiveWorkout(0)
+                                                    }
+                                                },
+                                                {
+                                                    text: "Cancel",
+                                                    onPress: () => {
+                                                    }
+                                                }
+                                            ])
+
+                                        }}
+                                    >
+                                        <Text className=' text-white'>Finish</Text>
+                                    </TouchableOpacity>
+                                </View>
+
+                                <View className='flex flex-col gap-2 mt-10'>
+                                    <View className='flex flex-row items-center gap-4'>
+                                        <TextInput className='text-white font-bold text-2xl' editable={false}>{workoutName}</TextInput>
+                                    </View>
+
+                                    <WorkoutTimer showWorkout={showWorkout} />
+                                </View>
+                            </View>
+                        )}
+                        ListFooterComponent={() => (
+                            <View className='flex gap-8 items-center p-6'>
+                                <TouchableOpacity
+                                    className="bg-gray-600 rounded-xl w-full p-3 "
+                                    onPress={() => {
+                                        setToggleAddExercise(prev => !prev)
+                                    }}
+                                >
+                                    <Text className="text-white font-bold text-center">Add Exercise</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    className="bg-red-400/20 rounded-xl w-full p-3"
+                                    onPress={handleCancelWorkout}>
+                                    <Text className="text-red-400 font-bold text-center">Cancel Workout</Text>
+                                </TouchableOpacity>
+                            </View>
+                        )}
+                    />
+                </MenuProvider>
+                {
+                    showTimerPopup
+                }
+                {
+                    (toggleAddExercise || toggleReplaceExercise) && (
+
+                        <ExerciseListPopup
+                            toggleAddExercise={toggleAddExercise}
+                            setToggleAddExercise={setToggleAddExercise}
+                            workoutExercises={exercises}
+                            setWorkoutExercises={setExercises}
+                            toggleReplaceExercise={toggleReplaceExercise}
+                            setToggleReplaceExercise={setToggleReplaceExercise}
+                            workoutId={workoutId}
+                            exerciseToReplace={exerciseToReplace ?? ''}
+                            refresh={refresh}
+                            setRefresh={setRefresh}
+                        />
+                    )
+                }
+
+            </SafeAreaView>
+
+        </Modal>
+    )
+}
+
+export default WorkoutScreen
 
