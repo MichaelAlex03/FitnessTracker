@@ -19,9 +19,10 @@ interface SetProps {
     handleRemoveSet: (id: String) => void;
     handleRepChange: (set: Sets, reps: number) => void
     handleWeightChange: (set: Sets, weight: number) => void
+    handleSetTypeChange: (id: string, type: string) => void
 }
 
-const RenderSet = ({ set, index, handleRemoveSet, handleRepChange, handleWeightChange }: SetProps) => {
+const RenderSet = ({ set, index, handleRemoveSet, handleRepChange, handleWeightChange, handleSetTypeChange }: SetProps) => {
 
 
     const [regularSet, setRegularSet] = useState(true);
@@ -30,6 +31,7 @@ const RenderSet = ({ set, index, handleRemoveSet, handleRepChange, handleWeightC
     const [failureSet, setFailureSet] = useState(false);
     const [showSetTypeInfo, setShowSetTypeInfo] = useState(false);
     const [setTypeInfo, setSetTypeInfo] = useState('');
+
 
     const handleWarmUpSet = () => {
         setWarmUpSet(true);
@@ -59,7 +61,16 @@ const RenderSet = ({ set, index, handleRemoveSet, handleRepChange, handleWeightC
                 <Menu>
                     <MenuTrigger>
                         <View className='items-center justify-center'>
-                            {regularSet && <Text className='text-white font-semibold text-lg bg-secondary/20 px-4 py-1 rounded-lg'>{index + 1}</Text>}
+                            {set.set_type === 'regular' && <Text className='text-white font-semibold text-lg bg-secondary/20 px-4 py-1 rounded-lg'>{index + 1}</Text>}
+                            {set.set_type === 'warmup' && <View className="bg-blue-500/30 w-8 h-8 rounded-lg items-center justify-center">
+                                <Text className="text-blue-500  font-bold">W</Text>
+                            </View>}
+                            {set.set_type === 'drop' && <View className="bg-purple-500/30 w-8 h-8 rounded-lg items-center justify-center">
+                                <Text className="text-purple-500 font-bold">D</Text>
+                            </View>}
+                            {set.set_type === 'failure' && <View className="bg-red-500/30 w-8 h-8 rounded-lg items-center justify-center">
+                                <Text className="text-red-500 font-bold">F</Text>
+                            </View>}
                         </View>
                     </MenuTrigger>
                     <MenuOptions
@@ -71,6 +82,9 @@ const RenderSet = ({ set, index, handleRemoveSet, handleRepChange, handleWeightC
                     >
                         <MenuOption
                             style={{ padding: 12, flexDirection: 'row', alignItems: 'center', gap: 8 }}
+                            onSelect={() => {
+                                handleSetTypeChange(set.id, 'warmup');
+                            }}
                         >
                             <View className="bg-blue-500/30 w-8 h-8 rounded-full items-center justify-center">
                                 <Text className="text-blue-500 font-bold">W</Text>
@@ -89,6 +103,9 @@ const RenderSet = ({ set, index, handleRemoveSet, handleRepChange, handleWeightC
                         </MenuOption>
                         <MenuOption
                             style={{ padding: 12, flexDirection: 'row', alignItems: 'center', gap: 8 }}
+                            onSelect={() => {
+                                handleSetTypeChange(set.id, 'drop');
+                            }}
                         >
                             <View className="bg-purple-500/30 w-8 h-8 rounded-full items-center justify-center">
                                 <Text className="text-purple-500 font-bold">D</Text>
@@ -107,6 +124,9 @@ const RenderSet = ({ set, index, handleRemoveSet, handleRepChange, handleWeightC
                         </MenuOption>
                         <MenuOption
                             style={{ padding: 12, flexDirection: 'row', alignItems: 'center', gap: 8 }}
+                            onSelect={() => {
+                                handleSetTypeChange(set.id, 'failure');
+                            }}
                         >
                             <View className="bg-red-500/30 w-8 h-8 rounded-full items-center justify-center">
                                 <Text className="text-red-500 font-bold">F</Text>

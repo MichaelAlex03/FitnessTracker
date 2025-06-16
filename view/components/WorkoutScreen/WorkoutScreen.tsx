@@ -106,6 +106,11 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
         setExerciseSets(updatedSets);
     }
 
+    const handleSetTypeChange = (id: string, type: string) => {
+        setExerciseSets(prevSets => prevSets.map(s =>
+            s.id === id ? { ...s, set_type: type } : s))
+    }
+
 
     const handleSave = async () => {
 
@@ -244,6 +249,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                                 handleRemoveSet={handleRemoveSet}
                                 handleRepChange={handleRepChange}
                                 handleWeightChange={handleWeightChange}
+                                handleSetTypeChange={handleSetTypeChange}
                             />
                         ))}
 
