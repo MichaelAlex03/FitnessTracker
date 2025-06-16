@@ -1,20 +1,20 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import {  Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 
-interface WarmUpSetProps {
+interface FailureSetModalProps {
   setShowSetTypeInfo: (show: boolean) => void
 }
 
-const WarmUpSet = ({ setShowSetTypeInfo }: WarmUpSetProps) => {
+const FailureSetModal = ({ setShowSetTypeInfo }: FailureSetModalProps) => {
   return (
     <View className='bg-black-100 w-full h-1/3 rounded-2xl items-center justify-center'>
       <View className='w-11/12 h-full items-center justify-center'>
-        <Text className='text-white text-2xl font-bold mb-10'>Warm Up Set</Text>
+        <Text className='text-white text-2xl font-bold mb-10'>Failure Set</Text>
         <Text className='text-white text-base font-semibold text-center'>
-          A warm-up set is a set of exercises that are performed before the main set of an exercise.
+          A failure set is a set of that is performed until you can no longer perform the exercise.
         </Text>
         <Text className='text-white text-base font-semibold text-center'>
-          It is used to warm up the muscles and prepare them for the main set.
+          Do not perform failure sets all the time as they cause lots of fatigue in the muscles.
         </Text>
 
         <TouchableOpacity className='bg-secondary/20 p-2 rounded-lg w-full mt-10' onPress={() => {
@@ -27,5 +27,5 @@ const WarmUpSet = ({ setShowSetTypeInfo }: WarmUpSetProps) => {
   )
 }
 
-export default WarmUpSet
+export default FailureSetModal
 

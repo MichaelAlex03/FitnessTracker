@@ -2,6 +2,7 @@ import { View, Text, TouchableOpacity, TextInput } from 'react-native';
 import { Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-native-popup-menu';
 import { AntDesign } from '@expo/vector-icons';
 import { useState } from 'react';
+import SetTypeInfo from '../SetTypeModal/SetTypeInfo';
 
 interface Sets {
     id: string,
@@ -27,6 +28,8 @@ const RenderSet = ({ set, index, handleRemoveSet, handleRepChange, handleWeightC
     const [warmUpSet, setWarmUpSet] = useState(false);
     const [dropSet, setDropSet] = useState(false);
     const [failureSet, setFailureSet] = useState(false);
+    const [showSetTypeInfo, setShowSetTypeInfo] = useState(false);
+    const [setTypeInfo, setSetTypeInfo] = useState('');
 
     const handleWarmUpSet = () => {
         setWarmUpSet(true);
@@ -74,6 +77,8 @@ const RenderSet = ({ set, index, handleRemoveSet, handleRepChange, handleWeightC
                             </View>
                             <Text className="text-white text-base font-semibold">Warmup Set</Text>
                             <TouchableOpacity className='bg-secondary/20 p-1 rounded-full ml-auto' onPress={() => {
+                                setShowSetTypeInfo(true);
+                                setSetTypeInfo('warmup');
                             }}>
                                 <AntDesign
                                     name="question"
@@ -90,6 +95,8 @@ const RenderSet = ({ set, index, handleRemoveSet, handleRepChange, handleWeightC
                             </View>
                             <Text className="text-white text-base font-semibold">Drop Set</Text>
                             <TouchableOpacity className='bg-secondary/20 p-1 rounded-full ml-auto' onPress={() => {
+                                setShowSetTypeInfo(true);
+                                setSetTypeInfo('drop');
                             }}>
                                 <AntDesign
                                     name="question"
@@ -107,6 +114,8 @@ const RenderSet = ({ set, index, handleRemoveSet, handleRepChange, handleWeightC
                             <Text className="text-white text-base font-semibold">Failure Set</Text>
 
                             <TouchableOpacity className='bg-secondary/20 p-1 rounded-full ml-auto' onPress={() => {
+                                setShowSetTypeInfo(true);
+                                setSetTypeInfo('failure');
                             }}>
                                 <AntDesign
                                     name="question"
@@ -117,6 +126,11 @@ const RenderSet = ({ set, index, handleRemoveSet, handleRepChange, handleWeightC
                         </MenuOption>
                     </MenuOptions>
                 </Menu>
+                <SetTypeInfo
+                    showSetTypeInfo={showSetTypeInfo}
+                    setShowSetTypeInfo={setShowSetTypeInfo}
+                    setType={setTypeInfo}
+                />
             </View>
 
             <View className='flex-1 items-center gap-4 justify-center w-16'>

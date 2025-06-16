@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View, Modal } from 'react-native'
 import React from 'react'
-import FailureSetModal from './FailureSetModal'
+import FailureSetModal from './FailureSet'
 import WarmUpSet from './WarmUpSet'
-import DropSetModal from './DropSetModal'
+import DropSetModal from './DropSet'
 
 interface SetTypeInfoProps {
   showSetTypeInfo: boolean
@@ -15,10 +15,15 @@ const SetTypeInfo = ({ showSetTypeInfo, setShowSetTypeInfo, setType }: SetTypeIn
     <Modal
       visible={showSetTypeInfo}
       onRequestClose={() => setShowSetTypeInfo(false)}
+      transparent={true}
+      animationType='slide'
     >
-      {setType === 'warmup' && <WarmUpSet />}
-      {setType === 'drop' && <DropSetModal />}
-      {setType === 'failure' && <FailureSetModal />}
+      <View className='flex-1 items-center justify-center p-6 bg-black/50'>
+        {setType === 'warmup' && <WarmUpSet setShowSetTypeInfo={setShowSetTypeInfo} />}
+        {setType === 'drop' && <DropSetModal setShowSetTypeInfo={setShowSetTypeInfo} />}
+        {setType === 'failure' && <FailureSetModal setShowSetTypeInfo={setShowSetTypeInfo} />}
+      </View>
+
     </Modal>
   )
 }
