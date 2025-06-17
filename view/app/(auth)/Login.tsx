@@ -17,7 +17,7 @@ const Login = () => {
 
   const { setIsLoggedIn, setAuth } = useAuth();
 
-  const [user, setUser] = useState('');
+  const [email, setEmail] = useState('');
 
   const [pwd, setPwd] = useState('');
 
@@ -27,14 +27,14 @@ const Login = () => {
 
   useEffect(() => {
     setErrMsg('');
-  }, [user, pwd]);
+  }, [email, pwd]);
 
 
   async function handleSubmit() {
     try {
       const response = await axios.post(LOGIN_URL,
         {
-          user: user,
+          email: email,
           pwd: pwd,
         },
         {
@@ -43,13 +43,13 @@ const Login = () => {
         }
       );
 
-      setAuth({ user, pwd, accessToken: response.data.accessToken, userId: response.data.id })
+      setAuth({ email, pwd, accessToken: response.data.accessToken, userId: response.data.id })
       setIsLoggedIn(true)
 
       if (response.status === 200) {
         router.replace('/Workouts');
       }
-      setUser('');
+      setEmail('');
       setPwd('');
     } catch (err) {
       const axiosError = err as AxiosError;
@@ -74,9 +74,9 @@ const Login = () => {
 
           {errMsg && <Text className='font-semibold p-2 mt-2 text-red-700'>{errMsg}</Text>}
           <FormField
-            title='Username'
-            value={user}
-            handleChangeText={(e) => setUser(e)}
+            title='Email'
+            value={email}
+            handleChangeText={(e) => setEmail(e)}
             otherStyles={'mt-7'}
           />
 

@@ -1,7 +1,7 @@
 import { createContext, useState, ReactNode } from "react";
 
 interface AuthData {
-    user: string;
+    email: string;
     pwd?: string;
     accessToken: string;
     userId: string;

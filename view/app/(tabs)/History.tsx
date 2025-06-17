@@ -5,8 +5,9 @@ import useAxiosPrivate from '@/hooks/useAxiosPrivate';
 import WorkoutHistoryCard from '@/components/HistoryScreen/WorkoutHistoryCard';
 import useAuth from '@/hooks/useAuth';
 
-const WORKOUT_HISTORY_URL = '';
-const EXERCISE_HISTORY_URL = ''
+const WORKOUT_HISTORY_URL = '/api/history/workouts';
+const EXERCISE_HISTORY_URL = '/api/history/exercises'
+const SET_HISTORY_URL = '/api/history/sets'
 
 const History = () => {
 
@@ -18,23 +19,37 @@ const History = () => {
   const [oldSets, setOldSets] = useState([]);
 
   const fetchWorkoutHistory = async () => {
+    try {
 
+    } catch (error) {
+
+    }
   }
 
   const fetchExerciseHistory = async () => {
+    try {
 
+    } catch (error) {
+
+    }
   }
 
 
   const fetchSetHistory = async () => {
+    try {
 
+    } catch (error) {
+
+    }
   }
 
   useEffect(() => {
-
+    fetchWorkoutHistory();
+    fetchExerciseHistory();
+    fetchSetHistory();
   }, [])
 
-  
+
   return (
     <SafeAreaView className="bg-primary flex-1 p-8">
       <Text className='text-white font-bold text-4xl'>History</Text>

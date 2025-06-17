@@ -1,10 +1,10 @@
 const supabase = require('../config/dbConn');
 
-const updateUser = async (user, refreshToken) => {
+const updateUser = async (email, refreshToken) => {
     const { data, error } = await supabase
         .from('users')
         .update({ refresh_token: refreshToken })
-        .eq('user_name', user);
+        .eq('user_email', email);
     if (error) throw error;
     return data;
 };
@@ -125,14 +125,13 @@ const updateWorkout = async (workoutId, workoutName) => {
 }
 
 //---------------------------- Get Routes Queries ------------------------------//
-const findUser = async (user) => {
+const findUser = async (email) => {
 
     try {
-        console.log(user)
         const { data, error } = await supabase
             .from('users')
             .select('*')
-            .eq('user_name', user);
+            .eq('user_email', email);
         if (error) throw error;
         return data;
     } catch (error) {
