@@ -48,6 +48,7 @@ app.use('/api/exercises', require('./routes/api/exercises'));
 app.use('/api/workouts', require('./routes/api/workouts'));
 app.use('/api/sets', require('./routes/api/sets'));
 app.use('/api/user', require('./routes/api/user'));
+app.use('/api/history', require('./routes/api/history'));
 
 
 

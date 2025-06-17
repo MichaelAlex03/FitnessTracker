@@ -10,7 +10,5 @@ router.route('/:id')
     .get(workoutsController.getWorkouts)
     .patch(workoutsController.updateWorkout)
 
-router.route('/history')
-    .get(workoutsController.getWorkoutHistory)
 
 module.exports = router;

@@ -35,11 +35,6 @@ const updateWorkout = async (req, res) => {
     }
 }
 
-const getWorkoutHistory = async (req, res) => {
-    const { userId } = req.params;
-    const workoutHistory = await pg.getWorkoutHistory(userId);
-    return res.status(200).json({ workoutHistory: workoutHistory });
-}
 
 
 module.exports = {
@@ -47,5 +42,4 @@ module.exports = {
     createWorkout,
     deleteWorkout,
     updateWorkout,
-    getWorkoutHistory
 }
