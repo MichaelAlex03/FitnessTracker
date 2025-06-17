@@ -14,7 +14,6 @@ import useAuth from '@/hooks/useAuth';
 
 
 const EXERCISES_URL = '/api/exercises';
-const WORKOUT_URL = '/api/workouts';
 const SETS_URL = '/api/sets';
 
 interface EditWorkoutProps {
