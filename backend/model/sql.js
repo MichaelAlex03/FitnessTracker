@@ -208,6 +208,15 @@ const getAllSetsForExercise = async (userId, exerciseName) => {
     return data;
 };
 
+const getWorkoutHistory = async (userId) => {
+    const { data, error } = await supabase
+        .from('workout_history')
+        .select('*')
+        .eq('user_id', userId);
+    if (error) throw error;
+    return data;
+}
+
 //---------------------------- Post Routes Queries ------------------------------//
 
 const createUser = async (user, pwd) => {
@@ -262,7 +271,7 @@ const addSet = async (exercise, workoutId) => {
     return data;
 };
 
-const addSetsToHistory = async (workoutId, sets, exerciseHistoryMap) => {
+const addSetsToHistory = async (workoutId, sets, exerciseHistoryMap, userId) => {
     const { data, error } = await supabase
         .from('sets_history')
         .insert(sets.map(set => ({
@@ -270,18 +279,20 @@ const addSetsToHistory = async (workoutId, sets, exerciseHistoryMap) => {
             exercise_id: exerciseHistoryMap[set.exercise_id],
             exercise_reps: set.exercise_reps,
             exercise_weight: set.exercise_weight,
-            set_type: set.set_type
+            set_type: set.set_type,
+            user_id: userId
         })));
     if (error) throw error;
     return data;
 };
 
-const addExercisesToHistory = async (workoutHistoryId, exercises) => {
+const addExercisesToHistory = async (workoutHistoryId, exercises, userId) => {
     const { data, error } = await supabase
         .from('exercise_history')
         .insert(exercises.map(exercise => ({
             workout_id: workoutHistoryId,
-            exercise_name: exercise.exercise_name
+            exercise_name: exercise.exercise_name,
+            user_id: userId
         })))
         .select()
        
@@ -390,5 +401,6 @@ module.exports = {
     replaceExercise,
     addSetsToHistory,
     addExercisesToHistory,
-    addWorkoutToHistory
+    addWorkoutToHistory,
+    getWorkoutHistory
 }

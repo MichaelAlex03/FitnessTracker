@@ -36,7 +36,7 @@ const updateSets = async (req, res) => {
             const workoutHistoryId = await pg.addWorkoutToHistory(userId, workoutName);
             
             //Add exercises to history
-            const exerciseHistoryData = await pg.addExercisesToHistory(workoutHistoryId, exercises);
+            const exerciseHistoryData = await pg.addExercisesToHistory(workoutHistoryId, exercises, userId);
 
             // Create a mapping of old exercise IDs to new exercise history IDs
             const exerciseHistoryMap = {};  
@@ -46,7 +46,7 @@ const updateSets = async (req, res) => {
 
 
             //Add sets to history
-            await pg.addSetsToHistory(workoutHistoryId, exerciseSets, exerciseHistoryMap);
+            await pg.addSetsToHistory(workoutHistoryId, exerciseSets, exerciseHistoryMap, userId);
 
 
         }
