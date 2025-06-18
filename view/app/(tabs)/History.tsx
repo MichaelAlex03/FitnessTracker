@@ -1,13 +1,24 @@
 import { View, Text } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import useAxiosPrivate from '@/hooks/useAxiosPrivate';
 import WorkoutHistoryCard from '@/components/HistoryScreen/WorkoutHistoryCard';
 import useAuth from '@/hooks/useAuth';
+import { useFocusEffect } from '@react-navigation/native';
 
-const WORKOUT_HISTORY_URL = '/api/history/workouts';
-const EXERCISE_HISTORY_URL = '/api/history/exercises'
-const SET_HISTORY_URL = '/api/history/sets'
+const HISTORY_DATA_URL ='/api/history'
+
+interface OldWorkout{
+
+}
+
+interface OldExercise{
+
+}
+
+interface OldSet{
+
+}
 
 const History = () => {
 
@@ -20,34 +31,25 @@ const History = () => {
 
   const fetchWorkoutHistory = async () => {
     try {
+      const workoutHistoryData = await axiosPrivate.get(`${HISTORY_DATA_URL}/${auth.userId}`);
 
+      console.log(workoutHistoryData.data)
+
+      setOldWorkouts(workoutHistoryData.data.workouts);
+      setOldExercises(workoutHistoryData.data.exercises);
+      setOldSets(workoutHistoryData.data.sets)
     } catch (error) {
 
     }
   }
 
-  const fetchExerciseHistory = async () => {
-    try {
+  
 
-    } catch (error) {
-
-    }
-  }
-
-
-  const fetchSetHistory = async () => {
-    try {
-
-    } catch (error) {
-
-    }
-  }
-
-  useEffect(() => {
-    fetchWorkoutHistory();
-    fetchExerciseHistory();
-    fetchSetHistory();
-  }, [])
+  useFocusEffect(
+    useCallback(() => {
+      fetchWorkoutHistory();
+    }, [])
+  );
 
 
   return (
