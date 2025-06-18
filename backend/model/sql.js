@@ -207,14 +207,41 @@ const getAllSetsForExercise = async (userId, exerciseName) => {
     return data;
 };
 
-const getWorkoutHistory = async (userId) => {
-    const { data, error } = await supabase
-        .from('workout_history')
-        .select('*')
-        .eq('user_id', userId);
-    if (error) throw error;
-    return data;
+
+//Add pagination later
+const getRecentWorkoutHistory = async (userId, limit) => {
+
+    const [workoutsRes, exercisesRes, setsRes] = await Promise.all([
+        supabase
+            .from('workout_history')
+            .select('*')
+            .eq('user_id', userId),
+
+        supabase
+            .from('exercise_history')
+            .select('*')
+            .eq('user_id', userId),
+
+        supabase
+            .from('sets_history')
+            .select('*')
+            .eq('user_id', userId),
+    ]);
+
+    // Handle errors individually
+    if (workoutsRes.error) throw workoutsRes.error;
+    if (exercisesRes.error) throw exercisesRes.error;
+    if (setsRes.error) throw setsRes.error;
+
+    return {
+        workouts: workoutsRes.data,
+        exercises: exercisesRes.data,
+        sets: setsRes.data
+    };
 }
+
+
+
 
 //---------------------------- Post Routes Queries ------------------------------//
 
@@ -294,12 +321,12 @@ const addExercisesToHistory = async (workoutHistoryId, exercises, userId) => {
             user_id: userId
         })))
         .select()
-       
+
     if (error) throw error;
     return data;
 };
 
-const addWorkoutToHistory = async ( userId, workoutName) => {
+const addWorkoutToHistory = async (userId, workoutName) => {
     const { data, error } = await supabase
         .from('workout_history')
         .insert([{
@@ -401,5 +428,5 @@ module.exports = {
     addSetsToHistory,
     addExercisesToHistory,
     addWorkoutToHistory,
-    getWorkoutHistory
+    getRecentWorkoutHistory
 }
