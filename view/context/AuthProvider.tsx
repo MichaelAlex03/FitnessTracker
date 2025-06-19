@@ -5,6 +5,7 @@ interface AuthData {
     pwd?: string;
     accessToken: string;
     userId: string;
+    user: string
 }
 
 interface AuthContextType {

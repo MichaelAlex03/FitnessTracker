@@ -5,6 +5,7 @@ import useAxiosPrivate from '@/hooks/useAxiosPrivate';
 import WorkoutHistoryCard from '@/components/HistoryScreen/WorkoutHistoryCard';
 import useAuth from '@/hooks/useAuth';
 import { useFocusEffect } from '@react-navigation/native';
+import WorkoutHistoryModal from '@/components/HistoryScreen/WorkoutHistoryModal';
 
 const HISTORY_DATA_URL = '/api/history'
 
@@ -40,6 +41,7 @@ const History = () => {
   const [oldWorkouts, setOldWorkouts] = useState<OldWorkout[]>([]);
   const [oldExercises, setOldExercises] = useState<OldExercise[]>([]);
   const [oldSets, setOldSets] = useState<OldSet[]>([]);
+  
 
   const fetchWorkoutHistory = async () => {
     try {
@@ -54,8 +56,6 @@ const History = () => {
 
     }
   }
-
-
 
   useFocusEffect(
     useCallback(() => {
@@ -84,6 +84,7 @@ const History = () => {
         }}
         keyExtractor={(item) => item.id.toString()}
       />
+    
     </SafeAreaView>
   )
 }

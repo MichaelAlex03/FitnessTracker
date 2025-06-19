@@ -43,7 +43,7 @@ const Login = () => {
         }
       );
 
-      setAuth({ email, pwd, accessToken: response.data.accessToken, userId: response.data.id })
+      setAuth({ email, pwd, accessToken: response.data.accessToken, userId: response.data.id, user: response.data.user })
       setIsLoggedIn(true)
 
       if (response.status === 200) {
