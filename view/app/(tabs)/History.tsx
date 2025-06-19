@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native'
+import { View, Text, FlatList } from 'react-native'
 import React, { useEffect, useState, useCallback } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import useAxiosPrivate from '@/hooks/useAxiosPrivate';
@@ -6,18 +6,30 @@ import WorkoutHistoryCard from '@/components/HistoryScreen/WorkoutHistoryCard';
 import useAuth from '@/hooks/useAuth';
 import { useFocusEffect } from '@react-navigation/native';
 
-const HISTORY_DATA_URL ='/api/history'
+const HISTORY_DATA_URL = '/api/history'
 
-interface OldWorkout{
-
+interface OldWorkout {
+  id: number
+  created_at: Date
+  workout_name: string
+  user_id: string
 }
 
-interface OldExercise{
-
+interface OldExercise {
+  id: number
+  exercise_name: string
+  workout_id: number
+  user_id: string
 }
 
-interface OldSet{
-
+interface OldSet {
+  id: string
+  exercise_id: number
+  exercise_reps: number
+  exercise_weight: number
+  workout_id: number
+  set_type: string
+  user_id: string
 }
 
 const History = () => {
@@ -25,9 +37,9 @@ const History = () => {
   const axiosPrivate = useAxiosPrivate();
   const { auth } = useAuth();
 
-  const [oldWorkouts, setOldWorkouts] = useState([]);
-  const [oldExercises, setOldExercises] = useState([]);
-  const [oldSets, setOldSets] = useState([]);
+  const [oldWorkouts, setOldWorkouts] = useState<OldWorkout[]>([]);
+  const [oldExercises, setOldExercises] = useState<OldExercise[]>([]);
+  const [oldSets, setOldSets] = useState<OldSet[]>([]);
 
   const fetchWorkoutHistory = async () => {
     try {
@@ -43,7 +55,7 @@ const History = () => {
     }
   }
 
-  
+
 
   useFocusEffect(
     useCallback(() => {
@@ -56,9 +68,22 @@ const History = () => {
     <SafeAreaView className="bg-primary flex-1 p-8">
       <Text className='text-white font-bold text-4xl'>History</Text>
 
-      <View className='flex-1 mt-10'>
-        <WorkoutHistoryCard />
-      </View>
+      <FlatList
+        data={oldWorkouts}
+        renderItem={({ item }) => {
+          const workoutExercises = oldExercises.filter(exercise => exercise.workout_id === item.id)
+          const workoutSets = oldSets.filter(set => set.workout_id === item.id);
+
+          return (
+            <WorkoutHistoryCard
+              workout={item}
+              sets={workoutSets}
+              exercises={workoutExercises}
+            />
+          )
+        }}
+        keyExtractor={(item) => item.id.toString()}
+      />
     </SafeAreaView>
   )
 }
