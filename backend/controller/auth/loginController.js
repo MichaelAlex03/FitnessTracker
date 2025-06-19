@@ -26,7 +26,7 @@ const handleLogin = async (req, res) => {
         await pg.updateUser(email, refreshToken);
 
         res.cookie('jwt', refreshToken, { httpOnly: true, sameSite: 'None', maxAge: 24 * 60 * 60 * 1000 });
-        res.status(200).json({ accessToken, id: foundUser[0].id });
+        res.status(200).json({ accessToken, id: foundUser[0].id, user: foundUser[0].user_name });
     } else {
         res.sendStatus(401);
     }
