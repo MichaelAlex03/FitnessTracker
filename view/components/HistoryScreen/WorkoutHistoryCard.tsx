@@ -35,18 +35,23 @@ interface HistoryCardProps {
   sets: Set[]
   exercises: Exercise[]
   workout: Workout
+  refresh: number
+  setRefresh: (val: number) => void
 }
 
 const DELETE_HISTORY_URL = '/api/history/delete'
 
-const WorkoutHistoryCard = ({ workout, exercises, sets }: HistoryCardProps) => {
+const WorkoutHistoryCard = ({ workout, exercises, sets, refresh, setRefresh }: HistoryCardProps) => {
 
   const axiosPrivate = useAxiosPrivate();
 
   const handleDeleteWorkout = async (workoutId: Number) => {
     try {
       const deleteResponse = await axiosPrivate.delete(`${DELETE_HISTORY_URL}/${workoutId}`);
-
+      console.log(deleteResponse)
+      if (deleteResponse.status === 204) {
+        setRefresh(refresh + 1);
+      }
     } catch (error) {
       console.error(error)
     }
@@ -77,16 +82,19 @@ const WorkoutHistoryCard = ({ workout, exercises, sets }: HistoryCardProps) => {
               }}
             >
               <MenuOption
-                onSelect={() => { 
+                onSelect={() => {
                   Alert.alert("Delete Workout From History", "Are your sure you want to permanately remove this workout and its info. Cannot be reversed",
                     [
                       {
                         text: "Ok",
                         onPress: () => handleDeleteWorkout(workout.id)
                       },
+                      {
+                        text: "Cancel"
+                      }
                     ]
                   )
-                  handleDeleteWorkout(workout.id) }}
+                }}
                 style={{ padding: 12, flexDirection: 'row', alignItems: 'center' }}
               >
                 <AntDesign name="delete" size={20} color="red" className='mr-2' />
@@ -122,7 +130,7 @@ const WorkoutHistoryCard = ({ workout, exercises, sets }: HistoryCardProps) => {
         </View>
 
         <View className='flex mt-5'>
-          {exercises.slice(0,4).map((exercise, index) => {
+          {exercises.slice(0, 4).map((exercise, index) => {
             // Filter sets for this exercise
             const exerciseSets = sets.filter(set => set.exercise_id === exercise.id);
 
@@ -166,7 +174,7 @@ const WorkoutHistoryCard = ({ workout, exercises, sets }: HistoryCardProps) => {
             workout={workout}
             showWorkoutHistory={showWorkoutHistory}
             setShowWorkoutHistory={setShowWorkoutHistory}
-          />  
+          />
         )
       }
     </View>

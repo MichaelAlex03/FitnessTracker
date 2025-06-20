@@ -41,6 +41,7 @@ const History = () => {
   const [oldWorkouts, setOldWorkouts] = useState<OldWorkout[]>([]);
   const [oldExercises, setOldExercises] = useState<OldExercise[]>([]);
   const [oldSets, setOldSets] = useState<OldSet[]>([]);
+  const [refresh, setRefresh] = useState<number>(0);
   
 
   const fetchWorkoutHistory = async () => {
@@ -60,7 +61,7 @@ const History = () => {
   useFocusEffect(
     useCallback(() => {
       fetchWorkoutHistory();
-    }, [])
+    }, [refresh])
   );
 
 
@@ -79,6 +80,8 @@ const History = () => {
               workout={item}
               sets={workoutSets}
               exercises={workoutExercises}
+              refresh={refresh}
+              setRefresh={setRefresh}
             />
           )
         }}
