@@ -397,6 +397,28 @@ const deleteExercise = async (exerciseId) => {
     }
 };
 
+const deleteWorkoutFromHistory = async (workoutId) => {
+    
+    const { data: setsData, error: setsError } = await supabase
+        .from('sets_history')
+        .delete()
+        .eq('workout_id', workoutId)
+    if (setsError) throw setsError
+
+    const { data: exerciseData, error: exerciseError } = await supabase
+        .from('exercise_history')
+        .delete()
+        .eq('workout_id', workoutId)
+    if (exerciseError) throw exerciseError
+
+    const { data: workoutData, error: workoutError } = await supabase
+        .from('workout_history')
+        .delete()
+        .eq('id', workoutId)
+    if (workoutError) throw workoutError
+    
+}
+
 
 
 //Exports
@@ -428,5 +450,6 @@ module.exports = {
     addSetsToHistory,
     addExercisesToHistory,
     addWorkoutToHistory,
-    getRecentWorkoutHistory
+    getRecentWorkoutHistory,
+    deleteWorkoutFromHistory
 }
