@@ -129,7 +129,7 @@ const RenderSet = ({ set, index, handleRemoveSet, handleRepChange, handleWeightC
 
             <View className='flex-1 items-center gap-4 justify-center w-16'>
                 {index === 0 && <Text className='text-white font-semibold text-lg'>Prev</Text>}
-                <Text className='text-white font-semibold text-lg py-1'>
+                <Text className={`text-white font-semibold py-1 ${set.exercise_reps >= 100 || set.exercise_weight >= 100 ? 'text-xs' : 'text-md'}`}>
                     {/* <AntDesign name="minus" size={20} color="white" /> */}
                     {set.exercise_reps} lb  x {set.exercise_weight}
                 </Text>
