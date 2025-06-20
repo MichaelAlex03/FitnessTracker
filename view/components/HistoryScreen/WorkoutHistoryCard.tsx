@@ -1,9 +1,10 @@
-import { Text, View, TouchableOpacity } from 'react-native'
+import { Text, View, TouchableOpacity, Alert } from 'react-native'
 import React, { useState } from 'react'
 import { Menu, MenuOption, MenuOptions, MenuTrigger } from 'react-native-popup-menu'
 import { AntDesign } from '@expo/vector-icons'
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import WorkoutHistoryModal from './WorkoutHistoryModal';
+import useAxiosPrivate from '@/hooks/useAxiosPrivate';
 
 
 interface Set {
@@ -36,10 +37,19 @@ interface HistoryCardProps {
   workout: Workout
 }
 
+const DELETE_HISTORY_URL = '/api/history/delete'
+
 const WorkoutHistoryCard = ({ workout, exercises, sets }: HistoryCardProps) => {
 
-  const handleDeleteWorkout = async () => {
+  const axiosPrivate = useAxiosPrivate();
 
+  const handleDeleteWorkout = async (workoutId: Number) => {
+    try {
+      const deleteResponse = await axiosPrivate.delete(`${DELETE_HISTORY_URL}/${workoutId}`);
+
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   const dateOfWorkout = workout.created_at;
@@ -67,7 +77,16 @@ const WorkoutHistoryCard = ({ workout, exercises, sets }: HistoryCardProps) => {
               }}
             >
               <MenuOption
-                onSelect={() => { handleDeleteWorkout() }}
+                onSelect={() => { 
+                  Alert.alert("Delete Workout From History", "Are your sure you want to permanately remove this workout and its info. Cannot be reversed",
+                    [
+                      {
+                        text: "Ok",
+                        onPress: () => handleDeleteWorkout(workout.id)
+                      },
+                    ]
+                  )
+                  handleDeleteWorkout(workout.id) }}
                 style={{ padding: 12, flexDirection: 'row', alignItems: 'center' }}
               >
                 <AntDesign name="delete" size={20} color="red" className='mr-2' />

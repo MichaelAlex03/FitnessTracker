@@ -1,4 +1,4 @@
-import { View, Text, FlatList } from 'react-native'
+import { View, Text, FlatList, StatusBar } from 'react-native'
 import React, { useEffect, useState, useCallback } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import useAxiosPrivate from '@/hooks/useAxiosPrivate';
@@ -84,7 +84,7 @@ const History = () => {
         }}
         keyExtractor={(item) => item.id.toString()}
       />
-    
+      <StatusBar className='bg-white'/>
     </SafeAreaView>
   )
 }

@@ -1,4 +1,4 @@
-import { Text, View, Modal, TouchableOpacity } from 'react-native'
+import { Text, View, Modal, TouchableOpacity, StatusBar } from 'react-native'
 import React from 'react'
 import { Menu, MenuOption, MenuOptions, MenuTrigger } from 'react-native-popup-menu'
 import { AntDesign } from '@expo/vector-icons'
@@ -114,9 +114,9 @@ const WorkoutHistoryModal = ({ workout, exercises, sets, showWorkoutHistory, set
                                                 <Text className='text-white font-bold text-xl'>{exercise.exercise_name}</Text>
                                                 <Text className='text-white font-bold text-xl'>1RM</Text>
                                             </View>
-                                            {exerciseSets.map((set, index) => {
+                                            {exerciseSets.map((set) => {
                                                 return (
-                                                    <View className='flex flex-row justify-between'>
+                                                    <View className='flex flex-row justify-between' key={set.id}>
                                                         <Text className='text-white text-lg font-base mt-1'>
                                                             {set.exercise_weight} lb x {set.exercise_reps} reps
                                                         </Text>

@@ -227,6 +227,7 @@ export default function Workouts() {
       {
         editWorkout && <EditWorkout editWorkout={editWorkout} setEditWorkout={setEditWorkout} workoutId={activeWorkout} setActiveWorkout={setActiveWorkout} refresh={refresh} setRefresh={setRefresh} workoutName={workoutName} />
       }
+      <StatusBar className='bg-white'/>
 
     </SafeAreaView>
   )
