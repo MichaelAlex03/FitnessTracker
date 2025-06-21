@@ -24,7 +24,20 @@ const deleteWorkout = async (req, res) => {
     }
 }
 
+const getPreviousSets = async (req, res) => {
+    const { exerciseName } = req.params
+
+    try {
+        const previousSets = await pg.getPreviousSets(exerciseName);
+        return res.status(200).json({ "message": "previous sets retrieved", previousSets });
+    } catch (error) {
+        console.error(error);
+        return res.status(500), json({ "message": "retrieval failed" });
+    }
+}
+
 module.exports = {
     getWorkoutHistory,
-    deleteWorkout
+    deleteWorkout,
+    getPreviousSets
 }

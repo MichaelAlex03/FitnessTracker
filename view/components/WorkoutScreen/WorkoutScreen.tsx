@@ -25,6 +25,17 @@ interface WorkoutScreenProps {
     workoutName: string
 }
 
+interface HistorySet {
+    id: string
+    exercise_id: number
+    exercise_reps: number
+    workout_id: number
+    exercise_weight: number
+    set_type: string
+    user_id: string
+    exercise_name: string
+}
+
 interface Exercise {
     id: number,
     exercise_name: string,
@@ -41,6 +52,8 @@ interface Sets {
     set_type: string
 }
 
+const PREVIOUS_SETS_URL = '/api/history/sets'
+
 
 const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkout, workoutName }: WorkoutScreenProps) => {
 
@@ -52,6 +65,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
     const [toggleReplaceExercise, setToggleReplaceExercise] = useState(false)
     const [showTimerPopup, setShowTimerPopup] = useState(false);
     const [exerciseToReplace, setExerciseToReplace] = useState<string>('');
+    const [previousSetsMap, setPreviousSetsMap] = useState<Record<string, HistorySet[]>>({});
 
 
     const axiosPrivate = useAxiosPrivate();
@@ -89,6 +103,28 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
     }, [refresh]);
 
     console.log("SETS", exerciseSets)
+
+    useEffect(() => {
+        const fetchAllPreviousSets = async () => {
+            const newPreviousSetsMap: Record<string, HistorySet[]> = {};
+            
+            for (const exercise of exercises) {
+                try {
+                    const previousSetsData = await axiosPrivate.get(`${PREVIOUS_SETS_URL}/${exercise.exercise_name}`);
+                    newPreviousSetsMap[exercise.exercise_name] = previousSetsData.data.previousSets;
+                } catch (error) {
+                    console.error(`Error fetching previous sets for ${exercise.exercise_name}:`, error);
+                    newPreviousSetsMap[exercise.exercise_name] = [];
+                }
+            }
+            
+            setPreviousSetsMap(newPreviousSetsMap);
+        };
+
+        if (exercises.length > 0) {
+            fetchAllPreviousSets();
+        }
+    }, [exercises]);
 
     const handleAddSet = (item: Exercise) => {
         let setID = uuid.v4();
@@ -194,7 +230,10 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
     const renderItem = (item: Exercise) => {
         // Filter sets for this specific exercise
         const exerciseSetsFiltered = exerciseSets.filter(set => set.exercise_id === item.id);
-
+        
+        // Get previous sets for this exercise from the map
+        const previousSets = previousSetsMap[item.exercise_name] || [];
+        console.log("PREV", previousSets)
 
         return (
             <View className='p-4'>
@@ -256,6 +295,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                             handleRepChange={handleRepChange}
                             handleWeightChange={handleWeightChange}
                             handleSetTypeChange={handleSetTypeChange}
+                            prevSet={previousSets[index] || {}}
                         />
                     ))}
 

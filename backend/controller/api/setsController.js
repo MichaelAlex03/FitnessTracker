@@ -41,8 +41,10 @@ const updateSets = async (req, res) => {
             // Create a mapping of old exercise IDs to new exercise history IDs
             const exerciseHistoryMap = {};  
             exercises.forEach((exercise, index) => {
-                exerciseHistoryMap[exercise.id] = exerciseHistoryData[index].id
+                exerciseHistoryMap[exercise.id] = [exerciseHistoryData[index].id, exerciseHistoryData[index].exercise_name]
             })
+
+            console.log(exerciseHistoryMap)
 
 
             //Add sets to history

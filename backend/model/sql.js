@@ -126,7 +126,6 @@ const updateWorkout = async (workoutId, workoutName) => {
 
 //---------------------------- Get Routes Queries ------------------------------//
 const findUser = async (email) => {
-
     try {
         const { data, error } = await supabase
             .from('users')
@@ -240,7 +239,14 @@ const getRecentWorkoutHistory = async (userId, limit) => {
     };
 }
 
-
+const getPreviousSets = async (exerciseName) => {
+    const { data, error } = await supabase
+        .from('sets_history')
+        .select('*')
+        .eq('exercise_name', exerciseName)
+    if (error) throw error
+    return data
+}
 
 
 //---------------------------- Post Routes Queries ------------------------------//
@@ -302,11 +308,12 @@ const addSetsToHistory = async (workoutId, sets, exerciseHistoryMap, userId) => 
         .from('sets_history')
         .insert(sets.map(set => ({
             workout_id: workoutId,
-            exercise_id: exerciseHistoryMap[set.exercise_id],
+            exercise_id: exerciseHistoryMap[set.exercise_id][0],
             exercise_reps: set.exercise_reps,
             exercise_weight: set.exercise_weight,
             set_type: set.set_type,
-            user_id: userId
+            user_id: userId,
+            exercise_name: exerciseHistoryMap[set.exercise_id][1]
         })));
     if (error) throw error;
     return data;
@@ -398,7 +405,7 @@ const deleteExercise = async (exerciseId) => {
 };
 
 const deleteWorkoutFromHistory = async (workoutId) => {
-    
+
     const { data: setsData, error: setsError } = await supabase
         .from('sets_history')
         .delete()
@@ -416,7 +423,7 @@ const deleteWorkoutFromHistory = async (workoutId) => {
         .delete()
         .eq('id', workoutId)
     if (workoutError) throw workoutError
-    
+
 }
 
 
@@ -451,5 +458,6 @@ module.exports = {
     addExercisesToHistory,
     addWorkoutToHistory,
     getRecentWorkoutHistory,
-    deleteWorkoutFromHistory
+    deleteWorkoutFromHistory,
+    getPreviousSets
 }

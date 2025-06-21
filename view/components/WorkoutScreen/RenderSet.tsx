@@ -1,10 +1,11 @@
 import { View, Text, TouchableOpacity, TextInput } from 'react-native';
 import { Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-native-popup-menu';
 import { AntDesign } from '@expo/vector-icons';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import SetTypeInfo from '../SetTypeModal/SetTypeInfo';
+import useAxiosPrivate from '@/hooks/useAxiosPrivate';
 
-interface Sets {
+interface Set {
     id: string,
     exercise_id: number,
     exercise_reps: number,
@@ -13,20 +14,44 @@ interface Sets {
     set_type: string
 }
 
-interface SetProps {
-    set: Sets;
-    index: number;
-    handleRemoveSet: (id: String) => void;
-    handleRepChange?: (set: Sets, reps: number) => void
-    handleWeightChange?: (set: Sets, weight: number) => void
-    handleSetTypeChange: (id: string, type: string) => void,
-    editWorkout?: boolean
+interface HistorySet {
+    id: string
+    exercise_id: number
+    exercise_reps: number
+    workout_id: number
+    exercise_weight: number
+    set_type: string
+    user_id: string
+    exercise_name: string
 }
 
-const RenderSet = ({ set, index, handleRemoveSet, handleRepChange, handleWeightChange, handleSetTypeChange, editWorkout }: SetProps) => {
+interface SetProps {
+    set: Set;
+    index: number;
+    handleRemoveSet: (id: String) => void;
+    handleRepChange?: (set: Set, reps: number) => void
+    handleWeightChange?: (set: Set, weight: number) => void
+    handleSetTypeChange: (id: string, type: string) => void,
+    editWorkout?: boolean,
+    prevSet: HistorySet
+}
+
+
+const RenderSet = ({
+    set,
+    index,
+    handleRemoveSet,
+    handleRepChange,
+    handleWeightChange,
+    handleSetTypeChange,
+    editWorkout,
+    prevSet
+}: SetProps) => {
 
     const [showSetTypeInfo, setShowSetTypeInfo] = useState(false);
     const [setTypeInfo, setSetTypeInfo] = useState('');
+
+    console.log("HEREEE", prevSet)
 
     return (
         <View className='flex flex-row items-center gap-4 py-2'>
@@ -130,8 +155,13 @@ const RenderSet = ({ set, index, handleRemoveSet, handleRepChange, handleWeightC
             <View className='flex-1 items-center gap-4 justify-center w-16'>
                 {index === 0 && <Text className='text-white font-semibold text-lg'>Prev</Text>}
                 <Text className={`text-white font-semibold py-1 ${set.exercise_reps >= 100 || set.exercise_weight >= 100 ? 'text-xs' : 'text-md'}`}>
-                    {/* <AntDesign name="minus" size={20} color="white" /> */}
-                    {set.exercise_reps} lb  x {set.exercise_weight}
+                    {
+                        prevSet.exercise_reps && prevSet.exercise_weight ? (
+                            `${prevSet.exercise_reps} lb x ${prevSet.exercise_weight}`
+                        ) : (
+                            <AntDesign name="minus" size={20} color="white" />
+                        )
+                    }
                 </Text>
             </View>
             <View className='flex-1 items-center gap-4 justify-center'>
