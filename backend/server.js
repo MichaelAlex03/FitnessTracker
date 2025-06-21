@@ -7,7 +7,7 @@ const { logger } = require('./middleware/logEvents');
 const path = require('path');
 const verifyJWT = require('./middleware/verifyJWT');
 const credentials = require('./middleware/credentials');
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 const IP = process.env.IP
 
 const app = express();
