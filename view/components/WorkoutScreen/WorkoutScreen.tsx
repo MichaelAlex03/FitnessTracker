@@ -170,7 +170,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                 workoutName,
                 save: false,
                 userId: auth.userId,
-                elapsedTime: 10
+                elapsedTime: 62
 
             });
 

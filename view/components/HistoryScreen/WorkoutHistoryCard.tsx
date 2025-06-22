@@ -66,7 +66,7 @@ const WorkoutHistoryCard = ({ workout, exercises, sets, refresh, setRefresh }: H
     const minutes = Math.floor((workout.time_elapsed % 3600) / 60);
     const remainingSeconds = workout.time_elapsed % 60;
 
-    return minutes > 0 ? `${minutes.toString()}` : `${remainingSeconds.toString().padStart(2, '0')}s`;
+    return minutes > 0 ? `${minutes.toString()}m` : `${remainingSeconds.toString().padStart(2, '0')}s`;
 };
 
 
