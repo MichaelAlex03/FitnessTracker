@@ -24,7 +24,7 @@ const getWorkoutSets = async (req, res) => {
 }
 
 const updateSets = async (req, res) => {
-    const { exerciseSets, exercises, workoutId, workoutName, save, userId } = req.body;
+    const { exerciseSets, exercises, workoutId, workoutName, save, userId, elapsedTime } = req.body;
 
     try {
         //First update workout template
@@ -33,7 +33,7 @@ const updateSets = async (req, res) => {
         if (save === false) {
 
             //Add workout to history
-            const workoutHistoryId = await pg.addWorkoutToHistory(userId, workoutName);
+            const workoutHistoryId = await pg.addWorkoutToHistory(userId, workoutName, elapsedTime);
             
             //Add exercises to history
             const exerciseHistoryData = await pg.addExercisesToHistory(workoutHistoryId, exercises, userId);

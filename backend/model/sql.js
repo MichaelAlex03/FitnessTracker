@@ -333,13 +333,14 @@ const addExercisesToHistory = async (workoutHistoryId, exercises, userId) => {
     return data;
 };
 
-const addWorkoutToHistory = async (userId, workoutName) => {
+const addWorkoutToHistory = async (userId, workoutName, elapsedTime) => {
     const { data, error } = await supabase
         .from('workout_history')
         .insert([{
             user_id: userId,
             workout_name: workoutName,
             created_at: new Date().toISOString(),
+            time_elapsed: elapsedTime
         }])
         .select();
     if (error) throw error;
