@@ -1,5 +1,5 @@
 import { Text, View, FlatList, Modal, TextInput, Alert } from 'react-native'
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useContext } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { TouchableOpacity } from 'react-native'
 import useAxiosPrivate from '@/hooks/useAxiosPrivate'
@@ -11,6 +11,7 @@ import ExerciseListPopup from '@/components/WorkoutScreen/ExerciseListPopup';
 import WorkoutTimer from './WorkoutTimer'
 import uuid from 'react-native-uuid';
 import useAuth from '@/hooks/useAuth'
+import TimerContext from '@/context/TimerContext'
 
 
 const EXERCISES_URL = '/api/exercises';
@@ -107,7 +108,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
     useEffect(() => {
         const fetchAllPreviousSets = async () => {
             const newPreviousSetsMap: Record<string, HistorySet[]> = {};
-            
+
             for (const exercise of exercises) {
                 try {
                     const previousSetsData = await axiosPrivate.get(`${PREVIOUS_SETS_URL}/${exercise.exercise_name}`);
@@ -117,7 +118,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                     newPreviousSetsMap[exercise.exercise_name] = [];
                 }
             }
-            
+
             setPreviousSetsMap(newPreviousSetsMap);
         };
 
@@ -152,6 +153,8 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
 
     const handleSave = async () => {
 
+        // const { elapsedTime } = useContext(TimerContext)
+
         //Check if there are any null values
         const nullSets = exerciseSets.filter(set => (set.exercise_reps === 0 || set.exercise_weight === 0));
         if (nullSets.length > 0) {
@@ -166,7 +169,9 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                 exercises,
                 workoutName,
                 save: false,
-                userId: auth.userId
+                userId: auth.userId,
+                elapsedTime: 10
+
             });
 
             console.log(response)
@@ -230,7 +235,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
     const renderItem = (item: Exercise) => {
         // Filter sets for this specific exercise
         const exerciseSetsFiltered = exerciseSets.filter(set => set.exercise_id === item.id);
-        
+
         // Get previous sets for this exercise from the map
         const previousSets = previousSetsMap[item.exercise_name] || [];
         console.log("PREV", previousSets)

@@ -12,6 +12,7 @@ interface Set {
     exercise_weight: number
     set_type: string
     user_id: string
+    exercise_name: string
 }
 
 interface Exercise {
@@ -26,6 +27,7 @@ interface Workout {
     created_at: Date
     workout_name: string
     user_id: string
+    time_elapsed: number
 }
 
 interface ModalHistoryProps {

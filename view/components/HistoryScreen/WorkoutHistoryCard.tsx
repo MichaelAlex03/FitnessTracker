@@ -14,7 +14,8 @@ interface Set {
   workout_id: number
   exercise_weight: number
   set_type: string
-  user_id: string
+  user_id: string,
+  exercise_name: string
 }
 
 interface Exercise {
@@ -28,7 +29,8 @@ interface Workout {
   id: number
   created_at: Date
   workout_name: string
-  user_id: string
+  user_id: string,
+  time_elapsed: number
 }
 
 interface HistoryCardProps {
@@ -44,6 +46,9 @@ const DELETE_HISTORY_URL = '/api/history/delete'
 const WorkoutHistoryCard = ({ workout, exercises, sets, refresh, setRefresh }: HistoryCardProps) => {
 
   const axiosPrivate = useAxiosPrivate();
+  const dateOfWorkout = workout.created_at;
+  const totalWeight = sets.reduce((sum, set) => sum + set.exercise_weight, 0);
+  const [showWorkoutHistory, setShowWorkoutHistory] = useState(false);
 
   const handleDeleteWorkout = async (workoutId: Number) => {
     try {
@@ -57,9 +62,14 @@ const WorkoutHistoryCard = ({ workout, exercises, sets, refresh, setRefresh }: H
     }
   }
 
-  const dateOfWorkout = workout.created_at;
-  const totalWeight = sets.reduce((sum, set) => sum + set.exercise_weight, 0);
-  const [showWorkoutHistory, setShowWorkoutHistory] = useState(false);
+  const formatTime = () => {
+    const minutes = Math.floor((workout.time_elapsed % 3600) / 60);
+    const remainingSeconds = workout.time_elapsed % 60;
+
+    return minutes > 0 ? `${minutes.toString()}` : `${remainingSeconds.toString().padStart(2, '0')}s`;
+};
+
+
 
 
   return (
@@ -115,7 +125,7 @@ const WorkoutHistoryCard = ({ workout, exercises, sets, refresh, setRefresh }: H
         <View className='flex flex-row justify-between items-center mt-5'>
           <View className='flex flex-row items-center'>
             <AntDesign name="clockcircleo" size={20} color="white" className='mr-2' />
-            <Text className='text-white'>51m</Text>
+            <Text className='text-white'>{formatTime()}</Text>
           </View>
 
           <View className='flex flex-row items-center'>

@@ -13,7 +13,8 @@ interface OldWorkout {
   id: number
   created_at: Date
   workout_name: string
-  user_id: string
+  user_id: string,
+  time_elapsed: number
 }
 
 interface OldExercise {
@@ -30,7 +31,8 @@ interface OldSet {
   exercise_weight: number
   workout_id: number
   set_type: string
-  user_id: string
+  user_id: string,
+  exercise_name: string
 }
 
 const History = () => {
