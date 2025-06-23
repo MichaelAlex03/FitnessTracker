@@ -13,13 +13,17 @@ import useAxiosPrivate from '../../hooks/useAxiosPrivate'
 
 const UPDATE_URL = '/api/user'
 const LOGOUT_URL = '/auth/logout'
+const S3_URL = '/api/getPresignedUrl'
 const PHONE_REGEX = /^[0-9]{3}-[0-9]{3}-[0-9]{4}$/
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 
 interface ImagePickerProps {
   profileImage: string | null,
-  setProfileImage: React.Dispatch<React.SetStateAction<null | string>>
+  setProfileImage: React.Dispatch<React.SetStateAction<null | string>>,
+  isEdit: boolean,
+  setPendingImage: React.Dispatch<React.SetStateAction<null | string>>
 }
+
 
 const Profile = () => {
 
@@ -28,6 +32,7 @@ const Profile = () => {
 
   const [refresh, setRefresh] = useState(0);
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [pendingImage, setPendingImage] = useState<string | null>(null);
   const [isEdit, setIsEdit] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -42,6 +47,8 @@ const Profile = () => {
       setName(userInfo[0].user_name);
       setEmail(userInfo[0].user_email);
       setPhone(userInfo[0].user_phone);
+      setProfileImage(userInfo[0].profile_image || null);
+      setPendingImage(null);
       console.log("Setting user info to state:", userInfo);
     }
   }, [userInfo]);
@@ -51,6 +58,8 @@ const Profile = () => {
     setName(userInfo[0].user_name);
     setEmail(userInfo[0].user_email);
     setPhone(userInfo[0].user_phone);
+    setProfileImage(userInfo[0].profile_image || null);
+    setPendingImage(null);
     setIsEdit(false);
   }
 
@@ -68,7 +77,7 @@ const Profile = () => {
   const handleUpdate = async () => {
 
     //Check for any changes if not no need to make update call
-    if (name === userInfo[0]?.user_name && email === userInfo[0]?.user_email && phone === userInfo[0]?.user_phone){
+    if (name === userInfo[0]?.user_name && email === userInfo[0]?.user_email && phone === userInfo[0]?.user_phone && userInfo[0]?.profile_image === profileImage) {
       Alert.alert("No changes made", "No fields were changed. Please make changes to update");
       return;
     }
@@ -85,12 +94,40 @@ const Profile = () => {
       return;
     }
 
+    let imageUrl = profileImage; // default to current image
+
+    // If there's a new image picked (pendingImage), upload it
+    if (pendingImage) {
+      try {
+        // Get file type
+        let fileType = 'image/jpeg';
+        if (pendingImage.endsWith('.png')) fileType = 'image/png';
+        else if (pendingImage.endsWith('.jpg') || pendingImage.endsWith('.jpeg')) fileType = 'image/jpeg';
+
+        const blob = await fetch(pendingImage).then(res => res.blob());
+        const response = await axiosPrivate.get(S3_URL, { params: { fileType } });
+        const { uploadUrl, publicUrl } = response.data;
+
+        const uploadRes = await fetch(uploadUrl, {
+          method: 'PUT',
+          headers: { 'Content-Type': fileType },
+          body: blob,
+        });
+
+        if (!uploadRes.ok) throw new Error('Failed to upload to S3');
+        imageUrl = publicUrl;
+      } catch (error) {
+        Alert.alert('Upload Failed', 'Could not upload profile image.');
+        return;
+      }
+    }
 
     const updateData = {
       name,
       phone,
       email,
-      prevName: auth?.user
+      prevName: auth?.user,
+      imageUrl,
     }
 
     try {
@@ -101,6 +138,7 @@ const Profile = () => {
       setAuth({ ...auth, user: name })
       setRefresh(refresh + 1);
       setIsEdit(false);
+      setPendingImage(null); // clear pending image after update
     } catch (error) {
       Alert.alert('Failed Update', 'Failed to update user info')
     }
@@ -130,6 +168,8 @@ const Profile = () => {
             <ProfileImagePicker
               profileImage={profileImage}
               setProfileImage={setProfileImage}
+              isEdit={isEdit}
+              setPendingImage={setPendingImage}
             />
 
           </View>
@@ -209,10 +249,16 @@ const Profile = () => {
 export default Profile
 
 
-const ProfileImagePicker = ({ profileImage, setProfileImage }: ImagePickerProps) => {
+const ProfileImagePicker = ({ profileImage, setProfileImage, isEdit, setPendingImage }: ImagePickerProps) => {
+
+  const axiosPrivate = useAxiosPrivate();
+
 
   const pickImage = async () => {
-
+    if (!isEdit) {
+      Alert.alert('Edit Required', 'Tap "Edit" before changing your profile picture.');
+      return;
+    }
     //Asks user for permission to access media library
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
@@ -234,7 +280,9 @@ const ProfileImagePicker = ({ profileImage, setProfileImage }: ImagePickerProps)
 
     //Sets image assuming process was not canceled
     if (!result.canceled) {
-      setProfileImage(result.assets[0].uri);
+      const imageAsset = result.assets[0];
+      setProfileImage(imageAsset.uri); // show immediately
+      setPendingImage(imageAsset.uri); // mark as pending upload
     }
   }
 
@@ -258,7 +306,6 @@ const ProfileImagePicker = ({ profileImage, setProfileImage }: ImagePickerProps)
         </View>
       </TouchableOpacity>
 
-      <Text className="text-gray-100 text-lg mt-2 font-pmedium">Tap to change profile picture</Text>
     </View>
   );
 

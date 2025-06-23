@@ -2,16 +2,17 @@ import { useEffect, useState } from 'react'
 import useAxiosPrivate from './useAxiosPrivate'
 
 interface FetchProps {
-    refresh: number,
-    name: string,
+    refresh: number
+    name: string
     accessToken: string
 }
 
 interface UserInfo {
-    user_name: string;
-    user_email: string;
-    user_phone: string;
+    user_name: string
+    user_email: string
+    user_phone: string
     id: string
+    profile_image?: string
 }
 
 const fetchUserInfo = ({refresh, name, accessToken}: FetchProps) => {
@@ -25,6 +26,7 @@ const fetchUserInfo = ({refresh, name, accessToken}: FetchProps) => {
         const fetchUser = async () => {
             try {
                 const result = await axiosPrivate.get(API_URL);
+                console.log(result.data.userInfo)
                 setUserInfo(result.data.userInfo)
             } catch (error) {
                 console.error(error)
