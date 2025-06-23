@@ -14,10 +14,10 @@ const getUserInfo = async (req, res) => {
 }
 
 const updateUserInfo = async (req, res) => {
-    const { prevName, name, phone, email } = req.body.updateData;
+    const { prevName, name, phone, email, imageUrl } = req.body.updateData;
 
     try {
-        await pg.updateUserProfile(prevName, name, phone, email)
+        await pg.updateUserProfile(prevName, name, phone, email, imageUrl)
         res.sendStatus(204);
     } catch (error) {
         res.sendStatus(500);

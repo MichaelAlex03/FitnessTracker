@@ -95,10 +95,10 @@ const replaceExercise = async (workoutId, exerciseToReplace, newExercise) => {
 }
 
 
-const updateUserProfile = async (prevName, name, phone, email) => {
+const updateUserProfile = async (prevName, name, phone, email, imageUrl) => {
     const { data, error } = await supabase
         .from('users')
-        .update({ user_name: name, user_email: email, user_phone: phone })
+        .update({ user_name: name, user_email: email, user_phone: phone, profile_image: imageUrl })
         .eq('user_name', prevName);
     if (error) console.log(error);
     return data;
@@ -142,7 +142,7 @@ const findUser = async (email) => {
 const findUserSecure = async (user) => {
     const { data, error } = await supabase
         .from('users')
-        .select('user_name, user_email, id, user_phone')
+        .select('user_name, user_email, id, user_phone, profile_image')
         .eq('user_name', user);
     if (error) throw error;
     return data;
