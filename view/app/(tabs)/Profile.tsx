@@ -49,7 +49,6 @@ const Profile = () => {
       setPhone(userInfo[0].user_phone);
       setProfileImage(userInfo[0].profile_image || null);
       setPendingImage(null);
-      console.log("Setting user info to state:", userInfo);
     }
   }, [userInfo]);
 
@@ -251,7 +250,6 @@ export default Profile
 
 const ProfileImagePicker = ({ profileImage, setProfileImage, isEdit, setPendingImage }: ImagePickerProps) => {
 
-  const axiosPrivate = useAxiosPrivate();
 
 
   const pickImage = async () => {
@@ -262,7 +260,6 @@ const ProfileImagePicker = ({ profileImage, setProfileImage, isEdit, setPendingI
     //Asks user for permission to access media library
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-    //Store users name is a variable so when we are changing it, the username doesnt update on our screen as well
 
     //If user denies access prompt alert
     if (status !== 'granted') {
