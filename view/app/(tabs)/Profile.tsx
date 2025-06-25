@@ -179,7 +179,6 @@ const Profile = () => {
       setAuth({ ...auth, user: name })
       setRefresh(refresh + 1);
       setIsEdit(false);
-      setPendingImage(null); // clear pending image after update
     } catch (error) {
       Alert.alert('Failed Update', 'Failed to update user info')
     }
