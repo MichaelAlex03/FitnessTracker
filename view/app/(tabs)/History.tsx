@@ -52,7 +52,12 @@ const History = () => {
 
       console.log(workoutHistoryData.data)
 
-      setOldWorkouts(workoutHistoryData.data.workouts);
+      const sortedWorkouts = [...workoutHistoryData.data.workouts].sort(
+        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      )
+
+
+      setOldWorkouts(sortedWorkouts);
       setOldExercises(workoutHistoryData.data.exercises);
       setOldSets(workoutHistoryData.data.sets)
     } catch (error) {

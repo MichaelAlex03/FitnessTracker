@@ -7,7 +7,10 @@ const handleLogin = async (req, res) => {
     if (!email || !pwd) return res.status(400).json({ 'message': 'Email and password are required' });
 
     const foundUser = await pg.findUser(email);
-    if (foundUser[0]?.user_email === '') return res.sendStatus(401); //user not found
+    
+    if (foundUser[0]?.user_email === '' || foundUser.length === 0) {
+        return res.sendStatus(401); //user not found
+    }
     //evaluate password
     const match = await bcrypt.compare(pwd, foundUser[0]?.user_pass);
     if (match) {

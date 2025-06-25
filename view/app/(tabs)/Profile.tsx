@@ -32,6 +32,7 @@ const Profile = () => {
 
   const [refresh, setRefresh] = useState(0);
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [profileImageKey, setProfileImageKey] = useState<string | null>(null)
   const [pendingImage, setPendingImage] = useState<string | null>(null);
   const [isEdit, setIsEdit] = useState(false);
   const [name, setName] = useState('');
@@ -48,6 +49,7 @@ const Profile = () => {
       setEmail(userInfo[0].user_email);
       setPhone(userInfo[0].user_phone);
       setProfileImage(userInfo[0].profile_image || null);
+      setProfileImageKey(userInfo[0].profile_image_key || null)
       setPendingImage(null);
     }
   }, [userInfo]);
@@ -58,6 +60,7 @@ const Profile = () => {
     setEmail(userInfo[0].user_email);
     setPhone(userInfo[0].user_phone);
     setProfileImage(userInfo[0].profile_image || null);
+    setProfileImageKey(userInfo[0].profile_image_key || null);
     setPendingImage(null);
     setIsEdit(false);
   }
@@ -71,6 +74,32 @@ const Profile = () => {
       Alert.alert('Failed logout', 'Failed to logout');
     }
     router.replace('/Login')
+  }
+
+  //If the user uploads/changes image will use this else with default value for key/imageUrl(null)
+  const handleProfileUpdateWithImageKey = async (key: string, imageUrl: string | null) => {
+    const updateData = {
+      name,
+      phone,
+      email,
+      prevName: auth?.user,
+      imageUrl,
+      profileImageKey: key
+    }
+
+    try {
+      await axiosPrivate.patch(UPDATE_URL, {
+        updateData
+      });
+      Alert.alert('Success', 'User Profile Updated');
+      setAuth({ ...auth, user: name })
+      setProfileImageKey(key)
+      setRefresh(refresh + 1);
+      setIsEdit(false);
+      setPendingImage(null); // clear pending image after update
+    } catch (error) {
+      Alert.alert('Failed Update', 'Failed to update user info')
+    }
   }
 
   const handleUpdate = async () => {
@@ -104,8 +133,16 @@ const Profile = () => {
         else if (pendingImage.endsWith('.jpg') || pendingImage.endsWith('.jpeg')) fileType = 'image/jpeg';
 
         const blob = await fetch(pendingImage).then(res => res.blob());
+
+        if (profileImageKey) {
+          await axiosPrivate.delete(S3_URL, {
+            data: { key: profileImageKey }
+          })
+          console.log("delteee")
+        }
+
         const response = await axiosPrivate.get(S3_URL, { params: { fileType } });
-        const { uploadUrl, publicUrl } = response.data;
+        const { uploadUrl, key, publicUrl } = response.data;
 
         const uploadRes = await fetch(uploadUrl, {
           method: 'PUT',
@@ -115,6 +152,9 @@ const Profile = () => {
 
         if (!uploadRes.ok) throw new Error('Failed to upload to S3');
         imageUrl = publicUrl;
+
+        handleProfileUpdateWithImageKey(key, imageUrl);
+        return;
       } catch (error) {
         Alert.alert('Upload Failed', 'Could not upload profile image.');
         return;
@@ -127,6 +167,8 @@ const Profile = () => {
       email,
       prevName: auth?.user,
       imageUrl,
+      profileImageKey
+
     }
 
     try {

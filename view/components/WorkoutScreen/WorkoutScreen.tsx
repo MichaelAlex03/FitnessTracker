@@ -15,8 +15,8 @@ import TimerContext from '@/context/TimerContext'
 
 
 const EXERCISES_URL = '/api/exercises';
-const WORKOUT_URL = '/api/workouts';
 const SETS_URL = '/api/sets';
+const PREVIOUS_SETS_URL = '/api/history/sets'
 
 interface WorkoutScreenProps {
     showWorkout: boolean,
@@ -53,7 +53,6 @@ interface Sets {
     set_type: string
 }
 
-const PREVIOUS_SETS_URL = '/api/history/sets'
 
 
 const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkout, workoutName }: WorkoutScreenProps) => {
@@ -67,6 +66,8 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
     const [showTimerPopup, setShowTimerPopup] = useState(false);
     const [exerciseToReplace, setExerciseToReplace] = useState<string>('');
     const [previousSetsMap, setPreviousSetsMap] = useState<Record<string, HistorySet[]>>({});
+
+    let { elapsedTime, setElapsedTime } = useContext(TimerContext)
 
 
     const axiosPrivate = useAxiosPrivate();
@@ -127,6 +128,23 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
         }
     }, [exercises]);
 
+    useEffect(() => {
+        let intervalId: NodeJS.Timeout;
+
+
+        intervalId = setInterval(() => {
+            elapsedTime += 1
+            setElapsedTime(elapsedTime);
+        }, 1000)
+
+
+        return () => {
+            clearInterval(intervalId);
+            setElapsedTime(0);
+        }
+
+    }, [])
+
     const handleAddSet = (item: Exercise) => {
         let setID = uuid.v4();
 
@@ -153,8 +171,6 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
 
     const handleSave = async () => {
 
-        // const { elapsedTime } = useContext(TimerContext)
-
         //Check if there are any null values
         const nullSets = exerciseSets.filter(set => (set.exercise_reps === 0 || set.exercise_weight === 0));
         if (nullSets.length > 0) {
@@ -170,7 +186,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                 workoutName,
                 save: false,
                 userId: auth.userId,
-                elapsedTime: 62
+                elapsedTime
 
             });
 
@@ -230,6 +246,13 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
             s.id === set.id ? { ...s, exercise_weight: weight } : s
         )))
     }
+
+    const formatTime = (seconds: number) => {
+        const minutes = Math.floor((seconds % 3600) / 60);
+        const remainingSeconds = seconds % 60;
+
+        return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+    };
 
 
     const renderItem = (item: Exercise) => {
@@ -372,7 +395,10 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                                         <TextInput className='text-white font-bold text-2xl' editable={false}>{workoutName}</TextInput>
                                     </View>
 
-                                    <WorkoutTimer showWorkout={showWorkout} />
+                                    <View className='flex flex-row items-center gap-2'>
+                                        <Icon name="timer" size={20} color="#FF9C01" />
+                                        <Text className='text-secondary font-semibold text-lg'>{formatTime(elapsedTime)}</Text>
+                                    </View>
                                 </View>
                             </View>
                         )}

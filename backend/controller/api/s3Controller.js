@@ -1,7 +1,8 @@
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
-const { PutObjectCommand } = require('@aws-sdk/client-s3');
+const { PutObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
 const { s3 } = require('../../config/s3Conn');
 const { v4: uuidv4 } = require('uuid');
+
 
 const getS3Url = async (req, res) => {
     const { fileType } = req.query;
@@ -31,4 +32,16 @@ const getS3Url = async (req, res) => {
     }
 }
 
-module.exports = { getS3Url }
+const deleteOldProfileImage = async (req, res) => {
+    const { key } = req.body
+
+    await s3.send(new DeleteObjectCommand({
+        Bucket: process.env.S3_BUCKET_NAME,
+        Key: key
+    }));
+
+    res.status(200).json({"message": "old profile image deleted"});
+
+}
+
+module.exports = { getS3Url, deleteOldProfileImage }

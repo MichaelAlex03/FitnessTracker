@@ -43,6 +43,13 @@ const WorkoutHistoryModal = ({ workout, exercises, sets, showWorkoutHistory, set
     const dateOfWorkout = workout.created_at;
     const totalWeight = sets.reduce((sum, set) => sum + set.exercise_weight, 0);
 
+    const formatTime = () => {
+        const minutes = Math.floor(workout.time_elapsed / 60);
+        const remainingSeconds = workout.time_elapsed % 60;
+
+        return minutes > 0 ? `${minutes.toString()}m` : `${remainingSeconds.toString()}s`
+    }
+
     return (
         <Modal
             visible={true}
@@ -89,7 +96,7 @@ const WorkoutHistoryModal = ({ workout, exercises, sets, showWorkoutHistory, set
                     <View className='flex flex-row justify-between items-center mt-5'>
                         <View className='flex flex-row items-center'>
                             <AntDesign name="clockcircleo" size={20} color="white" className='mr-2' />
-                            <Text className='text-white'>51m</Text>
+                            <Text className='text-white'>{formatTime()}</Text>
                         </View>
 
                         <View className='flex flex-row items-center'>

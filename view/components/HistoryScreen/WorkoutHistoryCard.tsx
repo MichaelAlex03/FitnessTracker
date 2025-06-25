@@ -63,7 +63,7 @@ const WorkoutHistoryCard = ({ workout, exercises, sets, refresh, setRefresh }: H
   }
 
   const formatTime = () => {
-    const minutes = Math.floor((workout.time_elapsed % 3600) / 60);
+    const minutes = Math.floor(workout.time_elapsed / 60);
     const remainingSeconds = workout.time_elapsed % 60;
 
     return minutes > 0 ? `${minutes.toString()}m` : `${remainingSeconds.toString().padStart(2, '0')}s`;
@@ -163,7 +163,7 @@ const WorkoutHistoryCard = ({ workout, exercises, sets, refresh, setRefresh }: H
                   <View className='flex-1'>
                     {index === 0 && <Text className='text-white font-bold mb-2'>Weight</Text>}
                     <Text className='text-white'>
-                      {bestSet?.exercise_weight}lb x {bestSet?.exercise_reps} reps
+                      {bestSet?.exercise_weight} lb x {bestSet?.exercise_reps} reps
                     </Text>
                   </View>
                 </View>

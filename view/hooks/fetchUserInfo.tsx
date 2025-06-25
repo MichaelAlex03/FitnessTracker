@@ -12,7 +12,8 @@ interface UserInfo {
     user_email: string
     user_phone: string
     id: string
-    profile_image?: string
+    profile_image: string
+    profile_image_key: string
 }
 
 const fetchUserInfo = ({refresh, name, accessToken}: FetchProps) => {
