@@ -44,7 +44,10 @@ const History = () => {
   const [oldExercises, setOldExercises] = useState<OldExercise[]>([]);
   const [oldSets, setOldSets] = useState<OldSet[]>([]);
   const [refresh, setRefresh] = useState<number>(0);
-  
+  const [currentMonth, setCurrentMonth] = useState<string>('');
+  const [currentYear, setCurrentYear] = useState<number>(0);
+  const [renderDate, setRenderDate] = useState<boolean>(false);
+
 
   const fetchWorkoutHistory = async () => {
     try {
@@ -78,23 +81,45 @@ const History = () => {
 
       <FlatList
         data={oldWorkouts}
-        renderItem={({ item }) => {
+        renderItem={({ item, index }) => {
+
           const workoutExercises = oldExercises.filter(exercise => exercise.workout_id === item.id)
           const workoutSets = oldSets.filter(set => set.workout_id === item.id);
 
+          const date = new Date(item.created_at);
+          const month = date.toLocaleString('default', { month: 'long' });
+          const year = date.getFullYear();
+
+          if (index === 0){
+            setCurrentMonth(month);
+            setCurrentYear(year);
+          } else if(month != currentMonth || year != currentYear){
+            setCurrentMonth(month);
+            setCurrentYear(year);
+            setRenderDate(true);
+          } else {
+            setRenderDate(false)
+          }
+
+
           return (
-            <WorkoutHistoryCard
-              workout={item}
-              sets={workoutSets}
-              exercises={workoutExercises}
-              refresh={refresh}
-              setRefresh={setRefresh}
-            />
+            <View className='mt-10 gap-4'>
+              {(index === 0 || renderDate) && (
+                <Text className='text-white font-bold text-2xl'>{currentMonth} {currentYear}</Text>
+              )}
+              <WorkoutHistoryCard
+                workout={item}
+                sets={workoutSets}
+                exercises={workoutExercises}
+                refresh={refresh}
+                setRefresh={setRefresh}
+              />
+            </View>
           )
         }}
         keyExtractor={(item) => item.id.toString()}
       />
-      <StatusBar className='bg-white'/>
+      <StatusBar className='bg-white' />
     </SafeAreaView>
   )
 }

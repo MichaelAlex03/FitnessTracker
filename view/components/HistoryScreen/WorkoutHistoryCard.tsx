@@ -73,7 +73,7 @@ const WorkoutHistoryCard = ({ workout, exercises, sets, refresh, setRefresh }: H
 
 
   return (
-    <View className='bg-primary border-2 border-secondary/40 rounded-2xl p-4 mt-10'>
+    <View className='bg-primary border-2 border-secondary/40 rounded-2xl p-4'>
       <TouchableOpacity onPress={() => setShowWorkoutHistory(true)}>
 
         <View className='flex-row justify-between items-center'>

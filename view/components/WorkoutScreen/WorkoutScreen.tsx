@@ -262,7 +262,11 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
 
         // Get previous sets for this exercise from the map
         const previousSets = previousSetsMap[item.exercise_name] || [];
-        console.log("PREV", previousSets)
+
+        // Sort sets so that ones with the highest weight appear first
+        const sortedSets = previousSets.sort(
+            (a,b) => a.exercise_weight - b.exercise_weight
+        )
 
         return (
             <View className='p-4'>
@@ -324,7 +328,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                             handleRepChange={handleRepChange}
                             handleWeightChange={handleWeightChange}
                             handleSetTypeChange={handleSetTypeChange}
-                            prevSet={previousSets[index] || {}}
+                            prevSet={sortedSets[index] || {}}
                         />
                     ))}
 
