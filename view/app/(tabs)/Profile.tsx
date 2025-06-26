@@ -76,7 +76,7 @@ const Profile = () => {
     router.replace('/Login')
   }
 
-  //If the user uploads/changes image will use this else with default value for key/imageUrl(null)
+  //If the user uploads/changes image will use this else will use api call with default value for key/imageUrl(null)
   const handleProfileUpdateWithImageKey = async (key: string, imageUrl: string | null) => {
     const updateData = {
       name,

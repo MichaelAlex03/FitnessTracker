@@ -12,6 +12,7 @@ import WorkoutTimer from './WorkoutTimer'
 import uuid from 'react-native-uuid';
 import useAuth from '@/hooks/useAuth'
 import TimerContext from '@/context/TimerContext'
+import { router } from 'expo-router'
 
 
 const EXERCISES_URL = '/api/exercises';
@@ -66,6 +67,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
     const [showTimerPopup, setShowTimerPopup] = useState(false);
     const [exerciseToReplace, setExerciseToReplace] = useState<string>('');
     const [previousSetsMap, setPreviousSetsMap] = useState<Record<string, HistorySet[]>>({});
+    const [showCompletedScreen, setShowCompletedScreen] = useState<boolean>(false);
 
     let { elapsedTime, setElapsedTime } = useContext(TimerContext)
 
@@ -191,8 +193,6 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
             });
 
             console.log(response)
-
-            Alert.alert("Finished Workout", "Your workout is complete!");
             setActiveWorkout(0);
             setShowWorkout(false);
         } catch (error: any) {
@@ -441,6 +441,18 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                         />
                     )
                 }
+                {/* {
+                    showCompletedScreen && (
+                        <CompletedWorkout
+                            workoutName={workoutName}
+                            workoutTimer={elapsedTime}
+                            exercises={exercises}
+                            sets={exerciseSets}
+                            showWorkout={showWorkout}
+                            setShowWorkout={setShowWorkout}
+                         />
+                    )
+                } */}
 
             </SafeAreaView>
 
