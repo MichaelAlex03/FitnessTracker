@@ -77,7 +77,7 @@ const History = () => {
 
   return (
     <SafeAreaView className="bg-primary flex-1 p-8">
-      <Text className='text-white font-bold text-4xl'>History</Text>
+      <Text className='text-white font-bold text-4xl mb-3'>History</Text>
 
       <FlatList
         data={oldWorkouts}
@@ -103,7 +103,7 @@ const History = () => {
 
 
           return (
-            <View className='mt-10 gap-4'>
+            <View className='mt-5 gap-4'>
               {(index === 0 || renderDate) && (
                 <Text className='text-white font-bold text-2xl'>{currentMonth} {currentYear}</Text>
               )}

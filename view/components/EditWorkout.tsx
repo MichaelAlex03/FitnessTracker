@@ -15,6 +15,7 @@ import useAuth from '@/hooks/useAuth';
 
 const EXERCISES_URL = '/api/exercises';
 const SETS_URL = '/api/sets';
+const PREVIOUS_SETS_URL = '/api/history/sets';
 
 interface EditWorkoutProps {
     editWorkout: boolean,
@@ -42,6 +43,17 @@ interface Sets {
     set_type: string
 }
 
+interface HistorySet {
+    id: string
+    exercise_id: number
+    exercise_reps: number
+    workout_id: number
+    exercise_weight: number
+    set_type: string
+    user_id: string
+    exercise_name: string
+}
+
 
 const EditWorkout = ({ editWorkout, setEditWorkout, workoutId, setActiveWorkout, refresh, setRefresh, workoutName }: EditWorkoutProps) => {
 
@@ -53,6 +65,7 @@ const EditWorkout = ({ editWorkout, setEditWorkout, workoutId, setActiveWorkout,
     const [toggleReplaceExercise, setToggleReplaceExercise] = useState(false)
     const [exerciseToReplace, setExerciseToReplace] = useState<string>('');
     const [currentWorkoutName, setCurrentWorkoutName] = useState<string>(workoutName);
+    const [previousSetsMap, setPreviousSetsMap] = useState<Record<string, HistorySet[]>>({});
 
 
     const axiosPrivate = useAxiosPrivate();
@@ -88,6 +101,29 @@ const EditWorkout = ({ editWorkout, setEditWorkout, workoutId, setActiveWorkout,
         fetchSets();
     }, [refresh]);
 
+    //Retrieves previous sets for each exercise
+    useEffect(() => {
+        const fetchAllPreviousSets = async () => {
+            const newPreviousSetsMap: Record<string, HistorySet[]> = {};
+
+            for (const exercise of exercises) {
+                try {
+                    const previousSetsData = await axiosPrivate.get(`${PREVIOUS_SETS_URL}/${exercise.exercise_name}`);
+                    newPreviousSetsMap[exercise.exercise_name] = previousSetsData.data.previousSets;
+                } catch (error) {
+                    console.error(`Error fetching previous sets for ${exercise.exercise_name}:`, error);
+                    newPreviousSetsMap[exercise.exercise_name] = [];
+                }
+            }
+
+            setPreviousSetsMap(newPreviousSetsMap);
+        };
+
+        if (exercises.length > 0) {
+            fetchAllPreviousSets();
+        }
+    }, [exercises]);
+
     const handleAddSet = (item: Exercise) => {
         let setID = uuid.v4();
 
@@ -104,6 +140,22 @@ const EditWorkout = ({ editWorkout, setEditWorkout, workoutId, setActiveWorkout,
     const handleRemoveSet = (id: String) => {
         const updatedSets = exerciseSets.filter(set => set.id !== String(id));
         setExerciseSets(updatedSets);
+    }
+
+    const handleDeleteExercise = async (exerciseId: number) => {
+
+        try {
+            const response = await axiosPrivate.delete(EXERCISES_URL + `/delete/${exerciseId}`);
+
+            if (response.status === 200 && response.data.message === 'exercise deleted!') {
+                const updatedSets = exerciseSets.filter(set => set.exercise_id !== exerciseId);
+                const updatedExercises = exercises.filter(exercise => exercise.id !== exerciseId);
+                setExerciseSets(updatedSets);
+                setExercises(updatedExercises);
+            }
+        } catch (error) {
+            console.error(error)
+        }
     }
 
 
@@ -144,6 +196,15 @@ const EditWorkout = ({ editWorkout, setEditWorkout, workoutId, setActiveWorkout,
         // Filter sets for this specific exercise
         const exerciseSetsFiltered = exerciseSets.filter(set => set.exercise_id === item.id);
 
+         // Get previous sets for this exercise from the map
+         const previousSets = previousSetsMap[item.exercise_name] || [];
+
+         // Sort sets so that ones with the highest weight appear first
+         const sortedSets = previousSets.sort(
+             (a,b) => a.exercise_weight - b.exercise_weight
+         )
+ 
+
 
         return (
             <View className='p-4'>
@@ -166,6 +227,7 @@ const EditWorkout = ({ editWorkout, setEditWorkout, workoutId, setActiveWorkout,
                         >
                             <MenuOption
                                 style={{ padding: 12, flexDirection: 'row', alignItems: 'center' }}
+                                onSelect={() => handleDeleteExercise(item.id)}
                             >
                                 <AntDesign name="delete" size={20} color="red" className='mr-2' />
                                 <Text className="text-white text-base">Remove Exercise</Text>
@@ -201,6 +263,7 @@ const EditWorkout = ({ editWorkout, setEditWorkout, workoutId, setActiveWorkout,
                             handleRemoveSet={handleRemoveSet}
                             handleSetTypeChange={handleSetTypeChange}
                             editWorkout={true}
+                            prevSet={sortedSets[index] || {}}
                         />
                     ))}
 
