@@ -38,41 +38,29 @@ const CompletedWorkout = ({ exercises, sets, workoutName, workoutTimer, showWork
   return (
     <Modal
       visible={showWorkout}
-      transparent={false}
+      transparent={true}
       animationType='slide'
       onRequestClose={() => setShowWorkout(false)}
     >
-      <View className='flex-1 justify-center items-center bg-primary'>
-
-        <View>
-          <Text className='text-white text-2xl font-bold'>Congratulations !!!</Text>
-        </View>
-        <View
-          className='w-11/12 p-6 rounded-2xl bg-white'
-          style={{
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.25,
-            shadowRadius: 8,
-            elevation: 8,
-          }}
-        >
-          <View className='flex-row justify-between items-center'>
-            <Text className='text-primary font-bold text-lg'>{workoutName}</Text>
+      <View className='flex-1 justify-center items-center bg-black/80'>
+        <View className='bg-primary w-11/12 p-6 rounded-2xl'>
+          <View className='flex-col justify-center items-center'>
+            <Text className='text-white font-bold text-2xl'>Workout Summary</Text>
+            <Text className='text-white font-bold text-lg text-left'>{workoutName}</Text>
           </View>
 
           <View className='flex flex-row justify-between items-center mt-5'>
             <View className='flex flex-row items-center'>
-              <AntDesign name="clockcircleo" size={20} color="#1E293B" className='mr-2' />
-              <Text className='text-primary'>{formatTime()}</Text>
+              <AntDesign name="clockcircleo" size={20} color="white" className='mr-2' />
+              <Text className='text-white'>{formatTime()}</Text>
             </View>
             <View className='flex flex-row items-center'>
-              <MaterialCommunityIcons name="dumbbell" size={20} color="#1E293B" className='mr-2' />
-              <Text className='text-primary'>{totalWeight}lb</Text>
+              <MaterialCommunityIcons name="dumbbell" size={20} color="white" className='mr-2' />
+              <Text className='text-white'>{totalWeight}lb</Text>
             </View>
             <View className='flex flex-row items-center'>
-              <AntDesign name="Trophy" size={20} color="#1E293B" className='mr-2' />
-              <Text className='text-primary'>0 PRs</Text>
+              <AntDesign name="Trophy" size={20} color="white" className='mr-2' />
+              <Text className='text-white'>0 PRs</Text>
             </View>
           </View>
 
@@ -84,15 +72,15 @@ const CompletedWorkout = ({ exercises, sets, workoutName, workoutTimer, showWork
                   <View className='flex flex-row'>
                     <View className='flex-1'>
                       <View className='flex flex-row justify-between'>
-                        <Text className='text-primary font-bold text-xl'>{exercise.exercise_name}</Text>
-                        <Text className='text-primary font-bold text-xl'>1RM</Text>
+                        <Text className='text-white font-bold text-xl'>{exercise.exercise_name}</Text>
+                        <Text className='text-white font-bold text-xl'>1RM</Text>
                       </View>
                       {exerciseSets.map((set) => (
                         <View className='flex flex-row justify-between' key={set.id}>
-                          <Text className='text-primary text-lg font-base mt-1'>
+                          <Text className='text-white text-lg font-base mt-1'>
                             {set.exercise_weight} lb x {set.exercise_reps} reps
                           </Text>
-                          <Text className='text-primary text-lg font-base mt-1'>
+                          <Text className='text-white text-lg font-base mt-1'>
                             90
                           </Text>
                         </View>
@@ -105,7 +93,7 @@ const CompletedWorkout = ({ exercises, sets, workoutName, workoutTimer, showWork
 
             <View className='items-center w-full'>
               <TouchableOpacity className='w-3/4 rounded-2xl bg-secondary p-3 mt-5' onPress={() => setShowWorkout(false)}>
-                <Text className='text-white text-center font-bold text-lg'>Close</Text>
+                <Text className='text-white text-center'>Finish</Text>
               </TouchableOpacity>
             </View>
           </View>

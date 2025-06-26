@@ -8,11 +8,10 @@ import { Menu, MenuOption, MenuOptions, MenuProvider, MenuTrigger } from 'react-
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import RenderSet from '@/components/WorkoutScreen/RenderSet';
 import ExerciseListPopup from '@/components/WorkoutScreen/ExerciseListPopup';
-import WorkoutTimer from './WorkoutTimer'
 import uuid from 'react-native-uuid';
 import useAuth from '@/hooks/useAuth'
 import TimerContext from '@/context/TimerContext'
-import { router } from 'expo-router'
+import CompletedWorkout from './CompletedWorkout'
 
 
 const EXERCISES_URL = '/api/exercises';
@@ -68,8 +67,10 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
     const [exerciseToReplace, setExerciseToReplace] = useState<string>('');
     const [previousSetsMap, setPreviousSetsMap] = useState<Record<string, HistorySet[]>>({});
     const [showCompletedScreen, setShowCompletedScreen] = useState<boolean>(false);
+    const [elapsedTime, setElapsedTime] = useState<number>(0);
+    const [completedTime, setCompletedTime] = useState<number>(0);
 
-    let { elapsedTime, setElapsedTime } = useContext(TimerContext)
+    // let { elapsedTime, setElapsedTime } = useContext(TimerContext)
 
 
     const axiosPrivate = useAxiosPrivate();
@@ -133,11 +134,11 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
     useEffect(() => {
         let intervalId: NodeJS.Timeout;
 
-
-        intervalId = setInterval(() => {
-            elapsedTime += 1
-            setElapsedTime(elapsedTime);
-        }, 1000)
+        if (!showCompletedScreen) {
+            intervalId = setInterval(() => {
+                setElapsedTime(prev => prev + 1);
+            }, 1000)
+        }
 
 
         return () => {
@@ -145,7 +146,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
             setElapsedTime(0);
         }
 
-    }, [])
+    }, [setShowCompletedScreen])
 
     const handleAddSet = (item: Exercise) => {
         let setID = uuid.v4();
@@ -194,7 +195,9 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
 
             console.log(response)
             setActiveWorkout(0);
-            setShowWorkout(false);
+            setCompletedTime(elapsedTime);
+            setElapsedTime(0);
+            setShowCompletedScreen(true)
         } catch (error: any) {
             console.error(error.message)
         }
@@ -441,18 +444,18 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                         />
                     )
                 }
-                {/* {
-                    showCompletedScreen && (
+                {
+                    showCompletedScreen && completedTime != 0 && (
                         <CompletedWorkout
                             workoutName={workoutName}
-                            workoutTimer={elapsedTime}
+                            workoutTimer={completedTime}
                             exercises={exercises}
                             sets={exerciseSets}
                             showWorkout={showWorkout}
                             setShowWorkout={setShowWorkout}
-                         />
+                        />
                     )
-                } */}
+                }
 
             </SafeAreaView>
 
