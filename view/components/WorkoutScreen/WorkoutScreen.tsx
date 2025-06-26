@@ -10,7 +10,6 @@ import RenderSet from '@/components/WorkoutScreen/RenderSet';
 import ExerciseListPopup from '@/components/WorkoutScreen/ExerciseListPopup';
 import uuid from 'react-native-uuid';
 import useAuth from '@/hooks/useAuth'
-import TimerContext from '@/context/TimerContext'
 import CompletedWorkout from './CompletedWorkout'
 
 
@@ -70,7 +69,6 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
     const [elapsedTime, setElapsedTime] = useState<number>(0);
     const [completedTime, setCompletedTime] = useState<number>(0);
 
-    // let { elapsedTime, setElapsedTime } = useContext(TimerContext)
 
 
     const axiosPrivate = useAxiosPrivate();
