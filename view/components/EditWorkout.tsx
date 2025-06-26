@@ -167,7 +167,7 @@ const EditWorkout = ({ editWorkout, setEditWorkout, workoutId, setActiveWorkout,
                 workoutId,
                 exercises,
                 workoutName,
-                save: false,
+                save: true,
                 userId: auth.userId
             });
 
