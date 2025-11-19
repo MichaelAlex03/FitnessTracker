@@ -50,6 +50,7 @@ app.use('/api/sets', require('./routes/api/sets'));
 app.use('/api/user', require('./routes/api/user'));
 app.use('/api/history', require('./routes/api/history'));
 app.use('/api/getPresignedUrl', require('./routes/api/s3'));
+app.use('/api/openAI', require('./routes/api/openAI'));
 
 
 
