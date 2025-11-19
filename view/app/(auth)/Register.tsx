@@ -151,10 +151,25 @@ const Register = () => {
   return (
     <SafeAreaView className='bg-primary h-full'>
       <ScrollView>
-        <View className='w-full items-center justify-center min-h-[85vh] px-4 my-6'>
-          <Text className='text-[27px] sm:text-[30px] text-white font-bold mt-10 font-psemibold'>Create New Account 👋</Text>
-          <Text className='text-[12px] sm:-text:sm text-gray-100 mt-2'>Please enter details to create a new account</Text>
-          {errMsg && <Text className='font-semibold p-2 mt-2 text-red-700'>{errMsg}</Text>}
+        <View className='w-full items-center justify-center min-h-[85vh] px-6 my-6'>
+
+          {/* Modern Header */}
+          <View className='items-center mt-10 mb-6'>
+            <View className='bg-accent/10 rounded-full p-4 mb-6'>
+              <View className='bg-accent rounded-full p-3'>
+                <Text className='text-4xl'>🚀</Text>
+              </View>
+            </View>
+            <Text className='text-4xl text-white font-pextrabold tracking-tight'>Get Started</Text>
+            <Text className='text-gray-400 mt-3 text-base font-pmedium'>Create your account to begin</Text>
+          </View>
+
+          {/* Error Message with Modern Styling */}
+          {errMsg && (
+            <View className='bg-error/10 border border-error/30 rounded-2xl p-4 mb-4 w-full'>
+              <Text className='text-error font-pmedium text-center'>{errMsg}</Text>
+            </View>
+          )}
 
           <FormField
             title='Username'
@@ -165,9 +180,9 @@ const Register = () => {
             handleBlur={() => setUserFocus(false)}
           />
           {userFocus && user && !validName &&
-            <View className='flex-row items-start justify-start gap-2 mt-2 w-full md:w-1/2 bg-black p-2 rounded-lg'>
-              <AntDesign name="exclamationcircle" size={12} color="white" className='mt-[2px]' />
-              <Text className='text-white rounded-md'>
+            <View className='flex-row items-start justify-start gap-2 mt-2 w-full md:w-1/2 bg-warning/10 border border-warning/30 p-3 rounded-xl'>
+              <AntDesign name="exclamationcircle" size={14} color="#F59E0B" className='mt-[2px]' />
+              <Text className='text-warning text-sm font-pmedium flex-1'>
                 4 to 24 characters. Must begin with a letter. Letters, numbers, underscores, hyphens allowed.
               </Text>
             </View>
@@ -182,9 +197,9 @@ const Register = () => {
             handleBlur={() => setEmailFocus(false)}
           />
           {emailFocus && email && !validEmail &&
-            <View className='flex-row items-start justify-start gap-2 mt-2 w-full md:w-1/2 bg-black p-2 rounded-lg'>
-              <AntDesign name="exclamationcircle" size={12} color="white" className='mt-[2px]' />
-              <Text className='text-white rounded-md'>
+            <View className='flex-row items-start justify-start gap-2 mt-2 w-full md:w-1/2 bg-warning/10 border border-warning/30 p-3 rounded-xl'>
+              <AntDesign name="exclamationcircle" size={14} color="#F59E0B" className='mt-[2px]' />
+              <Text className='text-warning text-sm font-pmedium flex-1'>
                 Your email address should follow the format: username@domain.com.
               </Text>
             </View>
@@ -199,9 +214,9 @@ const Register = () => {
             handleBlur={() => setPhoneFocus(false)}
           />
           {phoneFocus && phoneNum && !validPhone &&
-            <View className='flex-row items-start justify-start gap-2 mt-2 w-full md:w-1/2 bg-black p-2 rounded-lg'>
-              <AntDesign name="exclamationcircle" size={12} color="white" className='mt-[2px]' />
-              <Text className='text-white rounded-md'>
+            <View className='flex-row items-start justify-start gap-2 mt-2 w-full md:w-1/2 bg-warning/10 border border-warning/30 p-3 rounded-xl'>
+              <AntDesign name="exclamationcircle" size={14} color="#F59E0B" className='mt-[2px]' />
+              <Text className='text-warning text-sm font-pmedium flex-1'>
                 Phone number must be in format XXX-XXX-XXXX
               </Text>
             </View>
@@ -216,19 +231,19 @@ const Register = () => {
             handleBlur={() => setPwdFocus(false)}
           />
           {pwdFocus && !validPwd &&
-            <View className='flex-row items-start justify-start gap-2 mt-2 w-full md:w-1/2 bg-black p-2 rounded-lg'>
-              <AntDesign name="exclamationcircle" size={12} color="white" className='mt-[2px]' />
-              <View className='w-5/6 md:w-4/5 flex-col'>
-                <Text className='text-white rounded-md'>
+            <View className='flex-row items-start justify-start gap-2 mt-2 w-full md:w-1/2 bg-warning/10 border border-warning/30 p-3 rounded-xl'>
+              <AntDesign name="exclamationcircle" size={14} color="#F59E0B" className='mt-[2px]' />
+              <View className='flex-1'>
+                <Text className='text-warning text-sm font-pmedium'>
                   8 to 24 characters.
                 </Text>
-                <Text className='text-white rounded-md'>
+                <Text className='text-warning text-sm font-pmedium'>
                   Must include uppercase and lowercase letters
                 </Text>
-                <Text className='text-white rounded-md'>
+                <Text className='text-warning text-sm font-pmedium'>
                   a number and a special character.
                 </Text>
-                <Text className='text-white rounded-md'>
+                <Text className='text-warning text-sm font-pmedium'>
                   Allowed special characters: ! @ # %
                 </Text>
               </View>
@@ -244,9 +259,9 @@ const Register = () => {
             handleBlur={() => setMatchFocus(false)}
           />
           {matchPwd && !validMatch && matchFocus &&
-            <View className='flex-row items-center justify-start gap-2 mt-2 w-full md:w-1/2 bg-black p-2 rounded-lg'>
-              <AntDesign name="exclamationcircle" size={12} color="white" />
-              <Text className=' p-2 rounded-md text-white'>
+            <View className='flex-row items-start justify-start gap-2 mt-2 w-full md:w-1/2 bg-warning/10 border border-warning/30 p-3 rounded-xl'>
+              <AntDesign name="exclamationcircle" size={14} color="#F59E0B" className='mt-[2px]' />
+              <Text className='text-warning text-sm font-pmedium flex-1'>
                 Does not match the password
               </Text>
             </View>
@@ -255,14 +270,13 @@ const Register = () => {
           <CustomButton
             title="Create Account"
             handlePress={handleSubmit}
-            containerStyles={'mt-7 mb-2 bg-secondary'}
+            containerStyles={'mt-8 mb-2'}
             isLoading={isSubmitting}
           />
 
-
-          <View className='justify-center pt-5 flex-row gap-2'>
-            <Text className='text-lg text-gray-100 font-pregular'>Have an account already?</Text>
-            <Link href={'/Login'} className='text-lg font-psemibold text-secondary'>
+          <View className='justify-center pt-6 flex-row gap-2'>
+            <Text className='text-base text-gray-400 font-pregular'>Have an account already?</Text>
+            <Link href={'/Login'} className='text-base font-psemibold text-accent'>
               Sign In
             </Link>
           </View>

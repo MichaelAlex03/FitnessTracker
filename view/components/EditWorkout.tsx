@@ -65,6 +65,7 @@ const EditWorkout = ({ editWorkout, setEditWorkout, workoutId, setActiveWorkout,
     const [toggleReplaceExercise, setToggleReplaceExercise] = useState(false)
     const [exerciseToReplace, setExerciseToReplace] = useState<string>('');
     const [currentWorkoutName, setCurrentWorkoutName] = useState<string>(workoutName);
+    const [newWorkoutName, setNewWorkoutName] = useState<string>(workoutName);
     const [previousSetsMap, setPreviousSetsMap] = useState<Record<string, HistorySet[]>>({});
 
 
@@ -123,6 +124,14 @@ const EditWorkout = ({ editWorkout, setEditWorkout, workoutId, setActiveWorkout,
             fetchAllPreviousSets();
         }
     }, [exercises]);
+
+    //Update refresh name in the edit workout screen after you change it in popup
+    useEffect(() => {
+        if (currentWorkoutName !== newWorkoutName){
+            setCurrentWorkoutName(newWorkoutName)
+        }
+    }, [refresh])
+
 
     const handleAddSet = (item: Exercise) => {
         let setID = uuid.v4();
@@ -215,7 +224,7 @@ const EditWorkout = ({ editWorkout, setEditWorkout, workoutId, setActiveWorkout,
                     <Menu>
                         <MenuTrigger>
                             <View className="bg-secondary/20 p-2 rounded-xl">
-                                <AntDesign name="ellipsis1" size={20} color="#FF9C01" />
+                                <AntDesign name="ellipsis1" size={20} color="#6366F1" />
                             </View>
                         </MenuTrigger>
                         <MenuOptions
@@ -325,7 +334,7 @@ const EditWorkout = ({ editWorkout, setEditWorkout, workoutId, setActiveWorkout,
                                         <Menu>
                                             <MenuTrigger>
                                                 <View className="bg-secondary/20 p-2 rounded-xl">
-                                                    <AntDesign name="ellipsis1" size={16} color="#FF9C01" />
+                                                    <AntDesign name="ellipsis1" size={16} color="#6366F1" />
                                                 </View>
                                             </MenuTrigger>
                                             <MenuOptions
@@ -376,8 +385,8 @@ const EditWorkout = ({ editWorkout, setEditWorkout, workoutId, setActiveWorkout,
                             workoutId={workoutId}
                             refresh={refresh}
                             setRefresh={setRefresh}
-                            currentWorkoutName={currentWorkoutName}
-                            setCurrentWorkoutName={setCurrentWorkoutName}
+                            currentWorkoutName={newWorkoutName}
+                            setCurrentWorkoutName={setNewWorkoutName}
                         />
                     )
                 }

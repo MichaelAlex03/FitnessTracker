@@ -44,40 +44,40 @@ const History = () => {
   const [oldExercises, setOldExercises] = useState<OldExercise[]>([]);
   const [oldSets, setOldSets] = useState<OldSet[]>([]);
   const [refresh, setRefresh] = useState<number>(0);
-  const [currentMonth, setCurrentMonth] = useState<string>('');
-  const [currentYear, setCurrentYear] = useState<number>(0);
-  const [renderDate, setRenderDate] = useState<boolean>(false);
 
-
-  const fetchWorkoutHistory = async () => {
-    try {
-      const workoutHistoryData = await axiosPrivate.get(`${HISTORY_DATA_URL}/${auth.userId}`);
-
-      console.log(workoutHistoryData.data)
-
-      const sortedWorkouts = [...workoutHistoryData.data.workouts].sort(
-        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      )
-
-
-      setOldWorkouts(sortedWorkouts);
-      setOldExercises(workoutHistoryData.data.exercises);
-      setOldSets(workoutHistoryData.data.sets)
-    } catch (error) {
-
-    }
-  }
 
   useFocusEffect(
     useCallback(() => {
+      const fetchWorkoutHistory = async () => {
+        try {
+          const workoutHistoryData = await axiosPrivate.get(`${HISTORY_DATA_URL}/${auth.userId}`);
+
+          console.log(workoutHistoryData.data)
+
+          const sortedWorkouts = [...workoutHistoryData.data.workouts].sort(
+            (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          )
+
+          setOldWorkouts(sortedWorkouts);
+          setOldExercises(workoutHistoryData.data.exercises);
+          setOldSets(workoutHistoryData.data.sets)
+        } catch (error) {
+
+        }
+      }
+
       fetchWorkoutHistory();
     }, [refresh])
   );
 
 
   return (
-    <SafeAreaView className="bg-primary flex-1 p-8">
-      <Text className='text-white font-bold text-4xl mb-3'>History</Text>
+    <SafeAreaView className="bg-primary flex-1">
+      {/* Modern Header */}
+      <View className='px-6 pt-6 pb-4'>
+        <Text className='text-white font-pextrabold text-4xl mb-2'>Workout History</Text>
+        <Text className='text-gray-400 font-pmedium text-base'>Track your fitness journey</Text>
+      </View>
 
       <FlatList
         data={oldWorkouts}
@@ -90,22 +90,23 @@ const History = () => {
           const month = date.toLocaleString('default', { month: 'long' });
           const year = date.getFullYear();
 
-          if (index === 0){
-            setCurrentMonth(month);
-            setCurrentYear(year);
-          } else if(month != currentMonth || year != currentYear){
-            setCurrentMonth(month);
-            setCurrentYear(year);
-            setRenderDate(true);
+          let showDateHeader = false
+          if (index === 0) {
+            showDateHeader = true;
           } else {
-            setRenderDate(false)
+            const prevDate = new Date(oldWorkouts[index - 1].created_at);
+            const prevMonth = prevDate.toLocaleString('default', { month: 'long' });
+            const prevYear = prevDate.getFullYear();
+            showDateHeader = (month !== prevMonth || year !== prevYear);
           }
 
 
           return (
-            <View className='mt-5 gap-4'>
-              {(index === 0 || renderDate) && (
-                <Text className='text-white font-bold text-2xl'>{currentMonth} {currentYear}</Text>
+            <View className='mt-2 px-6'>
+              {showDateHeader && (
+                <View className='bg-surface rounded-2xl px-4 py-3 mb-4 border-l-4 border-accent'>
+                  <Text className='text-white font-pbold text-xl'>{month} {year}</Text>
+                </View>
               )}
               <WorkoutHistoryCard
                 workout={item}
@@ -118,6 +119,7 @@ const History = () => {
           )
         }}
         keyExtractor={(item) => item.id.toString()}
+        contentContainerStyle={{ paddingBottom: 20 }}
       />
       <StatusBar className='bg-white' />
     </SafeAreaView>

@@ -79,11 +79,19 @@ const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises, set
     //Exercise item for the selected exercises list
     const exerciseItem = (name: string, id: number) => {
         return (
-            <View key={id} className='bg-black-100 rounded-2xl p-4 border border-black-200 active:opacity-80 w-full flex flex-row justify-between'>
-                <Text className='text-white'>{name}</Text>
+            <View key={id} className='bg-primary-light rounded-2xl p-4 border-2 border-accent/20 w-full flex flex-row justify-between items-center'>
+                <View className='flex-row items-center flex-1'>
+                    <View className='bg-accent/20 rounded-full p-2 mr-3'>
+                        <AntDesign name="check" size={16} color="#6366F1" />
+                    </View>
+                    <Text className='text-white font-pmedium text-base flex-1'>{name}</Text>
+                </View>
 
-                <TouchableOpacity onPress={() => handleRemoveExercise(name)}>
-                    <AntDesign name="delete" size={20} color="#FF4D4F" />
+                <TouchableOpacity
+                    onPress={() => handleRemoveExercise(name)}
+                    className='bg-error/20 p-2 rounded-lg'
+                >
+                    <AntDesign name="delete" size={18} color="#EF4444" />
                 </TouchableOpacity>
             </View>
         )
@@ -113,101 +121,123 @@ const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises, set
             animationType="slide"
             onRequestClose={() => setShowCreateWorkout(false)}
         >
-            <View className="flex-1 bg-black/50 justify-center items-center p-6">
-                <View className='bg-primary w-full p-6 rounded-3xl'>
-                    <Text className='text-white text-2xl font-bold mb-4 text-center'>Create a new workout</Text>
-
-                    <Text className='text-white text-base mb-1'>Workout Name</Text>
-                    <View className='border border-gray-600 w-full h-16 px-4 bg-black/20 rounded-2xl flex flex-row items-center mt-1 mb-6'>
-                        <TextInput
-                            value={workoutName}
-                            onChangeText={(e) => setWorkoutName(e)}
-                            placeholder="Enter workout name"
-                            placeholderTextColor="#94a3b8"
-                            className="text-white w-full"
-                        />
+            <View className="flex-1 bg-black/80 justify-end">
+                <View className='bg-surface rounded-t-3xl border-t-2 border-accent/30 max-h-[90%]'>
+                    {/* Handle Bar */}
+                    <View className="items-center py-3">
+                        <View className="w-12 h-1 bg-gray-600 rounded-full" />
                     </View>
 
-                    <View className='mb-2 flex gap-4'>
-                        {selectedExercises.length > 0 &&
-                            selectedExercises.map((exercise, i) => {
-                                return exerciseItem(exercise.exercise_name, i)
-                            })
-                        }
-                    </View>
+                    <View className='px-6 pb-6'>
+                        {/* Header */}
+                        <View className='mb-6'>
+                            <Text className='text-white text-3xl font-pextrabold mb-2'>Create Workout</Text>
+                            <Text className='text-gray-400 text-base font-pmedium'>Build your custom training routine</Text>
+                        </View>
 
-                    <Text className='text-white text-base mb-1'>Select Exercise</Text>
-                    <View className='w-full mb-4'>
+                        <Text className='text-sm text-gray-300 font-pmedium mb-2'>Workout Name</Text>
+                        <View className='border-2 border-gray-700 w-full h-14 px-4 bg-primary-light rounded-2xl flex flex-row items-center mb-6'>
+                            <TextInput
+                                value={workoutName}
+                                onChangeText={(e) => setWorkoutName(e)}
+                                placeholder="Enter workout name"
+                                placeholderTextColor="#6B7280"
+                                className="text-white w-full font-pmedium text-base"
+                            />
+                        </View>
+
+                    {/* Selected Exercises List */}
+                    {selectedExercises.length > 0 && (
+                        <View className='mb-6'>
+                            <Text className='text-sm text-gray-300 font-pmedium mb-3'>
+                                Selected Exercises ({selectedExercises.length})
+                            </Text>
+                            <View className='flex gap-3'>
+                                {selectedExercises.map((exercise, i) => {
+                                    return exerciseItem(exercise.exercise_name, i)
+                                })}
+                            </View>
+                        </View>
+                    )}
+
+                    <Text className='text-sm text-gray-300 font-pmedium mb-2'>Add Exercise</Text>
+                    <View className='w-full mb-6'>
                         <Dropdown
                             data={exerciseNames}
                             value={selectedExercise}
                             maxHeight={300}
-                            placeholder='Select an exercise'
+                            placeholder='Select an exercise to add'
                             labelField="exercise_name"
                             valueField="value"
                             onChange={(item) => {
                                 handleAddExercise(item)
                             }}
                             style={{
-                                backgroundColor: 'white',
+                                backgroundColor: '#141925',
                                 borderRadius: 16,
                                 paddingHorizontal: 16,
-                                paddingVertical: 12,
-                                borderWidth: 1,
-                                borderColor: '#475569',
-                                height: 50,
+                                paddingVertical: 14,
+                                borderWidth: 2,
+                                borderColor: '#374151',
+                                height: 56,
                             }}
                             containerStyle={{
-                                backgroundColor: '#1e293b',
+                                backgroundColor: '#252D3F',
                                 borderRadius: 16,
-                                borderWidth: 1,
-                                borderColor: '#475569',
+                                borderWidth: 2,
+                                borderColor: '#6366F1',
                                 marginTop: 8,
+                                shadowColor: '#6366F1',
+                                shadowOffset: { width: 0, height: 4 },
+                                shadowOpacity: 0.3,
+                                shadowRadius: 8,
                             }}
                             placeholderStyle={{
-                                color: 'black',
-                                fontSize: 16,
-                            }}
-                            selectedTextStyle={{
-                                color: 'black',
+                                color: '#6B7280',
                                 fontSize: 16,
                                 fontWeight: '500',
                             }}
-                            itemTextStyle={{
-                                color: '#e2e8f0',
+                            selectedTextStyle={{
+                                color: '#E5E7EB',
                                 fontSize: 16,
+                                fontWeight: '600',
+                            }}
+                            itemTextStyle={{
+                                color: '#E5E7EB',
+                                fontSize: 16,
+                                fontWeight: '500',
                             }}
                             itemContainerStyle={{
-                                paddingVertical: 5,
-                                paddingHorizontal: 8,
-                                borderRadius: 16,
+                                paddingVertical: 12,
+                                paddingHorizontal: 12,
+                                borderRadius: 12,
                                 borderBottomWidth: 1,
-                                borderBottomColor: '#334155',
+                                borderBottomColor: '#374151',
                             }}
-                            activeColor="#334155"
+                            activeColor="#1E2433"
                             iconStyle={{
                                 width: 20,
                                 height: 20,
-                                tintColor: '#94a3b8',
+                                tintColor: '#6366F1',
                             }}
                         />
                     </View>
 
-                    <View className='flex gap-5 mt-2'>
-
+                    <View className='flex gap-4 mt-8'>
                         <TouchableOpacity
                             onPress={handleCreateWorkout}
-                            className='bg-[#25344d] rounded-2xl py-4 '
+                            className='bg-accent rounded-2xl py-4 shadow-lg shadow-accent/40 active:scale-95'
                         >
-                            <Text className='text-white text-center font-bold'>Create Workout</Text>
+                            <Text className='text-white text-center font-pbold text-lg'>Create Workout</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
                             onPress={() => setShowCreateWorkout(false)}
-                            className='bg-secondary py-4 rounded-2xl'
+                            className='bg-gray-700 py-4 rounded-2xl active:bg-gray-600'
                         >
-                            <Text className='text-white text-center font-bold'>Close</Text>
+                            <Text className='text-white text-center font-pbold text-lg'>Cancel</Text>
                         </TouchableOpacity>
+                    </View>
                     </View>
 
                 </View>

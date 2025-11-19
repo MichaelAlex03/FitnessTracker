@@ -190,19 +190,22 @@ const Profile = () => {
   return (
     <SafeAreaView className="bg-primary flex-1">
       <ScrollView contentContainerStyle={{ flex: 1 }}>
-        <View className='flex-1 p-8 items-center justify-center'>
+        <View className='flex-1 p-8'>
 
+          {/*Modern Profile Header*/}
+          <View className='w-full mb-8'>
+            <View className='flex-row justify-between items-center mb-6'>
+              <Text className='text-white text-4xl font-pextrabold tracking-tight'>Profile</Text>
 
-          {/*Profile Tab Heading*/}
-          <View className='w-full'>
-
-            <View className='flex-row justify-between'>
-              <Text className='text-white text-4xl font-bold'>Profile</Text>
-
-              {!isEdit ? <TouchableOpacity className='flex-row items-center gap-2' onPress={() => setIsEdit(true)}>
-                <FontAwesome name="edit" size={24} color="white" />
-                <Text className='text-white text-lg mr-2'>Edit</Text>
-              </TouchableOpacity> : null}
+              {!isEdit ? (
+                <TouchableOpacity
+                  className='flex-row items-center gap-2 bg-accent/20 px-4 py-2 rounded-xl active:bg-accent/30'
+                  onPress={() => setIsEdit(true)}
+                >
+                  <FontAwesome name="edit" size={18} color="#6366F1" />
+                  <Text className='text-accent text-base font-pbold'>Edit</Text>
+                </TouchableOpacity>
+              ) : null}
             </View>
 
             <ProfileImagePicker
@@ -211,31 +214,36 @@ const Profile = () => {
               isEdit={isEdit}
               setPendingImage={setPendingImage}
             />
-
           </View>
 
           {/*Profile Tab Content*/}
-          <View className='flex flex-col items-center mt-10 w-full gap-4 mb-10'>
+          <View className='flex flex-col items-center w-full gap-5 mb-10'>
 
             {/*Username field*/}
-            <View className='space-y-2 w-full md:w-1/2'>
-              <Text className='text-lg text-gray-100 font-pmedium mb-0.5'>Username</Text>
-              <View className='border-2 border-black-200 w-full h-16 px-4 bg-black-100 rounded-2xl flex flex-row items-center mt-1'>
+            <View className='space-y-2 w-full'>
+              <Text className='text-sm text-gray-400 font-pmedium mb-1'>Username</Text>
+              <View className={`border-2 w-full h-14 px-4 rounded-2xl flex flex-row items-center ${
+                isEdit ? 'bg-surface border-accent/30' : 'bg-surface-elevated border-gray-700'
+              }`}>
+                <FontAwesome name="user" size={18} color="#6B7280" />
                 <TextInput
                   value={name}
-                  className={`flex-1 ${!isEdit ? 'text-gray-500' : 'text-white'}`}
+                  className={`flex-1 ml-3 font-pmedium text-base ${!isEdit ? 'text-gray-400' : 'text-white'}`}
                   onChangeText={(val) => setName(val)}
                   editable={isEdit}
                 />
               </View>
             </View>
 
-            <View className='space-y-2 w-full md:w-1/2'>
-              <Text className='text-lg text-gray-100 font-pmedium mb-0.5'>Email</Text>
-              <View className='border-2 border-black-200 w-full h-16 px-4 bg-black-100 rounded-2xl flex flex-row items-center mt-1'>
+            <View className='space-y-2 w-full'>
+              <Text className='text-sm text-gray-400 font-pmedium mb-1'>Email</Text>
+              <View className={`border-2 w-full h-14 px-4 rounded-2xl flex flex-row items-center ${
+                isEdit ? 'bg-surface border-accent/30' : 'bg-surface-elevated border-gray-700'
+              }`}>
+                <FontAwesome name="envelope" size={16} color="#6B7280" />
                 <TextInput
                   value={email}
-                  className={`flex-1 ${!isEdit ? 'text-gray-500' : 'text-white'}`}
+                  className={`flex-1 ml-3 font-pmedium text-base ${!isEdit ? 'text-gray-400' : 'text-white'}`}
                   onChangeText={(val) => setEmail(val)}
                   editable={isEdit}
                 />
@@ -243,12 +251,15 @@ const Profile = () => {
             </View>
 
 
-            <View className='space-y-2 w-full md:w-1/2'>
-              <Text className='text-lg text-gray-100 font-pmedium mb-0.5'>Phone</Text>
-              <View className='border-2 border-black-200 w-full h-16 px-4 bg-black-100 rounded-2xl flex flex-row items-center mt-1'>
+            <View className='space-y-2 w-full'>
+              <Text className='text-sm text-gray-400 font-pmedium mb-1'>Phone</Text>
+              <View className={`border-2 w-full h-14 px-4 rounded-2xl flex flex-row items-center ${
+                isEdit ? 'bg-surface border-accent/30' : 'bg-surface-elevated border-gray-700'
+              }`}>
+                <FontAwesome name="phone" size={18} color="#6B7280" />
                 <TextInput
                   value={phone}
-                  className={`flex-1 ${!isEdit ? 'text-gray-500' : 'text-white'}`}
+                  className={`flex-1 ml-3 font-pmedium text-base ${!isEdit ? 'text-gray-400' : 'text-white'}`}
                   onChangeText={(val) => setPhone(val)}
                   editable={isEdit}
                 />
@@ -259,23 +270,26 @@ const Profile = () => {
 
 
           {isEdit ?
-            <View className='flex flex-col justify-center items-center w-full gap-4'>
+            <View className='flex flex-col justify-center items-center w-full gap-4 mt-4'>
               <CustomButton
-                title={'Update'}
-                containerStyles={'mt-auto bg-secondary '}
+                title={'Update Profile'}
+                containerStyles={''}
                 handlePress={handleUpdate}
+                variant='primary'
               />
 
               <CustomButton
                 title={'Cancel'}
-                containerStyles={'mt-auto bg-[#1E1E2D] border border-2 border-gray-100'}
+                containerStyles={''}
                 handlePress={handleCancel}
+                variant='outline'
               />
             </View> :
             <CustomButton
               title={'Sign Out'}
-              containerStyles={'mt-auto bg-secondary'}
+              containerStyles={'mt-4'}
               handlePress={handleLogout}
+              variant='danger'
             />
           }
 
@@ -325,22 +339,24 @@ const ProfileImagePicker = ({ profileImage, setProfileImage, isEdit, setPendingI
   }
 
   return (
-    <View className="items-center mt-5 w-">
+    <View className="items-center my-6">
       <TouchableOpacity onPress={pickImage} className="relative">
         {profileImage ? (
-          <Image
-            source={{ uri: profileImage }}
-            className="w-28 h-28 rounded-full"
-          />
+          <View className="rounded-full border-4 border-accent/30 p-1">
+            <Image
+              source={{ uri: profileImage }}
+              className="w-32 h-32 rounded-full"
+            />
+          </View>
         ) : (
-          <View className="w-24 h-24 rounded-full bg-gray-100 items-center justify-center">
-            <FontAwesome name="user" size={40} color="#CDCDE0" />
+          <View className="w-32 h-32 rounded-full bg-surface-elevated border-4 border-accent/30 items-center justify-center">
+            <FontAwesome name="user" size={50} color="#6B7280" />
           </View>
         )}
 
-        {/* Edit icon overlay */}
-        <View className="absolute bottom-0 right-0 bg-secondary p-2 rounded-full">
-          <FontAwesome name="camera" size={14} color="white" />
+        {/* Edit icon overlay with modern styling */}
+        <View className="absolute bottom-1 right-1 bg-accent p-3 rounded-full shadow-lg border-2 border-primary">
+          <FontAwesome name="camera" size={16} color="white" />
         </View>
       </TouchableOpacity>
 

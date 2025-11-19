@@ -124,51 +124,75 @@ export default function Workouts() {
   const workoutItem = (item: Workout) => {
     return (
       <TouchableOpacity
-        className="bg-black-100 mx-4 mb-4 rounded-2xl p-4 border border-black-200 active:opacity-80"
+        className="bg-surface mx-4 mb-4 rounded-3xl p-5 border-2 border-accent/20 active:scale-[0.98] shadow-lg"
         onPress={() => handleOpenWorkout(item.id, item.workout_name)}
       >
         <View className="flex-row justify-between items-center">
-          <View className="flex-1">
-            <Text className="text-white text-lg font-pmedium mb-1">
-              {item.workout_name}
-            </Text>
+          <View className="flex-1 flex-row items-center">
+            {/* Icon badge */}
+            <View className="bg-accent/20 rounded-2xl p-3 mr-4">
+              <Icon name="fitness-center" size={24} color="#6366F1" />
+            </View>
+
+            <View className="flex-1">
+              <Text className="text-white text-xl font-pbold mb-1">
+                {item.workout_name}
+              </Text>
+              <Text className="text-gray-400 text-sm font-pmedium">
+                Tap to start workout
+              </Text>
+            </View>
           </View>
 
           <Menu>
-            <MenuTrigger>
-              <View className="bg-secondary/20 p-2 rounded-xl">
-                <AntDesign name="ellipsis1" size={20} color="#FF9C01" />
-              </View>
+            <MenuTrigger
+              customStyles={{
+                triggerTouchable: { underlayColor: 'transparent' },
+                triggerWrapper: {
+                  backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                  padding: 12,
+                  borderRadius: 12,
+                }
+              }}
+            >
+              <AntDesign name="ellipsis1" size={20} color="#6366F1" />
+
             </MenuTrigger>
             <MenuOptions
               optionsContainerStyle={{
-                backgroundColor: '#1E1E1E',
-                borderRadius: 8,
+                backgroundColor: '#252D3F',
+                borderRadius: 16,
                 marginTop: 40,
+                borderWidth: 1,
+                borderColor: '#6366F1',
+                shadowColor: '#6366F1',
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.3,
+                shadowRadius: 8,
               }}
             >
               <MenuOption
                 onSelect={() => handleDeleteWorkout(item.id)}
-                style={{ padding: 12, flexDirection: 'row', alignItems: 'center' }}
+                style={{ padding: 16, flexDirection: 'row', alignItems: 'center' }}
               >
-                <AntDesign name="delete" size={20} color="red" className='mr-2' />
-                <Text className="text-white text-base">Delete</Text>
+                <AntDesign name="delete" size={20} color="#EF4444" className='mr-2' />
+                <Text className="text-white text-base font-pmedium ml-2">Delete</Text>
               </MenuOption>
               <MenuOption
                 onSelect={() => {
                   handleRename(item.id, item.workout_name)
                 }}
-                style={{ padding: 12, flexDirection: 'row', alignItems: 'center' }}
+                style={{ padding: 16, flexDirection: 'row', alignItems: 'center', borderTopWidth: 1, borderTopColor: '#374151' }}
               >
-                <Icon name="edit" size={20} color="white" className='mr-2' />
-                <Text className="text-white text-base">Rename</Text>
+                <Icon name="edit" size={20} color="#6366F1" className='mr-2' />
+                <Text className="text-white text-base font-pmedium ml-2">Rename</Text>
               </MenuOption>
               <MenuOption
                 onSelect={() => handleEditWorkout(item.id, item.workout_name)}
-                style={{ padding: 12, flexDirection: 'row', alignItems: 'center' }}
+                style={{ padding: 16, flexDirection: 'row', alignItems: 'center', borderTopWidth: 1, borderTopColor: '#374151' }}
               >
-                <Icon name="edit" size={20} color="white" className='mr-2' />
-                <Text className="text-white text-base">Edit Workout</Text>
+                <Icon name="edit" size={20} color="#6366F1" className='mr-2' />
+                <Text className="text-white text-base font-pmedium ml-2">Edit Workout</Text>
               </MenuOption>
             </MenuOptions>
           </Menu>
@@ -179,57 +203,77 @@ export default function Workouts() {
 
 
   return (
-    <SafeAreaView className="bg-primary flex-1">
+    <MenuProvider>
+      <SafeAreaView className="bg-primary flex-1">
 
-      <FlatList
-        data={workouts}
-        renderItem={({ item }) => workoutItem(item)}
-        keyExtractor={(item) => item.id.toString()}
-        ListHeaderComponent={() => (
-          <View className='flex-1 p-5'>
+        <FlatList
+          data={workouts}
+          renderItem={({ item }) => workoutItem(item)}
+          keyExtractor={(item) => item.id.toString()}
+          ListHeaderComponent={() => (
+            <View className='flex-1 px-5 pt-6 pb-4'>
 
-            <View className='mb-10'>
-              <Text className='font-bold text-md text-gray-100'>Welcome Back</Text>
-              <Text className='text-white font-semibold text-3xl'>{auth?.user}</Text>
+              {/* Modern Header with Greeting */}
+              <View className='mb-8'>
+                <Text className='font-pmedium text-base text-gray-400 mb-1'>Welcome Back</Text>
+                <Text className='text-white font-pextrabold text-4xl tracking-tight'>{auth?.user}</Text>
+                <View className='flex-row items-center mt-2'>
+                  <View className='bg-success/20 rounded-full px-3 py-1'>
+                    <Text className='text-success text-xs font-pbold'>Ready to train</Text>
+                  </View>
+                </View>
+              </View>
+
+              {/* Quick Start Section with Modern CTA */}
+              <View className='bg-gradient-to-br from-accent/10 to-accent-purple/10 rounded-3xl p-6 mb-6 border-2 border-accent/30'>
+                <View className='flex-row items-center mb-4'>
+                  <View className='bg-accent rounded-full p-2 mr-3'>
+                    <Icon name="add" size={24} color="white" />
+                  </View>
+                  <Text className='text-white font-pbold text-2xl flex-1'>Quick Start</Text>
+                </View>
+
+                <TouchableOpacity
+                  className='w-full bg-accent rounded-2xl p-4 active:scale-95 shadow-lg shadow-accent/40'
+                  onPress={() => setShowCreateWorkout(true)}
+                >
+                  <Text className='text-white text-center font-pbold text-lg'>Create New Workout</Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* My Workouts Section Header */}
+              <View className='flex-row justify-between items-center mb-4'>
+                <Text className='text-white font-pbold text-2xl'>My Workouts</Text>
+                <View className='bg-accent/20 rounded-full px-3 py-1'>
+                  <Text className='text-accent text-xs font-pbold'>{workouts.length} total</Text>
+                </View>
+              </View>
             </View>
-
-            <Text className='text-white font-semibold text-4xl'>Start Workout</Text>
-
-            <TouchableOpacity
-              className='w-full bg-secondary my-4 rounded-2xl p-4 border border-black-200 active:opacity-100'
-              onPress={() => setShowCreateWorkout(true)}
-            >
-              <Text className='text-white text-center font-pextrabold text-lg'>Create a new workout</Text>
-            </TouchableOpacity>
-
-            <View>
-              <Text className='text-white font-psemibold text-xl mt-4'>My Workouts</Text>
-            </View>
-          </View>
-        )}
-      />
-      {
-        showCreateWorkout &&
-        <CreateWorkout
-          showCreateWorkout={showCreateWorkout}
-          setShowCreateWorkout={setShowCreateWorkout}
-          exercises={exercises}
-          refresh={refresh}
-          setRefresh={setRefresh}
+          )}
         />
-      }
-      {
-        showWorkout && <WorkoutScreen showWorkout={showWorkout} setShowWorkout={setShowWorkout} workoutId={activeWorkout} setActiveWorkout={setActiveWorkout} workoutName={workoutName} />
-      }
-      {
-        showRename && <RenamePopup showRename={showRename} setShowRename={setShowRename} workoutId={activeWorkout} refresh={refresh} setRefresh={setRefresh} currentWorkoutName={workoutName} setCurrentWorkoutName={setWorkoutName} />
-      }
-      {
-        editWorkout && <EditWorkout editWorkout={editWorkout} setEditWorkout={setEditWorkout} workoutId={activeWorkout} setActiveWorkout={setActiveWorkout} refresh={refresh} setRefresh={setRefresh} workoutName={workoutName} />
-      }
-      <StatusBar className='bg-white'/>
+        {
+          showCreateWorkout &&
+          <CreateWorkout
+            showCreateWorkout={showCreateWorkout}
+            setShowCreateWorkout={setShowCreateWorkout}
+            exercises={exercises}
+            refresh={refresh}
+            setRefresh={setRefresh}
+          />
+        }
+        {
+          showWorkout && <WorkoutScreen showWorkout={showWorkout} setShowWorkout={setShowWorkout} workoutId={activeWorkout} setActiveWorkout={setActiveWorkout} workoutName={workoutName} />
+        }
+        {
+          showRename && <RenamePopup showRename={showRename} setShowRename={setShowRename} workoutId={activeWorkout} refresh={refresh} setRefresh={setRefresh} currentWorkoutName={workoutName} setCurrentWorkoutName={setWorkoutName} />
+        }
+        {
+          editWorkout && <EditWorkout editWorkout={editWorkout} setEditWorkout={setEditWorkout} workoutId={activeWorkout} setActiveWorkout={setActiveWorkout} refresh={refresh} setRefresh={setRefresh} workoutName={workoutName} />
+        }
+        <StatusBar className='bg-white' />
 
-    </SafeAreaView>
+      </SafeAreaView>
+    </MenuProvider>
   )
 }
 

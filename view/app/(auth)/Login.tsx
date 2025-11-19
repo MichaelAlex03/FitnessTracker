@@ -68,48 +68,65 @@ const Login = () => {
   return (
     <SafeAreaView className='bg-primary h-full'>
       <ScrollView>
-        <View className='w-full items-center justify-center min-h-[85vh] px-4 my-6'>
-          <Text className='text-[30px] text-white font-bold mt-10 font-psemibold'>Welcome to FitTrackr 👋</Text>
-          <Text className='text-gray-100 mt-2'>Please login with your details here</Text>
+        <View className='w-full items-center justify-center min-h-[85vh] px-6 my-6'>
 
-          {errMsg && <Text className='font-semibold p-2 mt-2 text-red-700'>{errMsg}</Text>}
+          {/* Modern Header with Gradient Effect */}
+          <View className='items-center mt-10 mb-8'>
+            <View className='bg-accent/10 rounded-full p-4 mb-6'>
+              <View className='bg-accent rounded-full p-3'>
+                <Text className='text-4xl'>💪</Text>
+              </View>
+            </View>
+            <Text className='text-4xl text-white font-pextrabold tracking-tight'>Welcome Back</Text>
+            <Text className='text-gray-400 mt-3 text-base font-pmedium'>Continue your fitness journey</Text>
+          </View>
+
+          {/* Error Message with Modern Styling */}
+          {errMsg && (
+            <View className='bg-error/10 border border-error/30 rounded-2xl p-4 mb-4 w-full'>
+              <Text className='text-error font-pmedium text-center'>{errMsg}</Text>
+            </View>
+          )}
+
+          {/* Form Fields */}
           <FormField
             title='Email'
             value={email}
             handleChangeText={(e) => setEmail(e)}
-            otherStyles={'mt-7'}
+            otherStyles={'mt-2'}
           />
 
           <FormField
             title='Password'
             value={pwd}
             handleChangeText={(e) => setPwd(e)}
-            otherStyles={'mt-7'}
+            otherStyles={'mt-5'}
           />
 
-          <TouchableOpacity className='w-full flex flex-row justify-end'>
-            <Text className='text-gray-100 text-base mt-4 font-bold'>
-              <Link href={'/'}>Forgot Password?</Link>
-            </Text>
+          {/* Forgot Password Link */}
+          <TouchableOpacity className='w-full flex flex-row justify-end mt-4'>
+            <Link href={'/'} className='text-accent font-psemibold text-base'>
+              Forgot Password?
+            </Link>
           </TouchableOpacity>
 
+          {/* Sign In Button */}
           <CustomButton
             title="Sign In"
             handlePress={handleSubmit}
-            containerStyles={'mt-6 bg-secondary'}
+            containerStyles={'mt-8 bg-gradient-to-r from-accent to-accent-purple'}
             isLoading={isSubmitting}
           />
 
-          <View className='justify-center pt-5 flex-row gap-2'>
-            <Text className='text-lg text-gray-100 font-pregular'>Don't have an account?</Text>
-            <Link href={'/Register'} className='text-lg font-psemibold text-secondary'>
+          {/* Sign Up Link */}
+          <View className='justify-center pt-6 flex-row gap-2'>
+            <Text className='text-base text-gray-400 font-pregular'>Don't have an account?</Text>
+            <Link href={'/Register'} className='text-base font-psemibold text-accent'>
               Sign Up
             </Link>
           </View>
 
-
         </View>
-
       </ScrollView>
     </SafeAreaView>
   )
