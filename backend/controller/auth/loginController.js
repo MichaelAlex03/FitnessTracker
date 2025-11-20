@@ -16,20 +16,33 @@ const handleLogin = async (req, res) => {
     if (match) {
         //create JWTs
         const accessToken = jwt.sign(
-            { "email": foundUser.user_email },
+            {
+                "id": foundUser[0].id,
+                "email": foundUser[0].user_email,
+                "username": foundUser[0].user_name
+            },
             process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: '1d' }
+            { expiresIn: '15m' }
         );
         const refreshToken = jwt.sign(
-            { "email": foundUser.user_email },
+            {
+                "id": foundUser[0].id,
+                "email": foundUser[0].user_email,
+                "username": foundUser[0].user_name
+            },
             process.env.REFRESH_TOKEN_SECRET,
-            { expiresIn: '1d' }
+            { expiresIn: '7d' }
         );
         //Saving refresh token with current user
         await pg.updateUser(email, refreshToken);
 
-        res.cookie('jwt', refreshToken, { httpOnly: true, sameSite: 'None', maxAge: 24 * 60 * 60 * 1000 });
-        res.status(200).json({ accessToken, id: foundUser[0].id, user: foundUser[0].user_name });
+        // Send both tokens in response body for React Native
+        res.status(200).json({
+            accessToken,
+            refreshToken,  // Send refresh token in body instead of cookie
+            id: foundUser[0].id,
+            user: foundUser[0].user_name
+        });
     } else {
         res.sendStatus(401);
     }

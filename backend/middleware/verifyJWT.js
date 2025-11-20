@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-require('dotenv').config;
+require('dotenv').config();
 
 const verifyJWT = (req, res, next) =>  {
     const authHeader = req.headers['authorization'] || req.headers['Authorization'];
@@ -9,9 +9,9 @@ const verifyJWT = (req, res, next) =>  {
     jwt.verify(
         token,
         process.env.ACCESS_TOKEN_SECRET,
-        (err, decode) => {
+        (err, decoded) => {
             if (err) return res.sendStatus(403); //invalid token
-            req.user = decode.username;
+            req.user = decoded; // Store entire decoded object (id, email, username)
             next();
         }
     )

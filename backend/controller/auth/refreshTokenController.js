@@ -2,26 +2,36 @@ const pg = require('../../model/sql');
 const jwt = require('jsonwebtoken');
 
 const handleRefreshToken = async (req, res) => {
-    const cookies = req.cookies
-    if (!cookies?.jwt) return res.sendStatus(401);
-    console.log(cookies)
-    const refreshToken = cookies.jwt;
+    // Accept refresh token from request body (React Native)
+    const { refreshToken } = req.body;
+    if (!refreshToken) return res.sendStatus(401);
 
-    const founderUser = await pg.findRefreshToken(refreshToken)
-    if (!founderUser) return res.sendStatus(403); //Forbidden
-    //evaluate password
+    const foundUser = await pg.findRefreshToken(refreshToken)
+    if (!foundUser || foundUser.length === 0) return res.sendStatus(403); //Forbidden
 
     jwt.verify(
         refreshToken,
         process.env.REFRESH_TOKEN_SECRET,
         (err, decoded) => {
-            if (err || founderUser.username !== decoded.username) return res.sendStatus(403);
+            if (err || foundUser[0].user_name !== decoded.username) return res.sendStatus(403);
+
+            // Create new access token with updated user data
             const accessToken = jwt.sign(
-                { "username": founderUser.username },
+                {
+                    "id": foundUser[0].id,
+                    "email": foundUser[0].user_email,
+                    "username": foundUser[0].user_name
+                },
                 process.env.ACCESS_TOKEN_SECRET,
-                { expiresIn: '1d' }
+                { expiresIn: '15m' }
             );
-            res.json({ accessToken, user: founderUser[0].user_name, id: founderUser[0].id, email: founderUser[0].user_email });
+
+            res.json({
+                accessToken,
+                user: foundUser[0].user_name,
+                id: foundUser[0].id,
+                email: foundUser[0].user_email
+            });
         }
     );
 }
