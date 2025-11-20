@@ -1,14 +1,17 @@
 import axios from '../api/axios';
 import useAuth from './useAuth';
+import * as SecureStore from 'expo-secure-store';
 
 
 const useRefreshToken = () => {
     const { auth, setAuth } = useAuth();
 
     const refresh = async () => {
-        const response = await axios.get('/auth/refresh', {
-            withCredentials: true
-        })
+        const refreshToken = await SecureStore.getItemAsync('refreshToken');
+
+        const response = await axios.post('/auth/refresh', {
+            refreshToken
+        });
         setAuth({
             ...auth,
             accessToken: response.data.accessToken,

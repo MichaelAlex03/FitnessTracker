@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons'
 import useAxiosPrivate from '@/hooks/useAxiosPrivate'
 import axios from '@/api/axios'
+import useAuth from '@/hooks/useAuth'
 
 interface Message {
   id: string
@@ -20,6 +21,8 @@ const Chatbot = () => {
 
   const axiosPrivate = useAxiosPrivate();
 
+  const { auth } = useAuth();
+
   // TODO: Implement your OpenAI API call here
   const handleSendMessage = async () => {
     if (inputText.trim() === '') return
@@ -31,16 +34,19 @@ const Chatbot = () => {
       timestamp: new Date()
     }
 
-    try {
-      const response = axiosPrivate.get('/api/openAI')
-      console.log("TEST", response)
-    } catch (error) {
-      console.error(error)
-    }
+    
 
     setMessages(prev => [...prev, userMessage])
     setInputText('')
     setIsTyping(true)
+
+
+    try {
+      const response = await axiosPrivate.get(`/api/openAI`)
+      console.log("TEST", response)
+    } catch (error) {
+      console.error(error)
+    }
 
     // TODO: Call OpenAI API with inputText
     // Example:

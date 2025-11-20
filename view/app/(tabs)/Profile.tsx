@@ -5,6 +5,7 @@ import { router } from 'expo-router';
 import axios from '@/api/axios';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import * as ImagePicker from 'expo-image-picker';
+import * as SecureStore from 'expo-secure-store';
 
 import CustomButton from '@/components/CustomButton'
 import useAuth from '@/hooks/useAuth';
@@ -68,7 +69,10 @@ const Profile = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.get(LOGOUT_URL);
+      const refreshToken = await SecureStore.getItemAsync('refreshToken');
+      await axios.post(LOGOUT_URL, {
+        refreshToken 
+      });
       Alert.alert('Signed Out', 'Sign out was succesful')
     } catch (error) {
       Alert.alert('Failed logout', 'Failed to logout');
