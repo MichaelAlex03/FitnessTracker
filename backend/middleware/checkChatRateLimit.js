@@ -12,7 +12,7 @@ const checkChatRateLimit = async (req, res, next) => {
 
         if (isPaid === null) {
 
-            const user = await pg.findUser(email);
+            const user = await findUser(email);
             isPaid = user[0]?.paid_user || false;
 
             await redis.setex(cacheKey, 300, isPaid.toString());
@@ -32,6 +32,12 @@ const checkChatRateLimit = async (req, res, next) => {
                 reset
             });
         }
+
+        res.set({
+            "RateLimit-Limit": 5,
+            "RateLimit-Remaining": remaining,
+            "RateLimit-Reset": Math.ceil(reset / 1000) 
+        });
 
         next()
     } catch (error) {

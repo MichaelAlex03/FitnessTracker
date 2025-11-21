@@ -8,12 +8,12 @@ const redis = new Redis({
 
 const freeUserLimiter = new Ratelimit({
     redis,
-    limiter: Ratelimit.fixedWindow(0, "24 h")
+    limiter: Ratelimit.fixedWindow(5, "24 h")
 })
 
 const paidUserLimiter = new Ratelimit({
     redis,
-    limiter: Ratelimit.fixedWindow(0, "12 h")
+    limiter: Ratelimit.fixedWindow(1000, "12 h")
 })
 
-module.exports = { freeUserLimiter, paidUserLimiter };
+module.exports = { freeUserLimiter, paidUserLimiter, redis };
