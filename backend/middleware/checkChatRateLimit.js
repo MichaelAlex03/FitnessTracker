@@ -1,12 +1,27 @@
-const { freeUserLimiter, paidUserLimiter } = require('../config/rateLimiter');
+const { freeUserLimiter, paidUserLimiter, redis } = require('../config/rateLimiter');
+const { findUser } = require('../model/sql')
 
 const checkChatRateLimit = async (req, res, next) => {
     try {
-        console.log(req.user)
-        const userId = req.user?.id;
-        if (!userId) return res.status(401).json({ "message": "Unauthorized" });
 
-        const limiter = req.user.isPaid ? paidUserLimiter : freeUserLimiter;
+        const email = req.user.email;
+        const userId = req.user.id
+
+        const cacheKey = `user:${userId}:isPaid`;
+        let isPaid = await redis.get(cacheKey);
+
+        if (isPaid === null) {
+
+            const user = await pg.findUser(email);
+            isPaid = user[0]?.paid_user || false;
+
+            await redis.setex(cacheKey, 300, isPaid.toString());
+        } else {
+            // Redis returns string, convert to boolean
+            isPaid = isPaid === 'true';
+        }
+
+        const limiter = isPaid ? paidUserLimiter : freeUserLimiter;
 
         const { success, remaining, reset } = await limiter.limit(userId);
 
