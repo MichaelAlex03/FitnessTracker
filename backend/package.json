@@ -23,6 +23,7 @@
     "rate-limit-redis": "^4.2.3",
     "react-select": "^5.8.0",
     "redis": "^5.10.0",
+    "stripe": "^20.0.0",
     "uuid": "^11.0.3"
   },
   "name": "backend",

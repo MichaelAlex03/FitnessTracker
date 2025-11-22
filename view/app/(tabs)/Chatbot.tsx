@@ -31,9 +31,23 @@ const Chatbot = () => {
 
   const { auth } = useAuth();
 
-  // TODO: Implement your OpenAI API call here
+  const handleUpgrade = () => {
+    
+    Alert.alert(
+      "Upgrade to Pro",
+      "Get unlimited AI coaching requests and premium features!",
+      [
+        { text: "Cancel", style: "cancel" },
+        { text: "Upgrade", onPress: () => console.log("Navigate to payment") }
+      ]
+    )
+  }
+
+
   const handleSendMessage = async () => {
     if (inputText.trim() === '') return
+
+    let userText = inputText;
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -50,11 +64,19 @@ const Chatbot = () => {
 
 
     try {
-      const response = await axiosPrivate.post(`/api/openAI`)
-      console.log("TEST", response)
+      const response = await axiosPrivate.post(`/api/openAI`, {
+        userText
+      })
+      const aiMessage: Message = {
+        id: response.data.response.id,
+        text: response.data.response.output_text,
+        isUser: false,
+        timestamp: new Date()
+      }
+      setMessages(prev => [...prev, aiMessage]);
     } catch (err) {
       const error = err as AxiosError<RateLimitError>;
-
+      console.log("hello")
       if (error.response?.status === 429) {
         console.log(error.response.data)
         const { msg, remaining, reset } = error.response.data;
@@ -161,6 +183,13 @@ const Chatbot = () => {
                 Powered by ChatGPT-5
               </Text>
             </View>
+            <TouchableOpacity
+              className='bg-yellow-500/20 border border-yellow-500/50 px-3 py-2 rounded-xl flex-row items-center gap-2 mr-2'
+              onPress={handleUpgrade}
+            >
+              <MaterialCommunityIcons name="crown" size={16} color="#EAB308" />
+              <Text className='text-yellow-500 font-pbold text-sm'>Pro</Text>
+            </TouchableOpacity>
             {messages.length > 0 && (
               <TouchableOpacity
                 className='bg-surface-elevated p-3 rounded-xl'

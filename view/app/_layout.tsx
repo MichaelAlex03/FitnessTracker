@@ -6,17 +6,16 @@ import '../index.css'
 
 export default function RootLayout() {
   return (
-
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <AuthProvider>
-        <MenuProvider>
-          <Stack>
-            <Stack.Screen name='(auth)' options={{ headerShown: false }} />
-            <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
-            <Stack.Screen name='index' options={{ headerShown: false }} />
-          </Stack>
-        </MenuProvider>
-      </AuthProvider>
-    </GestureHandlerRootView>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <AuthProvider>
+          <MenuProvider>
+            <Stack>
+              <Stack.Screen name='(auth)' options={{ headerShown: false }} />
+              <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
+              <Stack.Screen name='index' options={{ headerShown: false }} />
+            </Stack>
+          </MenuProvider>
+        </AuthProvider>
+      </GestureHandlerRootView>
   )
 }
