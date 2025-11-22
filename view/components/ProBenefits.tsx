@@ -1,8 +1,12 @@
-import React from 'react'
-import { Modal, View, TouchableOpacity, Text, ScrollView } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { Modal, View, TouchableOpacity, Text, ScrollView, Alert } from 'react-native'
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { useStripe } from '@stripe/stripe-react-native';
+import useAxiosPrivate from '@/hooks/useAxiosPrivate';
+import useAuth from '@/hooks/useAuth';
+
 
 interface ProModalProps {
     showProModal: boolean,
@@ -31,10 +35,57 @@ const BenefitCard = ({ icon, title, description }: BenefitCardProps) => (
 
 const ProBenefits = ({ showProModal, setShowProModal }: ProModalProps) => {
 
-    const handleSubscribe = () => {
-        // TODO: Implement Stripe subscription flow
-        console.log('Subscribe pressed')
+    const { initPaymentSheet, presentPaymentSheet } = useStripe();
+    const axiosPrivate = useAxiosPrivate();
+    const { auth } = useAuth();
+
+    const fetchPaymentSheetParams = async () => {
+        try {
+            const response = await axiosPrivate.post('/api/stripe/payment-sheet', {
+                email: auth.email
+            })
+
+            const { paymentIntent, ephemeralKey, customer } = response.data
+
+            return {
+                paymentIntent,
+                ephemeralKey,
+                customer
+            }
+        } catch (error) {
+            console.log(error)
+        }
     }
+
+    const initializePaymentSheet = async () => {
+        const params = await fetchPaymentSheetParams();
+        if (!params) {
+            console.error('Failed to fetch payment sheet parameters');
+            return;
+        }
+        const { paymentIntent, ephemeralKey, customer } = params;
+
+        const { error } = await initPaymentSheet({
+            merchantDisplayName: "FitTrackr",
+            customerId: customer,
+            customerEphemeralKeySecret: ephemeralKey,
+            paymentIntentClientSecret: paymentIntent
+        })
+    }
+
+    const openPaymentSheet = async () => {
+        const { error } = await presentPaymentSheet();
+    
+        if (error) {
+            Alert.alert(`Error code: ${error.code}`, error.message);
+          } else {
+            Alert.alert('Success', 'Your order is confirmed!');
+          }
+    }
+
+    useEffect(() => {
+        initializePaymentSheet();
+    }, [])
 
     return (
         <Modal
@@ -45,15 +96,6 @@ const ProBenefits = ({ showProModal, setShowProModal }: ProModalProps) => {
         >
             <SafeAreaView className='flex-1 bg-primary'>
                 <ScrollView className='flex-1' showsVerticalScrollIndicator={false}>
-
-                    <View className='px-6 pt-4 pb-2'>
-                        <TouchableOpacity
-                            onPress={() => setShowProModal(false)}
-                            className="bg-surface p-3 rounded-xl self-start"
-                        >
-                            <AntDesign name="close" size={20} color="white" />
-                        </TouchableOpacity>
-                    </View>
 
                     <View className='items-center px-6 pt-4 pb-8'>
                         <View className='bg-yellow-500/20 rounded-full p-6 mb-6'>
@@ -102,7 +144,7 @@ const ProBenefits = ({ showProModal, setShowProModal }: ProModalProps) => {
                     <View className='px-6 pt-4 pb-8'>
                         <TouchableOpacity
                             className='bg-yellow-500 rounded-2xl py-4 flex-row items-center justify-center gap-2'
-                            onPress={handleSubscribe}
+                            onPress={openPaymentSheet}
                         >
                             <MaterialCommunityIcons name="crown" size={24} color="#000" />
                             <Text className='text-black font-pbold text-lg'>Subscribe to Pro</Text>

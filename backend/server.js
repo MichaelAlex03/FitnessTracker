@@ -52,6 +52,7 @@ app.use('/api/user', require('./routes/api/user'));
 app.use('/api/history', require('./routes/api/history'));
 app.use('/api/getPresignedUrl', require('./routes/api/s3'));
 app.use('/api/openAI', require('./middleware/checkChatRateLimit'), require('./routes/api/openAI'));
+app.use('/api/stripe', require('./routes/api/stripe'))
 
 
 

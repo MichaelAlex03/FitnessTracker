@@ -1,6 +1,19 @@
-const stripePayment = async (req, res) => {
-    // Use an existing Customer ID if this is a returning customer.
-    const customer = await stripe.customers.create();
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
+
+const createStripeIntent = async (req, res) => {
+
+    const { email } = req.body
+    let customer;
+
+    const customers = await stripe.customers.list({ email, limit: 1});
+    if (customers.length > 1) {
+        customer = customers.data[0].id;
+    } else {
+        customer = await stripe.customers.create({ email })
+    }
+
+
+
     const customerSession = await stripe.customerSessions.create({
         customer: customer.id,
         components: {
@@ -14,21 +27,19 @@ const stripePayment = async (req, res) => {
             },
         },
     });
+
     const paymentIntent = await stripe.paymentIntents.create({
         amount: 1099,
-        currency: 'eur',
+        currency: 'usd',
         customer: customer.id,
-        // In the latest version of the API, specifying the `automatic_payment_methods` parameter
-        // is optional because Stripe enables its functionality by default.
-        automatic_payment_methods: {
-            enabled: true,
-        },
     });
 
     res.json({
         paymentIntent: paymentIntent.client_secret,
         customerSessionClientSecret: customerSession.client_secret,
         customer: customer.id,
-        publishableKey: 'pk_test_51JGZUXCQQLgS1lWmCBVEf4pjszDxVHe21vosctxUAgJZw2RZjH9R0FXTRBzrlDRWLDYDnxyDlDY9elMZbADNXcim00yf790JCh'
+        publishableKey: process.env.STRIPE_PUBLISHABLE_KEY
     });
 }
+
+module.exports = { createStripeIntent }

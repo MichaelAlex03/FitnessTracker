@@ -9,12 +9,12 @@ const handleLogin = async (req, res) => {
     const foundUser = await pg.findUser(email);
     
     if (foundUser[0]?.user_email === '' || foundUser.length === 0) {
-        return res.sendStatus(401); //user not found
+        return res.sendStatus(401); 
     }
-    //evaluate password
+
     const match = await bcrypt.compare(pwd, foundUser[0]?.user_pass);
     if (match) {
-        //create JWTs
+       
         const accessToken = jwt.sign(
             {
                 "id": foundUser[0].id,
@@ -33,13 +33,13 @@ const handleLogin = async (req, res) => {
             process.env.REFRESH_TOKEN_SECRET,
             { expiresIn: '7d' }
         );
-        //Saving refresh token with current user
+       
         await pg.updateUser(email, refreshToken);
 
-        // Send both tokens in response body for React Native
+        
         res.status(200).json({
             accessToken,
-            refreshToken,  // Send refresh token in body instead of cookie
+            refreshToken,  
             id: foundUser[0].id,
             user: foundUser[0].user_name
         });

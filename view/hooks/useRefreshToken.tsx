@@ -8,6 +8,7 @@ const useRefreshToken = () => {
 
     const refresh = async () => {
         const refreshToken = await SecureStore.getItemAsync('refreshToken');
+        console.log("REFRESH", refreshToken)
 
         const response = await axios.post('/auth/refresh', {
             refreshToken

@@ -29,18 +29,6 @@ const Chatbot = () => {
 
   const axiosPrivate = useAxiosPrivate();
 
-  const handleUpgrade = () => {
-
-    Alert.alert(
-      "Upgrade to Pro",
-      "Get unlimited AI coaching requests and premium features!",
-      [
-        { text: "Cancel", style: "cancel" },
-        { text: "Upgrade", onPress: () => setShowProModal(true) }
-      ]
-    )
-  }
-
 
   const handleSendMessage = async () => {
     if (inputText.trim() === '') return
@@ -183,7 +171,7 @@ const Chatbot = () => {
             </View>
             <TouchableOpacity
               className='bg-yellow-500/20 border border-yellow-500/50 px-3 py-2 rounded-xl flex-row items-center gap-2 mr-2'
-              onPress={handleUpgrade}
+              onPress={() => setShowProModal(true)}
             >
               <MaterialCommunityIcons name="crown" size={16} color="#EAB308" />
               <Text className='text-yellow-500 font-pbold text-sm'>Pro</Text>

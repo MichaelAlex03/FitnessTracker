@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { Link, router } from "expo-router";
 import axios from '../../api/axios'
 import { AxiosError } from 'axios'
+import * as SecureStore from 'expo-secure-store';
 
 
 import CustomButton from '../../components/CustomButton'
@@ -44,7 +45,9 @@ const Login = () => {
       );
 
       setAuth({ email, pwd, accessToken: response.data.accessToken, userId: response.data.id, user: response.data.user })
+      SecureStore.setItemAsync("refreshToken", response.data.refreshToken)
       setIsLoggedIn(true)
+      console.log(response.data.refreshToken)
 
       if (response.status === 200) {
         router.replace('/Workouts');
