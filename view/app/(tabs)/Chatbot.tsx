@@ -3,9 +3,8 @@ import React, { useState, useRef } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons'
 import useAxiosPrivate from '@/hooks/useAxiosPrivate'
-import axios from '@/api/axios'
-import useAuth from '@/hooks/useAuth'
 import { AxiosError } from 'axios'
+import ProBenefits from '@/components/ProBenefits'
 
 interface Message {
   id: string
@@ -25,20 +24,19 @@ const Chatbot = () => {
   const [inputText, setInputText] = useState<string>('')
   const [isTyping, setIsTyping] = useState<boolean>(false)
   const [error, setError] = useState<boolean>(false);
+  const [showProModal, setShowProModal] = useState<boolean>(false);
   const flatListRef = useRef<FlatList>(null)
 
   const axiosPrivate = useAxiosPrivate();
 
-  const { auth } = useAuth();
-
   const handleUpgrade = () => {
-    
+
     Alert.alert(
       "Upgrade to Pro",
       "Get unlimited AI coaching requests and premium features!",
       [
         { text: "Cancel", style: "cancel" },
-        { text: "Upgrade", onPress: () => console.log("Navigate to payment") }
+        { text: "Upgrade", onPress: () => setShowProModal(true) }
       ]
     )
   }
@@ -255,6 +253,12 @@ const Chatbot = () => {
           </Text>
         </View>
       </KeyboardAvoidingView>
+
+      {
+        showProModal && (
+          <ProBenefits showProModal={showProModal} setShowProModal={setShowProModal} />
+        )
+      }
     </SafeAreaView>
   )
 }

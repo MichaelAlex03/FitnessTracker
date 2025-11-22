@@ -105,13 +105,11 @@ const Exercises = () => {
 
   return (
     <SafeAreaView className='bg-primary flex-1'>
-      {/* Modern Header */}
       <View className='px-5 pt-6 pb-4'>
         <Text className='text-white font-pextrabold text-4xl mb-2'>Exercise Library</Text>
         <Text className='text-gray-400 font-pmedium text-base'>{filteredExercises.length} exercises available</Text>
       </View>
 
-      {/* Enhanced Search Bar */}
       <View className='px-5 mb-4'>
         <View className='bg-surface border-2 border-gray-700 rounded-2xl h-14 flex-row items-center px-4'>
           <AntDesign name="search1" size={20} color="#6B7280" />
@@ -146,15 +144,14 @@ const Exercises = () => {
           >
             <View className="flex-1 bg-black/80 justify-end">
 
-              {/*Modal Content - Bottom Sheet Style*/}
               <View className="bg-surface rounded-t-3xl border-t-2 border-accent/30">
-                {/* Handle Bar */}
+                
                 <View className="items-center py-3">
                   <View className="w-12 h-1 bg-gray-600 rounded-full" />
                 </View>
 
                 <View className="px-6 pb-8">
-                  {/* Header */}
+                  
                   <View className="flex-row justify-between items-start mb-6">
                     <View className="flex-1">
                       <Text className="text-white text-2xl font-pbold mb-2">
@@ -174,7 +171,6 @@ const Exercises = () => {
                     </TouchableOpacity>
                   </View>
 
-                  {/* Instructions */}
                   <View className="bg-primary-light rounded-2xl p-4">
                     <Text className="text-white text-lg font-pbold mb-4">How to Perform</Text>
                     <View className="space-y-3">
