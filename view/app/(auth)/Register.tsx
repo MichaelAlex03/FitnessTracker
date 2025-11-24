@@ -269,7 +269,7 @@ const Register = () => {
 
           <CustomButton
             title="Create Account"
-            handlePress={handleSubmit}
+            handlePress={() => router.push('/(auth)/ConfirmRegister')}
             containerStyles={'mt-8 mb-2'}
             isLoading={isSubmitting}
           />

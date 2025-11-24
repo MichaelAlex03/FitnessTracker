@@ -11,6 +11,15 @@ const updateUser = async (email, refreshToken) => {
 
 
 //---------------------------- Patch Routes Queries ------------------------------//
+const verifyUser = async (email) => {
+    const { data, error } = await supabase
+        .from('users')
+        .update({ user_verified: true })
+        .eq('user_email', email);
+    if (error) console.log(error);
+    return data;
+}
+
 
 const updateUserExercises = async (workoutId, selectedExercises) => {
     try {
@@ -125,6 +134,21 @@ const updateWorkout = async (workoutId, workoutName) => {
 }
 
 //---------------------------- Get Routes Queries ------------------------------//
+const getVerificationCode = async (email) => {
+    try {
+        const { data, error } = await supabase
+            .from('users')
+            .select('*')
+            .eq('user_email', email);
+        if (error) throw error;
+        return data;
+    } catch (error) {
+        console.error(error);
+        return error
+    }
+}
+
+
 const findUser = async (email) => {
     try {
         const { data, error } = await supabase
@@ -251,10 +275,18 @@ const getPreviousSets = async (exerciseName) => {
 
 //---------------------------- Post Routes Queries ------------------------------//
 
-const createUser = async (user, pwd) => {
+const createUser = async (newUser) => {
     const { data, error } = await supabase
         .from('users')
-        .insert([{ user_name: user, user_pass: pwd }]);
+        .insert([{
+            user_name: newUser.user,
+            user_pass: newUser.hashedPwd,
+            user_email: newUser.email,
+            user_phone: newUser.phone,
+            verification_code: newUser.verificationCode,
+            verification_code_expiration: newUser.codeExpiration,
+            user_verified: newUser.verified
+        }]);
     if (error) throw error;
     return data;
 };
@@ -460,5 +492,7 @@ module.exports = {
     addWorkoutToHistory,
     getRecentWorkoutHistory,
     deleteWorkoutFromHistory,
-    getPreviousSets
+    getPreviousSets,
+    getVerificationCode,
+    verifyUser
 }
