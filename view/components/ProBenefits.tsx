@@ -80,6 +80,7 @@ const ProBenefits = ({ showProModal, setShowProModal }: ProModalProps) => {
             Alert.alert(`Error code: ${error.code}`, error.message);
           } else {
             Alert.alert('Success', 'Your order is confirmed!');
+            setShowProModal(false)
           }
     }
 
