@@ -8,4 +8,7 @@ router.route('/')
 router.route('/verify')
     .post(registerController.verifyUser)
 
+router.route('/resend')
+    .post(registerController.resendVerificationCode)
+
 module.exports = router;

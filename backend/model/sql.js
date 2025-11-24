@@ -20,6 +20,14 @@ const verifyUser = async (email) => {
     return data;
 }
 
+const updateVerificationCode = async (email, verificationCode) => {
+    const { error } = await supabase
+        .from('users')
+        .update({ verification_code: verificationCode })
+        .eq('user_email', email);
+    if (error) console.log(error);
+}
+
 
 const updateUserExercises = async (workoutId, selectedExercises) => {
     try {
@@ -494,5 +502,6 @@ module.exports = {
     deleteWorkoutFromHistory,
     getPreviousSets,
     getVerificationCode,
-    verifyUser
+    verifyUser,
+    updateVerificationCode
 }

@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const pg = require('../../model/sql')
-const { generateVerificationCode, verifyCodeExpiration } = require('../../utils/functions')
+const { generateVerificationCode, verifyCodeExpiration, sendEmail } = require('../../utils/functions')
 
 const handleNewUser = async (req, res) => {
     const { user, pwd, email, phone } = req.body;
@@ -22,7 +22,8 @@ const handleNewUser = async (req, res) => {
             phone,
             verificationCode,
             codeExpiration,
-            verified: false
+            verified: false,
+            createdAt: new Date()
         }
 
         await pg.createUser(newUser)
@@ -36,6 +37,10 @@ const handleNewUser = async (req, res) => {
 const verifyUser = async (req, res) => {
     const { verificationCode, email } = req.body;
 
+    console.log(verificationCode)
+    await sendEmail(email, verificationCode)
+
+
     const user = pg.getVerificationCode(email);
     const matchingVerificationCode = user.verification_code
 
@@ -45,14 +50,28 @@ const verifyUser = async (req, res) => {
             pg.verifyUser(email);
             return res.sendStatus(200)
         } catch (error) {
-            res.status(500).json({ 'message': err.message })
+            return res.status(500).json({ 'message': err.message })
         }
     }
 
     return res.sendStatus(204)
 }
 
+const resendVerificationCode = async (req, res) => {
+    const { email } = req.body;
+    const verificationCode = generateVerificationCode();
+
+    try {
+        await pg.updateVerificationCode(email, verificationCode)
+    } catch (error) {
+        return res.status(500).json({ 'message': err.message })
+    }
+
+    await sendEmail("michaelalex03@outlook.com", verificationCode)
+}
+
 module.exports = {
     handleNewUser,
-    verifyUser
+    verifyUser,
+    resendVerificationCode
 };
