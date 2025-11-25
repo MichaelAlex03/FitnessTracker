@@ -124,7 +124,7 @@ const Register = () => {
       );
 
       if (response.status === 201) {
-        router.push('/Login');
+        router.push({ pathname: '/(auth)/ConfirmRegister', params: { email } });
         setUser('');
         setPwd('');
         setEmail('');
@@ -269,7 +269,7 @@ const Register = () => {
 
           <CustomButton
             title="Create Account"
-            handlePress={() => router.push('/(auth)/ConfirmRegister')}
+            handlePress={handleSubmit}
             containerStyles={'mt-8 mb-2'}
             isLoading={isSubmitting}
           />

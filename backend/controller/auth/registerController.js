@@ -26,7 +26,8 @@ const handleNewUser = async (req, res) => {
             createdAt: new Date()
         }
 
-        await pg.createUser(newUser)
+        await pg.createUser(newUser);
+        await sendEmail(email, verificationCode)
         res.status(201).json({ 'success': `New user created!` });
     } catch (err) {
         console.log(err)
@@ -37,17 +38,14 @@ const handleNewUser = async (req, res) => {
 const verifyUser = async (req, res) => {
     const { verificationCode, email } = req.body;
 
-    console.log(verificationCode)
-    await sendEmail(email, verificationCode)
+    const user = await pg.getVerificationCode(email);
+    const matchingVerificationCode = user[0].verification_code
 
 
-    const user = pg.getVerificationCode(email);
-    const matchingVerificationCode = user.verification_code
-
-    if (verificationCode === matchingVerificationCode) {
+    if (Number(verificationCode) === matchingVerificationCode) {
 
         try {
-            pg.verifyUser(email);
+            await pg.verifyUser(email);
             return res.sendStatus(200)
         } catch (error) {
             return res.status(500).json({ 'message': err.message })
@@ -59,6 +57,7 @@ const verifyUser = async (req, res) => {
 
 const resendVerificationCode = async (req, res) => {
     const { email } = req.body;
+    console.log(email)
     const verificationCode = generateVerificationCode();
 
     try {
@@ -67,7 +66,7 @@ const resendVerificationCode = async (req, res) => {
         return res.status(500).json({ 'message': err.message })
     }
 
-    await sendEmail("michaelalex03@outlook.com", verificationCode)
+    await sendEmail(email, verificationCode)
 }
 
 module.exports = {

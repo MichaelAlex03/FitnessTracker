@@ -3,20 +3,17 @@ import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Link, router } from "expo-router";
 import axios from '../../api/axios'
-import { AxiosError } from 'axios'
+import { useLocalSearchParams } from 'expo-router';
 
 import CustomButton from '../../components/CustomButton'
 import FormField from '../../components/FormField'
 
 
-import { AntDesign } from '@expo/vector-icons';
-import useAuth from '@/hooks/useAuth';
-
 const ConfirmRegister = () => {
 
     const [verificationCode, setVerificationCode] = useState<string>("");
 
-    const { auth } = useAuth();
+    const { email } = useLocalSearchParams();
 
     const handleVerifyCode = async () => {
 
@@ -28,10 +25,12 @@ const ConfirmRegister = () => {
         try {
             const response = await axios.post("/auth/register/verify", {
                 verificationCode,
-                email: auth.email
+                email
             });
-            
-            if (response.status === 200){
+
+            console.log(response)
+
+            if (response.status === 200) {
                 Alert.alert("Registration Successful", "Your user was created now just login with your email and password")
                 router.push('/(auth)/Login')
             } else if (response.status === 204) {
@@ -44,8 +43,15 @@ const ConfirmRegister = () => {
         }
     }
 
-    const handleResendEmail = () => {
-
+    const handleResendEmail = async () => {
+        try {
+            await axios.post("/auth/register/resend", {
+                verificationCode,
+                email
+            });
+        } catch (error) {
+            console.error(error)
+        }
     }
 
     return (
