@@ -40,6 +40,7 @@ app.use('/auth/register', require('./routes/auth/register'));
 app.use('/auth/login', require('./routes/auth/login'));
 app.use('/auth/refresh', require('./routes/auth/refresh'));
 app.use('/auth/logout', require('./routes/auth/logout'));
+app.use('/auth/passwordReset', require('./routes/auth/passwordReset'))
 
 
 app.use(verifyJWT);
@@ -52,7 +53,6 @@ app.use('/api/user', require('./routes/api/user'));
 app.use('/api/history', require('./routes/api/history'));
 app.use('/api/getPresignedUrl', require('./routes/api/s3'));
 app.use('/api/openAI', require('./middleware/checkChatRateLimit'), require('./routes/api/openAI'));
-app.use('/api/stripe', require('./routes/api/stripe'))
 
 
 

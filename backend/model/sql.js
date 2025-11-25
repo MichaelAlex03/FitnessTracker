@@ -11,6 +11,16 @@ const updateUser = async (email, refreshToken) => {
 
 
 //---------------------------- Patch Routes Queries ------------------------------//
+const updatePassword = async (email, newPassword) => {
+    const { data, error } = await supabase
+        .from('users')
+        .update({ user_pass: newPassword })
+        .eq('user_email', email)
+    if (error) console.log(error);
+    return data;
+}
+
+
 const verifyUser = async (email) => {
     const { data, error } = await supabase
         .from('users')
@@ -503,5 +513,6 @@ module.exports = {
     getPreviousSets,
     getVerificationCode,
     verifyUser,
-    updateVerificationCode
+    updateVerificationCode,
+    updatePassword
 }

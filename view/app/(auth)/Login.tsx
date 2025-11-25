@@ -108,7 +108,7 @@ const Login = () => {
 
           {/* Forgot Password Link */}
           <TouchableOpacity className='w-full flex flex-row justify-end mt-4'>
-            <Link href={'/'} className='text-accent font-psemibold text-base'>
+            <Link href={'/(auth)/ForgotPassword'} className='text-accent font-psemibold text-base'>
               Forgot Password?
             </Link>
           </TouchableOpacity>

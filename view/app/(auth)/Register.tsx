@@ -27,6 +27,13 @@ const Register = () => {
   const [validPwd, setValidPwd] = useState(false);
   const [pwdFocus, setPwdFocus] = useState(false);
 
+  // Individual password requirement states
+  const [hasMinLength, setHasMinLength] = useState(false);
+  const [hasUpperCase, setHasUpperCase] = useState(false);
+  const [hasLowerCase, setHasLowerCase] = useState(false);
+  const [hasNumber, setHasNumber] = useState(false);
+  const [hasSpecialChar, setHasSpecialChar] = useState(false);
+
   const [matchPwd, setMatchPwd] = useState('');
   const [validMatch, setValidMatch] = useState(false);
   const [matchFocus, setMatchFocus] = useState(false);
@@ -53,6 +60,14 @@ const Register = () => {
 
   //Validates password and confirm password
   useEffect(() => {
+    // Check individual password requirements
+    setHasMinLength(pwd.length >= 8 && pwd.length <= 24);
+    setHasUpperCase(/[A-Z]/.test(pwd));
+    setHasLowerCase(/[a-z]/.test(pwd));
+    setHasNumber(/[0-9]/.test(pwd));
+    setHasSpecialChar(/[!@#$%]/.test(pwd));
+
+    // Overall validation
     setValidPwd(PWD_REGEX.test(pwd));
     setValidMatch(pwd === matchPwd);
   }, [pwd, matchPwd]);
@@ -73,6 +88,21 @@ const Register = () => {
   }, [user, pwd, matchPwd]);
 
 
+
+  // Helper function to render requirement with checkbox
+  const renderRequirement = (isMet: boolean, text: string) => {
+    const isEmpty = pwd.length === 0;
+    const iconName = isEmpty ? 'minuscircleo' : isMet ? 'checkcircle' : 'closecircle';
+    const iconColor = isEmpty ? '#9CA3AF' : isMet ? '#10B981' : '#EF4444';
+    const textColor = isEmpty ? 'text-gray-100' : isMet ? 'text-green-500' : 'text-red-500';
+
+    return (
+      <View className='flex-row items-center gap-2 mb-1'>
+        <AntDesign name={iconName} size={14} color={iconColor} />
+        <Text className={`${textColor} text-sm font-pregular`}>{text}</Text>
+      </View>
+    );
+  };
 
   async function handleSubmit() {
 
@@ -230,23 +260,14 @@ const Register = () => {
             handleFocus={() => setPwdFocus(true)}
             handleBlur={() => setPwdFocus(false)}
           />
-          {pwdFocus && !validPwd &&
-            <View className='flex-row items-start justify-start gap-2 mt-2 w-full md:w-1/2 bg-warning/10 border border-warning/30 p-3 rounded-xl'>
-              <AntDesign name="exclamationcircle" size={14} color="#F59E0B" className='mt-[2px]' />
-              <View className='flex-1'>
-                <Text className='text-warning text-sm font-pmedium'>
-                  8 to 24 characters.
-                </Text>
-                <Text className='text-warning text-sm font-pmedium'>
-                  Must include uppercase and lowercase letters
-                </Text>
-                <Text className='text-warning text-sm font-pmedium'>
-                  a number and a special character.
-                </Text>
-                <Text className='text-warning text-sm font-pmedium'>
-                  Allowed special characters: ! @ # %
-                </Text>
-              </View>
+          {pwdFocus &&
+            <View className='mt-2 w-full bg-gray-100/5 border border-gray-100/10 p-4 rounded-xl'>
+              <Text className='text-gray-100 text-sm font-pmedium mb-3'>Password Requirements:</Text>
+              {renderRequirement(hasMinLength, '8 to 24 characters')}
+              {renderRequirement(hasUpperCase, 'At least one uppercase letter (A-Z)')}
+              {renderRequirement(hasLowerCase, 'At least one lowercase letter (a-z)')}
+              {renderRequirement(hasNumber, 'At least one number (0-9)')}
+              {renderRequirement(hasSpecialChar, 'At least one special character (!@#$%)')}
             </View>
           }
 
