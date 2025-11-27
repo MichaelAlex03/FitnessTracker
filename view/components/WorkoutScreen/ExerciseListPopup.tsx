@@ -122,8 +122,6 @@ const ExerciseListPopup = ({
         }
     }
 
-    console.log(selectedExercises)
-
 
     useEffect(() => {
         if (searchData.trim() === '') {

@@ -2,7 +2,6 @@ const pg = require('../../model/sql');
 
 const getExercises = async (req, res) => {
     const result = await pg.getAllExercises();
-    console.log("RESULT", result)
     return res.status(200).json({ exercises: result });
 }
 
@@ -12,6 +11,17 @@ const addExercisesToWorkout = async (req, res) => {
 
     const result = await pg.createWorkoutExercises(workoutId, selectedExercises);
     res.status(201).json({ result });
+}
+
+const addExercise = async (req, res) => {
+    const { exerciseName, exerciseCategory, exerciseInstructions } = req.body;
+
+    try {
+        return res.status(200).json({ 'message': 'exercises added' });
+    } catch (error) {
+        return res.status(500).json({ 'message': error.message });
+    }
+
 }
 
 const updateWorkoutExercises = async (req, res) => {
@@ -45,7 +55,6 @@ const deleteExercise = async (req, res) => {
     const { exerciseId } = req.params;
     try {
         const result = await pg.deleteExercise(exerciseId);
-        console.log(result)
         if (result == true) return res.status(200).json({ 'message': 'exercise deleted!' });
     } catch (err) {
         return res.status(500).json({ 'message': err.message });

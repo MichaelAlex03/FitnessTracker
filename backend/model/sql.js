@@ -293,6 +293,14 @@ const getPreviousSets = async (exerciseName) => {
 
 //---------------------------- Post Routes Queries ------------------------------//
 
+const addExercise = async (exerciseName, exerciseCategory, exerciseIntructions) => {
+    const { data, error } = await supabase
+        .from('exercises')
+        .insert({
+            
+        })
+}
+
 const createUser = async (newUser) => {
     const { data, error } = await supabase
         .from('users')
@@ -477,9 +485,6 @@ const deleteWorkoutFromHistory = async (workoutId) => {
 
 }
 
-
-
-//Exports
 
 module.exports = {
     findUser,

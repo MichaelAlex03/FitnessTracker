@@ -14,4 +14,7 @@ router.route('/getWorkoutExercises/:workoutId')
 router.route('/delete/:exerciseId')
     .delete(exerciseController.deleteExercise)
 
+router.route('/add')
+    .post()
+
 module.exports = router;
