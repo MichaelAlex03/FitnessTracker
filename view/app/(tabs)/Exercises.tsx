@@ -6,6 +6,7 @@ import useAxiosPrivate from '@/hooks/useAxiosPrivate';
 import { Menu, MenuOption, MenuOptions, MenuTrigger } from 'react-native-popup-menu';
 import AddExercise from '@/components/AddExercise';
 import useAuth from '@/hooks/useAuth';
+import { GenerateUUID } from 'react-native-uuid';
 
 const EXERCISES_URL = '/api/exercises'
 
@@ -14,6 +15,7 @@ interface Exercise {
   exercise_bodypart: string,
   exercise_instructions: string,
   exercise_category: string,
+  user_id: string
   id: string
 }
 
@@ -212,11 +214,11 @@ const Exercises = () => {
   }
 
   const handleAddExercise = async (
-    exercise: { 
-      exercise_name: string, 
-      exercise_bodypart: string, 
-      exercise_category: string, 
-      exercise_instructions: string 
+    exercise: {
+      exercise_name: string,
+      exercise_bodypart: string,
+      exercise_category: string,
+      exercise_instructions: string
     }
   ) => {
     try {
@@ -251,21 +253,36 @@ const Exercises = () => {
     )
     setFilteredExercises(filtered)
     setShowBodyPartFilter(false)
+    setCategories(new Map())
   }
 
   const filterByCategory = () => {
-      if (categories.size === 0){
-        setFilteredExercises(exercises)
-        setShowCategoryFilter(false)
-        return;
-      }
+    if (categories.size === 0) {
+      setFilteredExercises(exercises)
+      setShowCategoryFilter(false)
+      return;
+    }
 
-      const filtered = exercises.filter(exercise => 
-        categories.get(exercise.exercise_category) !== undefined
-      )
+    const filtered = exercises.filter(exercise =>
+      categories.get(exercise.exercise_category) !== undefined
+    )
 
-      setFilteredExercises(filtered)
-      setShowCategoryFilter(false);
+    setFilteredExercises(filtered)
+    setShowCategoryFilter(false);
+    setBodyParts(new Map())
+  }
+
+  const filterUserWorkouts = () => {
+    const filtered = exercises.filter(exercise => (
+      exercise.user_id === auth.userId
+    ))
+    setFilteredExercises(filtered)
+  }
+
+  const resetFilter = () => {
+    setFilteredExercises(exercises)
+    setBodyParts(new Map())
+    setCategories(new Map())
   }
 
   useEffect(() => {
@@ -352,7 +369,21 @@ const Exercises = () => {
                 </MenuOption>
                 <View style={{ height: 1, backgroundColor: '#374151', marginHorizontal: 8 }} />
                 <MenuOption
-                  onSelect={() => setFilteredExercises(exercises)}
+                  onSelect={filterUserWorkouts}
+                  style={{
+                    padding: 14,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}
+                >
+                  <View className="w-6 h-6 rounded-full items-center justify-center mr-3" style={{ backgroundColor: '#6366F120' }}>
+                    <AntDesign name="reload1" size={14} color="#6366F1" />
+                  </View>
+                  <Text className="text-white text-base font-pmedium">My Exercises</Text>
+                </MenuOption>
+                <View style={{ height: 1, backgroundColor: '#374151', marginHorizontal: 8 }} />
+                <MenuOption
+                  onSelect={resetFilter}
                   style={{
                     padding: 14,
                     flexDirection: 'row',
@@ -364,6 +395,7 @@ const Exercises = () => {
                   </View>
                   <Text className="text-white text-base font-pmedium">Reset Filter</Text>
                 </MenuOption>
+
               </MenuOptions>
             </Menu>
           </View>

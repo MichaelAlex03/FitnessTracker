@@ -1,4 +1,5 @@
 import { createContext, useState, ReactNode } from "react";
+import { GenerateUUID } from "react-native-uuid";
 
 interface AuthData {
     email: string;
