@@ -10,8 +10,9 @@ const EXERCISES_URL = '/api/exercises'
 
 interface Exercise {
   exercise_name: string,
-  exercise_category: string,
+  exercise_bodypart: string,
   exercise_instructions: string,
+  exercise_category: string,
   id: string
 }
 
@@ -20,11 +21,25 @@ interface ExerciseItem {
 }
 
 type bodyPartToFilterMap = Map<string, number>
+type categoryToFilterMap = Map<string, number>
 
 interface BodyParts {
   id: number
   value: string
 }
+
+interface CategoriesToFilter {
+  id: number
+  value: string
+}
+
+const CATEGORIES: CategoriesToFilter[] = [
+  { id: 1, value: 'Barbell' },
+  { id: 2, value: 'Dumbbell' },
+  { id: 3, value: 'Machine' },
+  { id: 4, value: 'Bodyweight' },
+  { id: 5, value: 'Other' }
+]
 
 
 const BODY_PARTS: BodyParts[] = [
@@ -46,8 +61,12 @@ const Exercises = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [activeExercise, setActiveExercise] = useState<Exercise | null>(null);
   const [addModalVisible, setAddModalVisible] = useState<boolean>(false);
+
   const [bodyParts, setBodyParts] = useState<bodyPartToFilterMap>(new Map());
   const [showBodyPartFilter, setShowBodyPartFilter] = useState<boolean>(false);
+
+  const [categories, setCategories] = useState<categoryToFilterMap>(new Map())
+  const [showCategoryFilter, setShowCategoryFilter] = useState<boolean>(false);
 
 
   const renderExercise = ({ item }: ExerciseItem) => {
@@ -68,7 +87,7 @@ const Exercises = () => {
             <View className="flex-row items-center">
               <View className="rounded-full px-3 py-1" style={{ backgroundColor: '#6366F120' }}>
                 <Text className="text-xs font-pmedium" style={{ color: '#6366F1' }}>
-                  {item.exercise_category}
+                  {item.exercise_bodypart}
                 </Text>
               </View>
             </View>
@@ -83,7 +102,7 @@ const Exercises = () => {
   };
 
 
-  const renderFilterItems = ({ item }: { item: BodyParts }) => {
+  const renderBodyPartFilter = ({ item }: { item: BodyParts }) => {
     let name = item.value
     const isSelected = bodyParts.get(name) !== undefined;
 
@@ -121,13 +140,62 @@ const Exercises = () => {
                   color="#FF9C01"
                 />
                 : <View>
-                  </View>
+                </View>
             }
           </View>
         </View>
       </TouchableOpacity>
     );
   };
+
+
+  const renderCategoryItems = ({ item }: { item: CategoriesToFilter }) => {
+
+    let category = item.value;
+    let isSelected = categories.get(category) !== undefined
+
+    const toggleCategory = () => {
+      const newMap = new Map(categories)
+      if (isSelected) {
+        newMap.delete(category)
+      } else {
+        newMap.set(category, 1)
+      }
+
+      setCategories(newMap)
+    }
+
+    return (
+      <TouchableOpacity
+        className={isSelected
+          ? "bg-secondary/20 mx-4 mb-4 rounded-2xl p-4 border border-black-200 active:opacity-80"
+          : "bg-black-100 mx-4 mb-4 rounded-2xl p-4 border border-black-200 active:opacity-80"
+        }
+        onPress={toggleCategory}
+      >
+        <View className="w-full flex-row justify-between items-center">
+          <View className="flex-1">
+            <Text className="text-white text-lg font-pmedium mb-1">
+              {category}
+            </Text>
+          </View>
+
+          <View className="bg-secondary/20 p-2 rounded-xl">
+            {
+              isSelected ?
+                <AntDesign
+                  name="check"
+                  size={20}
+                  color="#FF9C01"
+                />
+                : <View>
+                </View>
+            }
+          </View>
+        </View>
+      </TouchableOpacity>
+    )
+  }
 
 
   const fetchExercises = async () => {
@@ -140,7 +208,7 @@ const Exercises = () => {
     }
   }
 
-  const handleAddExercise = async (exercise: { exercise_name: string; exercise_category: string; exercise_instructions: string }) => {
+  const handleAddExercise = async (exercise: { exercise_name: string; exercise_bodypart: string; exercise_instructions: string }) => {
     try {
       const response = await axiosPrivate.post(EXERCISES_URL, exercise);
       if (response.status === 201) {
@@ -155,17 +223,32 @@ const Exercises = () => {
 
   const filterByBodyPart = () => {
 
-    if (bodyParts.size === 0){
+    if (bodyParts.size === 0) {
       setFilteredExercises(exercises)
       setShowBodyPartFilter(false)
       return;
     }
 
     const filtered = exercises.filter(exercise =>
-      bodyParts.get(exercise.exercise_category) !== undefined
+      bodyParts.get(exercise.exercise_bodypart) !== undefined
     )
     setFilteredExercises(filtered)
     setShowBodyPartFilter(false)
+  }
+
+  const filterByCategory = () => {
+      if (categories.size === 0){
+        setFilteredExercises(exercises)
+        setShowCategoryFilter(false)
+        return;
+      }
+
+      const filtered = exercises.filter(exercise => 
+        categories.get(exercise.exercise_category) !== undefined
+      )
+
+      setFilteredExercises(filtered)
+      setShowCategoryFilter(false);
   }
 
   useEffect(() => {
@@ -232,13 +315,13 @@ const Exercises = () => {
                     alignItems: 'center',
                   }}>
                   <View className="w-6 h-6 rounded-full items-center justify-center mr-3" style={{ backgroundColor: '#6366F120' }}>
-                    <AntDesign name="reload1" size={14} color="#6366F1" />
+                    <AntDesign name="tags" size={14} color="#6366F1" />
                   </View>
                   <Text className="text-white text-base font-pmedium">Body Part</Text>
                 </MenuOption>
                 <View style={{ height: 1, backgroundColor: '#374151', marginHorizontal: 8 }} />
                 <MenuOption
-                  onSelect={() => setFilteredExercises(exercises)}
+                  onSelect={() => setShowCategoryFilter(true)}
                   style={{
                     padding: 14,
                     flexDirection: 'row',
@@ -246,7 +329,7 @@ const Exercises = () => {
                   }}
                 >
                   <View className="w-6 h-6 rounded-full items-center justify-center mr-3" style={{ backgroundColor: '#6366F120' }}>
-                    <AntDesign name="reload1" size={14} color="#6366F1" />
+                    <AntDesign name="appstore-o" size={14} color="#6366F1" />
                   </View>
                   <Text className="text-white text-base font-pmedium">Category</Text>
                 </MenuOption>
@@ -319,7 +402,7 @@ const Exercises = () => {
                       </Text>
                       <View className="rounded-full px-3 py-1 self-start" style={{ backgroundColor: `'#6366F1'20` }}>
                         <Text className="text-sm font-pmedium" style={{ color: '#6366F1' }}>
-                          {activeExercise?.exercise_category}
+                          {activeExercise?.exercise_bodypart}
                         </Text>
                       </View>
                     </View>
@@ -362,35 +445,126 @@ const Exercises = () => {
             animationType="slide"
             onRequestClose={() => setShowBodyPartFilter(false)}
           >
-            <View className="flex-1 bg-black/80 justify-center items-center p-6">
+            <View className="flex-1 bg-black/80 justify-end">
+              <View className="bg-surface rounded-t-3xl border-t-2 border-accent/30">
 
-              <View className='bg-primary items-center justify-center w-full rounded-xl p-6'>
-                <FlatList
-                  data={BODY_PARTS}
-                  renderItem={renderFilterItems}
-                  keyExtractor={item => item.id.toString()}
-                  ListFooterComponent={() => (
-                    <View className='w-full gap-4 mt-4'>
-                      <TouchableOpacity
-                        onPress={filterByBodyPart}
-                        className='bg-gray-700 py-4 rounded-2xl active:bg-gray-600'
-                      >
-                        <Text className='text-white text-center font-pbold text-lg'>Confirm Filter</Text>
-                      </TouchableOpacity>
+                <View className="items-center py-3">
+                  <View className="w-12 h-1 bg-gray-600 rounded-full" />
+                </View>
 
-                      <TouchableOpacity
-                        onPress={() => setShowBodyPartFilter(false)}
-                        className='bg-accent rounded-2xl py-4 shadow-lg shadow-accent/40 active:scale-95'
-                      >
-                        <Text className='text-white text-center font-pbold text-lg'>Cancel</Text>
-                      </TouchableOpacity>
-                    </View>
-                  )}
-                />
+                <View className="flex-row justify-between items-center px-6 pb-4">
+                  <View className="flex-1">
+                    <Text className="text-white text-2xl font-pbold mb-1">Filter by Body Part</Text>
+                    <Text className="text-gray-400 font-pmedium text-sm">
+                      {bodyParts.size > 0 ? `${bodyParts.size} selected` : 'Select one or more'}
+                    </Text>
+                  </View>
+                  <TouchableOpacity
+                    onPress={() => setShowBodyPartFilter(false)}
+                    className="bg-gray-700 p-2 rounded-xl"
+                  >
+                    <AntDesign name="close" size={20} color="white" />
+                  </TouchableOpacity>
+                </View>
+
+                <View className="max-h-96">
+                  <FlatList
+                    data={BODY_PARTS}
+                    renderItem={renderBodyPartFilter}
+                    keyExtractor={item => item.id.toString()}
+                    contentContainerStyle={{ paddingBottom: 16 }}
+                  />
+                </View>
+
+                <View className="px-6 pb-8 pt-4 border-t border-gray-700">
+                  <View className="flex-row gap-3">
+                    <TouchableOpacity
+                      onPress={() => {
+                        setBodyParts(new Map());
+                        setFilteredExercises(exercises);
+                      }}
+                      className="flex-1 bg-gray-700 rounded-xl py-3.5 items-center"
+                    >
+                      <Text className="text-white font-psemibold text-base">Clear</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={filterByBodyPart}
+                      className="flex-1 bg-accent rounded-xl py-3.5 items-center"
+                    >
+                      <Text className="text-white font-psemibold text-base">Apply Filter</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
               </View>
             </View>
           </Modal>
+        )
+      }
+      {
+        showCategoryFilter && (
+          <Modal
+            visible={showCategoryFilter}
+            transparent={true}
+            animationType="slide"
+            onRequestClose={() => setShowCategoryFilter(false)}
+          >
+            <View className="flex-1 bg-black/80 justify-end">
+              <View className="bg-surface rounded-t-3xl border-t-2 border-accent/30">
 
+                {/* Drag Handle */}
+                <View className="items-center py-3">
+                  <View className="w-12 h-1 bg-gray-600 rounded-full" />
+                </View>
+
+                {/* Header */}
+                <View className="flex-row justify-between items-center px-6 pb-4">
+                  <View className="flex-1">
+                    <Text className="text-white text-2xl font-pbold mb-1">Filter by Category</Text>
+                    <Text className="text-gray-400 font-pmedium text-sm">
+                      {categories.size > 0 ? `${categories.size} selected` : 'Select one or more'}
+                    </Text>
+                  </View>
+                  <TouchableOpacity
+                    onPress={() => setShowCategoryFilter(false)}
+                    className="bg-gray-700 p-2 rounded-xl"
+                  >
+                    <AntDesign name="close" size={20} color="white" />
+                  </TouchableOpacity>
+                </View>
+
+                {/* Categories List */}
+                <View className="max-h-96">
+                  <FlatList
+                    data={CATEGORIES}
+                    renderItem={renderCategoryItems}
+                    keyExtractor={item => item.id.toString()}
+                    contentContainerStyle={{ paddingBottom: 16 }}
+                  />
+                </View>
+
+                {/* Action Buttons */}
+                <View className="px-6 pb-8 pt-4 border-t border-gray-700">
+                  <View className="flex-row gap-3">
+                    <TouchableOpacity
+                      onPress={() => {
+                        setCategories(new Map());
+                        setFilteredExercises(exercises);
+                      }}
+                      className="flex-1 bg-gray-700 rounded-xl py-3.5 items-center"
+                    >
+                      <Text className="text-white font-psemibold text-base">Clear</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={filterByCategory}
+                      className="flex-1 bg-accent rounded-xl py-3.5 items-center"
+                    >
+                      <Text className="text-white font-psemibold text-base">Apply Filter</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+            </View>
+          </Modal>
         )
       }
 

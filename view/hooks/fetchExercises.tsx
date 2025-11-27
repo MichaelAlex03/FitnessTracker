@@ -3,7 +3,8 @@ import useAxiosPrivate from './useAxiosPrivate';
 
 interface Exercise {
     exercise_name: string,
-    exercise_category: string,
+    exercise_bodypart: string,
+    exercise_category: string
     exercise_instructions: string,
     id: string
 }

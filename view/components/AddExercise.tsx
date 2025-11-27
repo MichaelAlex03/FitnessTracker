@@ -5,14 +5,16 @@ import AntDesign from '@expo/vector-icons/AntDesign'
 interface AddExerciseProps {
   visible: boolean;
   onClose: () => void;
-  onSubmit: (exercise: { exercise_name: string; exercise_category: string; exercise_instructions: string }) => void;
+  onSubmit: (exercise: { exercise_name: string; exercise_bodypart: string; exercise_instructions: string }) => void;
 }
 
-const CATEGORIES = ['Chest', 'Back', 'Legs', 'Shoulders', 'Arms', 'Core'];
+const BODY_PARTS = ['Chest', 'Back', 'Legs', 'Shoulders', 'Arms', 'Core'];
+const CATEGORIES = ['Barbell', 'Dumbbell', 'Machine', 'Bodyweight', 'Other']
 
 const AddExercise = ({ visible, onClose, onSubmit }: AddExerciseProps) => {
   const [exerciseName, setExerciseName] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('Chest');
+  const [selectedBodyPart, setSelectedBodyPart] = useState('Chest');
+  const [selectedCategory, setSelectedCategory] = useState<string>('Barbell')
   const [instructions, setInstructions] = useState('');
 
   const handleSubmit = () => {
@@ -22,13 +24,13 @@ const AddExercise = ({ visible, onClose, onSubmit }: AddExerciseProps) => {
 
     onSubmit({
       exercise_name: exerciseName,
-      exercise_category: selectedCategory,
+      exercise_bodypart: selectedBodyPart,
       exercise_instructions: instructions
     });
 
-    
+
     setExerciseName('');
-    setSelectedCategory('Chest');
+    setSelectedBodyPart('Chest');
     setInstructions('');
   };
 
@@ -68,22 +70,43 @@ const AddExercise = ({ visible, onClose, onSubmit }: AddExerciseProps) => {
 
             {/* Category Selection */}
             <View className="mb-5">
-              <Text className="text-white text-base font-pmedium mb-2">Category</Text>
+              <Text className="text-white text-base font-pmedium mb-2">Body Part</Text>
+              <View className="flex-row flex-wrap gap-2">
+                {BODY_PARTS.map((part) => (
+                  <TouchableOpacity
+                    key={part}
+                    onPress={() => setSelectedBodyPart(part)}
+                    className={`px-4 py-2 rounded-xl border-2 ${selectedBodyPart === part
+                        ? 'bg-accent/20 border-accent'
+                        : 'bg-primary border-gray-700'
+                      }`}
+                  >
+                    <Text
+                      className={`font-pmedium ${selectedBodyPart === part ? 'text-accent' : 'text-gray-400'
+                        }`}
+                    >
+                      {part}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+
+            <View className="mb-5">
+              <Text className="text-white text-base font-pmedium mb-2">Body Part</Text>
               <View className="flex-row flex-wrap gap-2">
                 {CATEGORIES.map((category) => (
                   <TouchableOpacity
                     key={category}
                     onPress={() => setSelectedCategory(category)}
-                    className={`px-4 py-2 rounded-xl border-2 ${
-                      selectedCategory === category
+                    className={`px-4 py-2 rounded-xl border-2 ${selectedCategory === category
                         ? 'bg-accent/20 border-accent'
                         : 'bg-primary border-gray-700'
-                    }`}
+                      }`}
                   >
                     <Text
-                      className={`font-pmedium ${
-                        selectedCategory === category ? 'text-accent' : 'text-gray-400'
-                      }`}
+                      className={`font-pmedium ${selectedCategory === category ? 'text-accent' : 'text-gray-400'
+                        }`}
                     >
                       {category}
                     </Text>

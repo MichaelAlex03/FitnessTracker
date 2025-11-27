@@ -17,8 +17,9 @@ interface Exercise {
 //Interface used for set of exercises that users can choose from not the exercises in their workout
 interface ExerciseList {
     exercise_name: string,
-    exercise_category: string,
+    exercise_bodypart: string,
     exercise_instructions: string,
+    exercise_category: string
     id: string
 }
 
@@ -154,7 +155,7 @@ const ExerciseListPopup = ({
                             {item.exercise_name}
                         </Text>
                         <Text className="text-gray-100 text-sm">
-                            {item.exercise_category}
+                            {item.exercise_bodypart}
                         </Text>
                     </View>
 
@@ -164,7 +165,7 @@ const ExerciseListPopup = ({
                                 <AntDesign
                                     name="check"
                                     size={20}
-                                    color="#FF9C01"
+                                    color="#6366F1"
                                 />
                                 :
                                 <TouchableOpacity onPress={() => {
@@ -174,7 +175,7 @@ const ExerciseListPopup = ({
                                     <AntDesign
                                         name="question"
                                         size={20}
-                                        color="#FF9C01"
+                                        color="#6366F1"
                                     />
                                 </TouchableOpacity>
                         }
@@ -257,7 +258,6 @@ const ExerciseListPopup = ({
 
                             <View className="flex-1 bg-black/50 justify-center items-center">
 
-                                {/*Modal Content*/}
                                 <View className="bg-black-100 w-[90%] rounded-2xl p-6 mx-4">
                                     <View className="flex-row justify-between items-center mb-4">
                                         <Text className="text-white text-xl font-pmedium">
