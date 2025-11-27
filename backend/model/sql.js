@@ -208,10 +208,11 @@ const getWorkouts = async (id) => {
     return data;
 };
 
-const getAllExercises = async () => {
+const getAllExercises = async (userId) => {
     const { data, error } = await supabase
         .from('exercises')
-        .select('*');
+        .select('*')
+        .or(`user_id.is.null,user_id.eq.${userId}`)
     if (error) throw error;
     return data;
 };
@@ -293,12 +294,17 @@ const getPreviousSets = async (exerciseName) => {
 
 //---------------------------- Post Routes Queries ------------------------------//
 
-const addExercise = async (exerciseName, exerciseCategory, exerciseIntructions) => {
-    const { data, error } = await supabase
+const addExercise = async (exerciseName, exerciseCategory, exerciseBodyPart, exerciseIntructions, userId) => {
+    const { error } = await supabase
         .from('exercises')
         .insert({
-            
+            exercise_name: exerciseName,
+            exercise_category: exerciseCategory,
+            exercise_bodypart: exerciseBodyPart,
+            exercise_instructions: exerciseIntructions,
+            user_id: userId
         })
+    if (error) throw error;
 }
 
 const createUser = async (newUser) => {
@@ -519,5 +525,6 @@ module.exports = {
     getVerificationCode,
     verifyUser,
     updateVerificationCode,
-    updatePassword
+    updatePassword,
+    addExercise
 }

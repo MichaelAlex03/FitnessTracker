@@ -1,7 +1,8 @@
 const pg = require('../../model/sql');
 
 const getExercises = async (req, res) => {
-    const result = await pg.getAllExercises();
+    const { userId } = req.params
+    const result = await pg.getAllExercises(userId);
     return res.status(200).json({ exercises: result });
 }
 
@@ -14,10 +15,11 @@ const addExercisesToWorkout = async (req, res) => {
 }
 
 const addExercise = async (req, res) => {
-    const { exerciseName, exerciseCategory, exerciseInstructions } = req.body;
+    const { exerciseName, exerciseCategory, exerciseBodyPart, exerciseInstructions, userId } = req.body;
 
     try {
-        return res.status(200).json({ 'message': 'exercises added' });
+        await pg.addExercise(exerciseName, exerciseCategory, exerciseBodyPart, exerciseInstructions, userId);
+        return res.status(201).json({ 'message': 'exercises added' });
     } catch (error) {
         return res.status(500).json({ 'message': error.message });
     }
@@ -67,5 +69,6 @@ module.exports = {
     deleteAllWorkoutExercises,
     getWorkoutExercises,
     deleteExercise,
-    updateWorkoutExercises
+    updateWorkoutExercises,
+    addExercise
 }

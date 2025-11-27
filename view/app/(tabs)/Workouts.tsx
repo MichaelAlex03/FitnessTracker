@@ -22,9 +22,10 @@ const SETS_URL = '/api/sets';
 
 
 interface Exercise {
-  exercise_name: string,
-  exercise_category: string,
-  exercise_instructions: string,
+  exercise_name: string
+  exercise_category: string
+  exercise_bodypart: string
+  exercise_instructions: string
   id: string
 }
 
@@ -55,7 +56,7 @@ export default function Workouts() {
   //Function to fetch exercises users can choose from
   const fetchExercises = async () => {
     try {
-      const response = await axiosPrivate.get(EXERCISES_URL);
+      const response = await axiosPrivate.get(`${EXERCISES_URL}/${auth.userId}`);
       setExercises(response.data.exercises);
     } catch (error) {
       console.error(error)
@@ -129,7 +130,7 @@ export default function Workouts() {
       >
         <View className="flex-row justify-between items-center">
           <View className="flex-1 flex-row items-center">
-            {/* Icon badge */}
+           
             <View className="bg-accent/20 rounded-2xl p-3 mr-4">
               <Icon name="fitness-center" size={24} color="#6366F1" />
             </View>
@@ -224,7 +225,7 @@ export default function Workouts() {
                 </View>
               </View>
 
-              {/* Quick Start Section with Modern CTA */}
+             
               <View className='bg-gradient-to-br from-accent/10 to-accent-purple/10 rounded-3xl p-6 mb-6 border-2 border-accent/30'>
                 <View className='flex-row items-center mb-4'>
                   <View className='bg-accent rounded-full p-2 mr-3'>
@@ -241,7 +242,7 @@ export default function Workouts() {
                 </TouchableOpacity>
               </View>
 
-              {/* My Workouts Section Header */}
+             
               <View className='flex-row justify-between items-center mb-4'>
                 <Text className='text-white font-pbold text-2xl'>My Workouts</Text>
                 <View className='bg-accent/20 rounded-full px-3 py-1'>

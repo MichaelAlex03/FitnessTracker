@@ -1,10 +1,11 @@
-import { View, Text, TextInput, FlatList, TouchableOpacity, Modal } from 'react-native'
+import { View, Text, TextInput, FlatList, TouchableOpacity, Modal, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import AntDesign from '@expo/vector-icons/AntDesign';
 import useAxiosPrivate from '@/hooks/useAxiosPrivate';
 import { Menu, MenuOption, MenuOptions, MenuTrigger } from 'react-native-popup-menu';
 import AddExercise from '@/components/AddExercise';
+import useAuth from '@/hooks/useAuth';
 
 const EXERCISES_URL = '/api/exercises'
 
@@ -54,6 +55,7 @@ const BODY_PARTS: BodyParts[] = [
 const Exercises = () => {
 
   const axiosPrivate = useAxiosPrivate();
+  const { auth } = useAuth();
 
   const [searchData, setSearchData] = useState('');
   const [exercises, setExercises] = useState<Exercise[]>([]);
@@ -61,6 +63,7 @@ const Exercises = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [activeExercise, setActiveExercise] = useState<Exercise | null>(null);
   const [addModalVisible, setAddModalVisible] = useState<boolean>(false);
+  const [refresh, setRefresh] = useState<number>(0);
 
   const [bodyParts, setBodyParts] = useState<bodyPartToFilterMap>(new Map());
   const [showBodyPartFilter, setShowBodyPartFilter] = useState<boolean>(false);
@@ -200,7 +203,7 @@ const Exercises = () => {
 
   const fetchExercises = async () => {
     try {
-      const response = await axiosPrivate.get(EXERCISES_URL);
+      const response = await axiosPrivate.get(`${EXERCISES_URL}/${auth.userId}`);
       setExercises(response.data.exercises);
       setFilteredExercises(response.data.exercises)
     } catch (error) {
@@ -208,12 +211,26 @@ const Exercises = () => {
     }
   }
 
-  const handleAddExercise = async (exercise: { exercise_name: string; exercise_bodypart: string; exercise_instructions: string }) => {
+  const handleAddExercise = async (
+    exercise: { 
+      exercise_name: string, 
+      exercise_bodypart: string, 
+      exercise_category: string, 
+      exercise_instructions: string 
+    }
+  ) => {
     try {
-      const response = await axiosPrivate.post(EXERCISES_URL, exercise);
+      const response = await axiosPrivate.post(`${EXERCISES_URL}/add`, {
+        exerciseName: exercise.exercise_name,
+        exerciseCategory: exercise.exercise_category,
+        exerciseBodyPart: exercise.exercise_bodypart,
+        exerciseInstructions: exercise.exercise_instructions,
+        userId: auth.userId
+      });
       if (response.status === 201) {
-        await fetchExercises();
+        setRefresh(refresh + 1)
         setAddModalVisible(false);
+        Alert.alert("Exercise Added", "Your exercise was succesfully added")
       }
     } catch (error) {
       console.error('Failed to add exercise:', error);
@@ -253,7 +270,7 @@ const Exercises = () => {
 
   useEffect(() => {
     fetchExercises();
-  }, [])
+  }, [refresh])
 
   useEffect(() => {
     if (searchData.trim() === '') {

@@ -1,11 +1,16 @@
-import { View, Text, Modal, TouchableOpacity, TextInput, ScrollView } from 'react-native'
+import { View, Text, Modal, TouchableOpacity, TextInput, ScrollView, Alert } from 'react-native'
 import React, { useState } from 'react'
 import AntDesign from '@expo/vector-icons/AntDesign'
 
 interface AddExerciseProps {
   visible: boolean;
   onClose: () => void;
-  onSubmit: (exercise: { exercise_name: string; exercise_bodypart: string; exercise_instructions: string }) => void;
+  onSubmit: (exercise: {
+    exercise_name: string,
+    exercise_bodypart: string,
+    exercise_category: string,
+    exercise_instructions: string
+  }) => void;
 }
 
 const BODY_PARTS = ['Chest', 'Back', 'Legs', 'Shoulders', 'Arms', 'Core'];
@@ -19,12 +24,14 @@ const AddExercise = ({ visible, onClose, onSubmit }: AddExerciseProps) => {
 
   const handleSubmit = () => {
     if (!exerciseName.trim() || !instructions.trim()) {
+      Alert.alert("Empty Fields", "Please fill in all fields to add exercise")
       return;
     }
 
     onSubmit({
       exercise_name: exerciseName,
       exercise_bodypart: selectedBodyPart,
+      exercise_category: selectedCategory,
       exercise_instructions: instructions
     });
 
@@ -44,7 +51,6 @@ const AddExercise = ({ visible, onClose, onSubmit }: AddExerciseProps) => {
       <View className="flex-1 bg-black/80 justify-center items-center px-4">
         <View className="bg-surface rounded-3xl border-2 border-accent/30 w-full max-w-lg">
 
-          {/* Header */}
           <View className="flex-row justify-between items-center px-6 pt-6 pb-4">
             <Text className="text-white text-2xl font-pbold">Add Exercise</Text>
             <TouchableOpacity
@@ -56,7 +62,6 @@ const AddExercise = ({ visible, onClose, onSubmit }: AddExerciseProps) => {
           </View>
 
           <ScrollView className="px-6 pb-6" showsVerticalScrollIndicator={false}>
-            {/* Exercise Name */}
             <View className="mb-5">
               <Text className="text-white text-base font-pmedium mb-2">Exercise Name</Text>
               <TextInput
@@ -68,7 +73,6 @@ const AddExercise = ({ visible, onClose, onSubmit }: AddExerciseProps) => {
               />
             </View>
 
-            {/* Category Selection */}
             <View className="mb-5">
               <Text className="text-white text-base font-pmedium mb-2">Body Part</Text>
               <View className="flex-row flex-wrap gap-2">
@@ -77,8 +81,8 @@ const AddExercise = ({ visible, onClose, onSubmit }: AddExerciseProps) => {
                     key={part}
                     onPress={() => setSelectedBodyPart(part)}
                     className={`px-4 py-2 rounded-xl border-2 ${selectedBodyPart === part
-                        ? 'bg-accent/20 border-accent'
-                        : 'bg-primary border-gray-700'
+                      ? 'bg-accent/20 border-accent'
+                      : 'bg-primary border-gray-700'
                       }`}
                   >
                     <Text
@@ -100,8 +104,8 @@ const AddExercise = ({ visible, onClose, onSubmit }: AddExerciseProps) => {
                     key={category}
                     onPress={() => setSelectedCategory(category)}
                     className={`px-4 py-2 rounded-xl border-2 ${selectedCategory === category
-                        ? 'bg-accent/20 border-accent'
-                        : 'bg-primary border-gray-700'
+                      ? 'bg-accent/20 border-accent'
+                      : 'bg-primary border-gray-700'
                       }`}
                   >
                     <Text
@@ -115,7 +119,6 @@ const AddExercise = ({ visible, onClose, onSubmit }: AddExerciseProps) => {
               </View>
             </View>
 
-            {/* Instructions */}
             <View className="mb-5">
               <Text className="text-white text-base font-pmedium mb-2">Instructions</Text>
               <Text className="text-gray-400 text-sm font-pregular mb-2">
@@ -134,7 +137,6 @@ const AddExercise = ({ visible, onClose, onSubmit }: AddExerciseProps) => {
               />
             </View>
 
-            {/* Action Buttons */}
             <View className="flex-row gap-3">
               <TouchableOpacity
                 onPress={onClose}
