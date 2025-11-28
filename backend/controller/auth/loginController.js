@@ -42,7 +42,8 @@ const handleLogin = async (req, res) => {
                 accessToken,
                 refreshToken,
                 id: foundUser[0].id,
-                user: foundUser[0].user_name
+                user: foundUser[0].user_name,
+                isPaid: foundUser[0].paid_user
             });
         } else {
             res.sendStatus(401);

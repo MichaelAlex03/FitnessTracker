@@ -35,59 +35,10 @@ const BenefitCard = ({ icon, title, description }: BenefitCardProps) => (
 
 const ProBenefits = ({ showProModal, setShowProModal }: ProModalProps) => {
 
-    const { initPaymentSheet, presentPaymentSheet } = useStripe();
     const axiosPrivate = useAxiosPrivate();
     const { auth } = useAuth();
 
-    const fetchPaymentSheetParams = async () => {
-        try {
-            const response = await axiosPrivate.post('/api/stripe/payment-sheet', {
-                email: auth.email
-            })
-
-            const { paymentIntent, ephemeralKey, customer } = response.data
-
-            return {
-                paymentIntent,
-                ephemeralKey,
-                customer
-            }
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
-    const initializePaymentSheet = async () => {
-        const params = await fetchPaymentSheetParams();
-        if (!params) {
-            console.error('Failed to fetch payment sheet parameters');
-            return;
-        }
-        const { paymentIntent, ephemeralKey, customer } = params;
-
-        const { error } = await initPaymentSheet({
-            merchantDisplayName: "FitTrackr",
-            customerId: customer,
-            customerEphemeralKeySecret: ephemeralKey,
-            paymentIntentClientSecret: paymentIntent
-        })
-    }
-
-    const openPaymentSheet = async () => {
-        const { error } = await presentPaymentSheet();
-    
-        if (error) {
-            Alert.alert(`Error code: ${error.code}`, error.message);
-          } else {
-            Alert.alert('Success', 'Your order is confirmed!');
-            setShowProModal(false)
-          }
-    }
-
-    useEffect(() => {
-        initializePaymentSheet();
-    }, [])
-
+   
     return (
         <Modal
             visible={showProModal}
@@ -124,9 +75,9 @@ const ProBenefits = ({ showProModal, setShowProModal }: ProModalProps) => {
                         />
 
                         <BenefitCard
-                            icon={<Ionicons name="fitness" size={28} color="#EAB308" />}
-                            title="Personal Workout Assistant"
-                            description="Your AI assistant helps you track progress, adjust your workouts, and provides personalized recommendations based on your goals."
+                            icon={<MaterialCommunityIcons name="dumbbell" size={28} color="#EAB308" />}
+                            title="Unlimited Workouts"
+                            description="Create as many custom workouts as you need. No limits on workout templates or saved routines. Build your perfect training program."
                         />
                     </View>
 
@@ -145,7 +96,7 @@ const ProBenefits = ({ showProModal, setShowProModal }: ProModalProps) => {
                     <View className='px-6 pt-4 pb-8'>
                         <TouchableOpacity
                             className='bg-yellow-500 rounded-2xl py-4 flex-row items-center justify-center gap-2'
-                            onPress={openPaymentSheet}
+                            onPress={() => {}}
                         >
                             <MaterialCommunityIcons name="crown" size={24} color="#000" />
                             <Text className='text-black font-pbold text-lg'>Subscribe to Pro</Text>

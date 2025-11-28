@@ -12,7 +12,9 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import RenamePopup from '@/components/RenamePopup';
 import EditWorkout from '@/components/EditWorkout';
 import WorkoutScreen from '@/components/WorkoutScreen/WorkoutScreen';
-import CreateWorkout from '@/components/CreateWorkout';
+import CreateWorkout from '@/components/WorkoutScreen/CreateWorkout';
+import DeleteWorkoutPopup from '@/components/WorkoutScreen/DeleteWorkoutPopop';
+import ProBenefits from '@/components/ProBenefits'
 
 
 const EXERCISES_URL = '/api/exercises';
@@ -45,6 +47,11 @@ export default function Workouts() {
   const [showRename, setShowRename] = useState(false);
   const [editWorkout, setEditWorkout] = useState(false);
   const [workoutName, setWorkoutName] = useState('');
+
+  const [workoutToDelete, setWorkoutToDelete] = useState<number>(0)
+  const [showDeleteWorkoutPopup, setShowDeleteWorkoutPopup] = useState<boolean>(false);
+
+  const [showProModal, setShowProModal] = useState<boolean>(false);
 
 
   const axiosPrivate = useAxiosPrivate();
@@ -93,7 +100,7 @@ export default function Workouts() {
         }
       })
 
-
+      setShowDeleteWorkoutPopup(false)
       setRefresh(refresh + 1)
 
     } catch (error) {
@@ -125,13 +132,13 @@ export default function Workouts() {
   const workoutItem = (item: Workout) => {
     return (
       <TouchableOpacity
-        className="bg-surface mx-4 mb-4 rounded-3xl p-5 border-2 border-accent/20 active:scale-[0.98] shadow-lg"
+        className="bg-surface mx-4 mb-4 rounded-3xl p-3 border-2 border-accent/20 active:scale-[0.98] shadow-lg"
         onPress={() => handleOpenWorkout(item.id, item.workout_name)}
       >
         <View className="flex-row justify-between items-center">
           <View className="flex-1 flex-row items-center">
-           
-            <View className="bg-accent/20 rounded-2xl p-3 mr-4">
+
+            <View className="bg-accent/20 rounded-2xl p-2 mr-4">
               <Icon name="fitness-center" size={24} color="#6366F1" />
             </View>
 
@@ -151,7 +158,7 @@ export default function Workouts() {
                 triggerTouchable: { underlayColor: 'transparent' },
                 triggerWrapper: {
                   backgroundColor: 'rgba(99, 102, 241, 0.1)',
-                  padding: 12,
+                  padding: 8,
                   borderRadius: 12,
                 }
               }}
@@ -173,7 +180,10 @@ export default function Workouts() {
               }}
             >
               <MenuOption
-                onSelect={() => handleDeleteWorkout(item.id)}
+                onSelect={() => {
+                  setShowDeleteWorkoutPopup(true)
+                  setWorkoutToDelete(item.id)
+                }}
                 style={{ padding: 16, flexDirection: 'row', alignItems: 'center' }}
               >
                 <AntDesign name="delete" size={20} color="#EF4444" className='mr-2' />
@@ -214,7 +224,6 @@ export default function Workouts() {
           ListHeaderComponent={() => (
             <View className='flex-1 px-5 pt-6 pb-4'>
 
-              {/* Modern Header with Greeting */}
               <View className='mb-8'>
                 <Text className='font-pmedium text-base text-gray-400 mb-1'>Welcome Back</Text>
                 <Text className='text-white font-pextrabold text-4xl tracking-tight'>{auth?.user}</Text>
@@ -225,7 +234,7 @@ export default function Workouts() {
                 </View>
               </View>
 
-             
+
               <View className='bg-gradient-to-br from-accent/10 to-accent-purple/10 rounded-3xl p-6 mb-6 border-2 border-accent/30'>
                 <View className='flex-row items-center mb-4'>
                   <View className='bg-accent rounded-full p-2 mr-3'>
@@ -235,14 +244,46 @@ export default function Workouts() {
                 </View>
 
                 <TouchableOpacity
-                  className='w-full bg-accent rounded-2xl p-4 active:scale-95 shadow-lg shadow-accent/40'
-                  onPress={() => setShowCreateWorkout(true)}
+                  className='w-full bg-accent rounded-2xl p-2 active:scale-95 shadow-lg shadow-accent/40 mb-3'
+                  onPress={() => {
+                    console.log(workouts.length)
+                    console.log(auth.isPaid)
+                    if (auth.isPaid === false && workouts.length === 6){
+                      Alert.alert("Too many exercises", "To make unlimited exercises upgrade to pro!",
+                        [{
+                          text: 'Ok'
+                        },
+                        {
+                          text: 'Upgrade',
+                          onPress: () => setShowProModal(true)
+                        },]
+                      )
+                      return;
+                    }
+                    setShowCreateWorkout(true)
+                  }}
                 >
-                  <Text className='text-white text-center font-pbold text-lg'>Create New Workout</Text>
+                  <View className='flex-row items-center justify-center'>
+                    <Icon name="add" size={20} color="white" style={{ marginRight: 8 }} />
+                    <Text className='text-white text-center font-pbold text-lg'>Create New Workout</Text>
+                  </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  className='w-full bg-surface border-2 border-accent/30 rounded-2xl p-2 active:scale-95'
+                  onPress={() => {
+                    // Template logic will be added
+                    console.log('Build from Template pressed');
+                  }}
+                >
+                  <View className='flex-row items-center justify-center'>
+                    <Icon name="content-copy" size={20} color="#6366F1" style={{ marginRight: 8 }} />
+                    <Text className='text-accent text-center font-pbold text-lg'>Build from Template</Text>
+                  </View>
                 </TouchableOpacity>
               </View>
 
-             
+
               <View className='flex-row justify-between items-center mb-4'>
                 <Text className='text-white font-pbold text-2xl'>My Workouts</Text>
                 <View className='bg-accent/20 rounded-full px-3 py-1'>
@@ -271,6 +312,14 @@ export default function Workouts() {
         {
           editWorkout && <EditWorkout editWorkout={editWorkout} setEditWorkout={setEditWorkout} workoutId={activeWorkout} setActiveWorkout={setActiveWorkout} refresh={refresh} setRefresh={setRefresh} workoutName={workoutName} />
         }
+        {
+          showDeleteWorkoutPopup && <DeleteWorkoutPopup workout_id={workoutToDelete} visible={showDeleteWorkoutPopup} setVisible={setShowDeleteWorkoutPopup} onSubmit={handleDeleteWorkout} />
+        }
+        {
+        showProModal && (
+          <ProBenefits showProModal={showProModal} setShowProModal={setShowProModal} />
+        )
+      }
         <StatusBar className='bg-white' />
 
       </SafeAreaView>

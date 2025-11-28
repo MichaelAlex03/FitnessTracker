@@ -44,7 +44,14 @@ const Login = () => {
         }
       );
 
-      setAuth({ email, pwd, accessToken: response.data.accessToken, userId: response.data.id, user: response.data.user })
+      setAuth({ 
+        email, 
+        pwd, 
+        accessToken: response.data.accessToken, 
+        userId: response.data.id, 
+        user: response.data.user,
+        isPaid: response.data.isPaid 
+      })
       SecureStore.setItemAsync("refreshToken", response.data.refreshToken)
       setIsLoggedIn(true)
       console.log(response.data.refreshToken)

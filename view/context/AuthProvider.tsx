@@ -6,7 +6,8 @@ interface AuthData {
     pwd?: string;
     accessToken: string;
     userId: string;
-    user: string
+    user: string;
+    isPaid: boolean
 }
 
 interface AuthContextType {
