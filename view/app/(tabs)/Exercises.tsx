@@ -78,21 +78,38 @@ const Exercises = () => {
   const [showMyExercisesOnly, setShowMyExercisesOnly] = useState<boolean>(false);
 
 
+  const deleteExercise = () => {
+
+  }
+
+  const updateExercise = () => {
+    
+  }
+
+
   const renderExercise = ({ item }: ExerciseItem) => {
+    const isUserCreated = item.user_id === auth.userId;
 
     return (
-      <TouchableOpacity
-        className="bg-surface mx-4 mb-3 rounded-2xl p-4 border-2 border-gray-700 active:border-accent active:scale-[0.98]"
-        onPress={() => {
-          setActiveExercise(item);
-          setModalVisible(true);
-        }}
-      >
+      <View className="bg-surface mx-4 mb-3 rounded-2xl p-4 border-2 border-gray-700">
         <View className="flex-row justify-between items-center">
-          <View className="flex-1">
-            <Text className="text-white text-lg font-pbold mb-2">
-              {item.exercise_name}
-            </Text>
+          <TouchableOpacity
+            className="flex-1"
+            onPress={() => {
+              setActiveExercise(item);
+              setModalVisible(true);
+            }}
+          >
+            <View className="flex-row items-center gap-2 mb-2">
+              <Text className="text-white text-lg font-pbold">
+                {item.exercise_name}
+              </Text>
+              {isUserCreated && (
+                <View className="bg-accent/20 px-2 py-0.5 rounded-md">
+                  <Text className="text-accent text-xs font-pmedium">Custom</Text>
+                </View>
+              )}
+            </View>
             <View className="flex-row items-center">
               <View className="rounded-full px-3 py-1" style={{ backgroundColor: '#6366F120' }}>
                 <Text className="text-xs font-pmedium" style={{ color: '#6366F1' }}>
@@ -100,13 +117,91 @@ const Exercises = () => {
                 </Text>
               </View>
             </View>
-          </View>
+          </TouchableOpacity>
 
-          <View className="bg-accent/20 p-3 rounded-xl">
-            <AntDesign name="right" size={18} color="#6366F1" />
-          </View>
+          {isUserCreated ? (
+            <Menu>
+              <MenuTrigger>
+                <View className="bg-accent/20 p-3 rounded-xl">
+                  <AntDesign name="ellipsis1" size={18} color="#6366F1" />
+                </View>
+              </MenuTrigger>
+              <MenuOptions
+                optionsContainerStyle={{
+                  backgroundColor: '#1F2937',
+                  borderRadius: 16,
+                  padding: 4,
+                  marginTop: 8,
+                  borderWidth: 1,
+                  borderColor: '#374151',
+                }}
+              >
+                <MenuOption
+                  onSelect={() => {
+                    setActiveExercise(item);
+                    setModalVisible(true);
+                  }}
+                  style={{
+                    padding: 14,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}
+                >
+                  <View className="w-6 h-6 rounded-full items-center justify-center mr-3" style={{ backgroundColor: '#6366F120' }}>
+                    <AntDesign name="eye" size={14} color="#6366F1" />
+                  </View>
+                  <Text className="text-white text-base font-pmedium">View Instructions</Text>
+                </MenuOption>
+                <View style={{ height: 1, backgroundColor: '#374151', marginHorizontal: 8 }} />
+                <MenuOption
+                  onSelect={() => {
+                    // Edit functionality placeholder
+                    console.log('Edit exercise:', item.id);
+                  }}
+                  style={{
+                    padding: 14,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}
+                >
+                  <View className="w-6 h-6 rounded-full items-center justify-center mr-3" style={{ backgroundColor: '#F59E0B20' }}>
+                    <AntDesign name="edit" size={14} color="#F59E0B" />
+                  </View>
+                  <Text className="text-white text-base font-pmedium">Edit</Text>
+                </MenuOption>
+                <View style={{ height: 1, backgroundColor: '#374151', marginHorizontal: 8 }} />
+                <MenuOption
+                  onSelect={() => {
+                    // Delete functionality placeholder
+                    console.log('Delete exercise:', item.id);
+                  }}
+                  style={{
+                    padding: 14,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}
+                >
+                  <View className="w-6 h-6 rounded-full items-center justify-center mr-3" style={{ backgroundColor: '#EF444420' }}>
+                    <AntDesign name="delete" size={14} color="#EF4444" />
+                  </View>
+                  <Text className="text-white text-base font-pmedium">Delete</Text>
+                </MenuOption>
+              </MenuOptions>
+            </Menu>
+          ) : (
+            <TouchableOpacity
+              onPress={() => {
+                setActiveExercise(item);
+                setModalVisible(true);
+              }}
+            >
+              <View className="bg-accent/20 p-3 rounded-xl">
+                <AntDesign name="right" size={18} color="#6366F1" />
+              </View>
+            </TouchableOpacity>
+          )}
         </View>
-      </TouchableOpacity>
+      </View>
     );
   };
 
