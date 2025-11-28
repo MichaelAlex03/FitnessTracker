@@ -1,10 +1,11 @@
-import { Text, View, Modal, TextInput, Alert } from 'react-native'
-import React, { useState, useEffect } from 'react'
-import { Dropdown } from 'react-native-element-dropdown';
+import { Text, View, Modal, TextInput, Alert, FlatList } from 'react-native'
+import React, { useState } from 'react'
 import useAuth from '@/hooks/useAuth'
 import { TouchableOpacity } from 'react-native'
 import useAxiosPrivate from '@/hooks/useAxiosPrivate'
 import { AntDesign } from '@expo/vector-icons';
+import { ScrollView } from 'react-native-gesture-handler';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 const EXERCISES_URL = '/api/exercises';
@@ -35,24 +36,20 @@ const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises, set
     const [selectedExercises, setSelectedExercises] = useState<UserExercise[]>([]);
     const [selectedExercise, setSelectedExercise] = useState<UserExercise>({} as UserExercise);
     const [workoutName, setWorkoutName] = useState('');
+    const [currentStep, setCurrentStep] = useState(1);
+    const [searchQuery, setSearchQuery] = useState('');
 
     const axiosPrivate = useAxiosPrivate();
     const { auth } = useAuth();
 
-    const exerciseNames = exercises.map((ex, i) => ({
-        exercise_name: ex.exercise_name,
-        value: i.toString()
-    }));
-
     const handleCreateWorkout = async () => {
-
-        if (selectedExercises.length == 0) {
-            Alert.alert("No Workouts Selected", "Please select at least one exercise to create a workout");
+        if (selectedExercises.length === 0) {
+            Alert.alert("No Exercises Selected", "Please select at least one exercise to create a workout");
             return;
         }
 
-        if (!workoutName) {
-            Alert.alert("No Workout Name", "Please enter in a workout name");
+        if (!workoutName.trim()) {
+            Alert.alert("No Workout Name", "Please enter a workout name");
             return;
         }
 
@@ -69,43 +66,25 @@ const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises, set
                 selectedExercises
             })
 
+            Alert.alert("Workout Created", `"${workoutName}" has been created successfully!`);
             setRefresh(refresh + 1);
-            setShowCreateWorkout(false);
+            handleClose();
         } catch (err) {
             console.error(err)
+            Alert.alert("Error", "Failed to create workout. Please try again.");
         }
     }
 
-
-    //Exercise item for the selected exercises list
-    const exerciseItem = (name: string, id: number) => {
-        return (
-            <View key={id} className='bg-primary-light rounded-2xl p-4 border-2 border-accent/20 w-full flex flex-row justify-between items-center'>
-                <View className='flex-row items-center flex-1'>
-                    <View className='bg-accent/20 rounded-full p-2 mr-3'>
-                        <AntDesign name="check" size={16} color="#6366F1" />
-                    </View>
-                    <Text className='text-white font-pmedium text-base flex-1'>{name}</Text>
-                </View>
-
-                <TouchableOpacity
-                    onPress={() => handleRemoveExercise(name)}
-                    className='bg-error/20 p-2 rounded-lg'
-                >
-                    <AntDesign name="delete" size={18} color="#EF4444" />
-                </TouchableOpacity>
-            </View>
-        )
-    }
-
-    const handleAddExercise = (item: UserExercise) => {
+    const handleToggleExercise = (item: UserExercise) => {
         const found = selectedExercises.find(exercise => exercise.exercise_name === item.exercise_name);
         if (found) {
-            Alert.alert("Duplicate Exercise", "You have already added this exercise to the workout");
-            return;
+            // Remove if already selected
+            const updatedExercises = selectedExercises.filter((exercise) => exercise.exercise_name !== item.exercise_name);
+            setSelectedExercises(updatedExercises);
+        } else {
+            // Add if not selected
+            setSelectedExercises([...selectedExercises, item]);
         }
-        setSelectedExercises([...selectedExercises, item]);
-        setSelectedExercise(item);
     }
 
     const handleRemoveExercise = (name: string) => {
@@ -113,136 +92,250 @@ const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises, set
         setSelectedExercises(updatedExercises);
     }
 
-    console.log(selectedExercises)
+    const handleNext = () => {
+        if (currentStep === 1 && !workoutName.trim()) {
+            Alert.alert("No Workout Name", "Please enter a workout name");
+            return;
+        }
+        if (currentStep < 3) {
+            setCurrentStep(currentStep + 1);
+        }
+    }
+
+    const handleBack = () => {
+        if (currentStep > 1) {
+            setCurrentStep(currentStep - 1);
+        }
+    }
+
+    const handleClose = () => {
+        setShowCreateWorkout(false);
+        setCurrentStep(1);
+        setWorkoutName('');
+        setSelectedExercises([]);
+        setSearchQuery('');
+    }
+
+    // Filter exercises based on search query
+    const filteredExercises = exercises.filter(exercise =>
+        exercise.exercise_name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    const renderStep1 = () => (
+        <View className='flex-1 bg-primary px-6'>
+            <View className='flex-1 justify-center'>
+                <View className='mb-8'>
+                    <Text className='text-white text-4xl font-pextrabold mb-3'>Name Your Workout</Text>
+                    <Text className='text-gray-400 text-lg font-pmedium'>Give your workout a memorable name</Text>
+                </View>
+
+                <View className='mb-8'>
+                    <Text className='text-sm text-gray-300 font-pmedium mb-3'>Workout Name</Text>
+                    <View className='border-2 border-gray-700 w-full h-16 px-5 bg-surface rounded-2xl flex flex-row items-center'>
+                        <TextInput
+                            value={workoutName}
+                            onChangeText={setWorkoutName}
+                            placeholder="e.g., Upper Body Day, Leg Day, Full Body"
+                            placeholderTextColor="#6B7280"
+                            className="text-white w-full font-pmedium text-lg"
+                            autoFocus
+                        />
+                    </View>
+                </View>
+            </View>
+
+            <View className='pb-8'>
+                <TouchableOpacity
+                    onPress={handleNext}
+                    className='bg-accent rounded-2xl py-4 mb-3 active:scale-95'
+                >
+                    <Text className='text-white text-center font-pbold text-lg'>Next</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={handleClose}
+                    className='bg-gray-700 py-4 rounded-2xl active:bg-gray-600'
+                >
+                    <Text className='text-white text-center font-pbold text-lg'>Cancel</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
+    );
+
+    const renderStep2 = () => (
+        <View className='flex-1 bg-primary'>
+            <View className='px-6 pt-6 pb-4'>
+                <Text className='text-white text-4xl font-pextrabold mb-3'>Add Exercises</Text>
+                <Text className='text-gray-400 text-base font-pmedium mb-4'>
+                    {selectedExercises.length > 0
+                        ? `${selectedExercises.length} exercise${selectedExercises.length !== 1 ? 's' : ''} selected`
+                        : 'Tap exercises to add them to your workout'}
+                </Text>
+
+                <View className='bg-surface border-2 border-gray-700 rounded-2xl h-14 flex-row items-center px-4 mb-4'>
+                    <AntDesign name="search1" size={20} color="#6B7280" />
+                    <TextInput
+                        className='text-white flex-1 ml-3 font-pmedium text-base'
+                        value={searchQuery}
+                        onChangeText={setSearchQuery}
+                        placeholder="Search exercises..."
+                        placeholderTextColor='#6B7280'
+                    />
+                    {searchQuery.length > 0 && (
+                        <TouchableOpacity onPress={() => setSearchQuery('')}>
+                            <AntDesign name="closecircle" size={18} color="#6B7280" />
+                        </TouchableOpacity>
+                    )}
+                </View>
+            </View>
+
+            <FlatList
+                data={filteredExercises}
+                keyExtractor={(item) => item.id}
+                contentContainerStyle={{ paddingBottom: 100 }}
+                renderItem={({ item }) => {
+                    const isSelected = selectedExercises.find(ex => ex.exercise_name === item.exercise_name);
+                    return (
+                        <TouchableOpacity
+                            onPress={() => handleToggleExercise({ exercise_name: item.exercise_name })}
+                            className={`mx-4 mb-3 rounded-2xl p-4 border-2 ${
+                                isSelected ? 'bg-accent/10 border-accent' : 'bg-surface border-gray-700'
+                            }`}
+                        >
+                            <View className='flex-row items-center justify-between'>
+                                <Text className={`text-lg font-pbold flex-1 ${
+                                    isSelected ? 'text-accent' : 'text-white'
+                                }`}>
+                                    {item.exercise_name}
+                                </Text>
+                                {isSelected && (
+                                    <View className='bg-accent rounded-full p-1.5'>
+                                        <AntDesign name="check" size={16} color="white" />
+                                    </View>
+                                )}
+                            </View>
+                        </TouchableOpacity>
+                    );
+                }}
+            />
+
+            <View className='absolute bottom-0 left-0 right-0 bg-primary border-t-2 border-gray-700 px-6 py-4'>
+                <View className='flex-row gap-3'>
+                    <TouchableOpacity
+                        onPress={handleBack}
+                        className='flex-1 bg-gray-700 rounded-2xl py-4 active:bg-gray-600'
+                    >
+                        <Text className='text-white text-center font-pbold text-lg'>Back</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={handleNext}
+                        className='flex-1 bg-accent rounded-2xl py-4 active:scale-95'
+                    >
+                        <Text className='text-white text-center font-pbold text-lg'>Next</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        </View>
+    );
+
+    const renderStep3 = () => (
+        <View className='flex-1 bg-primary px-6'>
+            <ScrollView className='flex-1 pt-6' showsVerticalScrollIndicator={false}>
+                <Text className='text-white text-4xl font-pextrabold mb-3'>Review Workout</Text>
+                <Text className='text-gray-400 text-base font-pmedium mb-6'>
+                    Make sure everything looks good before saving
+                </Text>
+
+                <View className='mb-6'>
+                    <Text className='text-sm text-gray-300 font-pmedium mb-2'>Workout Name</Text>
+                    <View className='bg-surface border-2 border-gray-700 rounded-2xl p-4'>
+                        <Text className='text-white font-pbold text-lg'>{workoutName}</Text>
+                    </View>
+                </View>
+
+                <View className='mb-6'>
+                    <Text className='text-sm text-gray-300 font-pmedium mb-3'>
+                        Exercises ({selectedExercises.length})
+                    </Text>
+                    {selectedExercises.length > 0 ? (
+                        <View className='flex gap-3'>
+                            {selectedExercises.map((exercise, i) => (
+                                <View key={i} className='bg-surface rounded-2xl p-4 border-2 border-gray-700 flex-row justify-between items-center'>
+                                    <Text className='text-white font-pmedium text-base flex-1'>{exercise.exercise_name}</Text>
+                                    <TouchableOpacity
+                                        onPress={() => handleRemoveExercise(exercise.exercise_name)}
+                                        className='bg-red-500/20 p-2 rounded-lg ml-3'
+                                    >
+                                        <AntDesign name="delete" size={18} color="#EF4444" />
+                                    </TouchableOpacity>
+                                </View>
+                            ))}
+                        </View>
+                    ) : (
+                        <View className='bg-gray-700/30 rounded-2xl p-6 items-center'>
+                            <AntDesign name="inbox" size={48} color="#6B7280" />
+                            <Text className='text-gray-400 font-pmedium text-base mt-3 text-center'>
+                                No exercises added yet
+                            </Text>
+                            <TouchableOpacity
+                                onPress={handleBack}
+                                className='mt-4'
+                            >
+                                <Text className='text-accent font-psemibold text-base'>Add Exercises</Text>
+                            </TouchableOpacity>
+                        </View>
+                    )}
+                </View>
+            </ScrollView>
+
+            <View className='pb-8 pt-4'>
+                <TouchableOpacity
+                    onPress={handleCreateWorkout}
+                    className='bg-accent rounded-2xl py-4 mb-3 active:scale-95'
+                    disabled={selectedExercises.length === 0}
+                    style={{ opacity: selectedExercises.length === 0 ? 0.5 : 1 }}
+                >
+                    <Text className='text-white text-center font-pbold text-lg'>Create Workout</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={handleBack}
+                    className='bg-gray-700 py-4 rounded-2xl active:bg-gray-600'
+                >
+                    <Text className='text-white text-center font-pbold text-lg'>Back</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
+    );
 
     return (
         <Modal
             visible={showCreateWorkout}
-            transparent={true}
             animationType="slide"
-            onRequestClose={() => setShowCreateWorkout(false)}
+            onRequestClose={handleClose}
         >
-            <View className="flex-1 bg-black/80 justify-end">
-                <View className='bg-surface rounded-t-3xl border-t-2 border-accent/30 max-h-[90%]'>
-                    {/* Handle Bar */}
-                    <View className="items-center py-3">
-                        <View className="w-12 h-1 bg-gray-600 rounded-full" />
-                    </View>
-
-                    <View className='px-6 pb-6'>
-                        {/* Header */}
-                        <View className='mb-6'>
-                            <Text className='text-white text-3xl font-pextrabold mb-2'>Create Workout</Text>
-                            <Text className='text-gray-400 text-base font-pmedium'>Build your custom training routine</Text>
-                        </View>
-
-                        <Text className='text-sm text-gray-300 font-pmedium mb-2'>Workout Name</Text>
-                        <View className='border-2 border-gray-700 w-full h-14 px-4 bg-primary-light rounded-2xl flex flex-row items-center mb-6'>
-                            <TextInput
-                                value={workoutName}
-                                onChangeText={(e) => setWorkoutName(e)}
-                                placeholder="Enter workout name"
-                                placeholderTextColor="#6B7280"
-                                className="text-white w-full font-pmedium text-base"
+            <SafeAreaView className='flex-1 bg-primary'>
+                
+                <View className='flex-row items-center justify-between px-6 py-4 border-b border-gray-700'>
+                    <TouchableOpacity onPress={handleClose}>
+                        <AntDesign name="close" size={24} color="white" />
+                    </TouchableOpacity>
+                    <View className='flex-row gap-2'>
+                        {[1, 2, 3].map((step) => (
+                            <View
+                                key={step}
+                                className={`h-2 rounded-full ${
+                                    step === currentStep ? 'w-8 bg-accent' : 'w-2 bg-gray-700'
+                                }`}
                             />
-                        </View>
-
-                    {/* Selected Exercises List */}
-                    {selectedExercises.length > 0 && (
-                        <View className='mb-6'>
-                            <Text className='text-sm text-gray-300 font-pmedium mb-3'>
-                                Selected Exercises ({selectedExercises.length})
-                            </Text>
-                            <View className='flex gap-3'>
-                                {selectedExercises.map((exercise, i) => {
-                                    return exerciseItem(exercise.exercise_name, i)
-                                })}
-                            </View>
-                        </View>
-                    )}
-
-                    <Text className='text-sm text-gray-300 font-pmedium mb-2'>Add Exercise</Text>
-                    <View className='w-full mb-6'>
-                        <Dropdown
-                            data={exerciseNames}
-                            value={selectedExercise}
-                            maxHeight={300}
-                            placeholder='Select an exercise to add'
-                            labelField="exercise_name"
-                            valueField="value"
-                            onChange={(item) => {
-                                handleAddExercise(item)
-                            }}
-                            style={{
-                                backgroundColor: '#141925',
-                                borderRadius: 16,
-                                paddingHorizontal: 16,
-                                paddingVertical: 14,
-                                borderWidth: 2,
-                                borderColor: '#374151',
-                                height: 56,
-                            }}
-                            containerStyle={{
-                                backgroundColor: '#252D3F',
-                                borderRadius: 16,
-                                borderWidth: 2,
-                                borderColor: '#6366F1',
-                                marginTop: 8,
-                                shadowColor: '#6366F1',
-                                shadowOffset: { width: 0, height: 4 },
-                                shadowOpacity: 0.3,
-                                shadowRadius: 8,
-                            }}
-                            placeholderStyle={{
-                                color: '#6B7280',
-                                fontSize: 16,
-                                fontWeight: '500',
-                            }}
-                            selectedTextStyle={{
-                                color: '#E5E7EB',
-                                fontSize: 16,
-                                fontWeight: '600',
-                            }}
-                            itemTextStyle={{
-                                color: '#E5E7EB',
-                                fontSize: 16,
-                                fontWeight: '500',
-                            }}
-                            itemContainerStyle={{
-                                paddingVertical: 12,
-                                paddingHorizontal: 12,
-                                borderRadius: 12,
-                                borderBottomWidth: 1,
-                                borderBottomColor: '#374151',
-                            }}
-                            activeColor="#1E2433"
-                            iconStyle={{
-                                width: 20,
-                                height: 20,
-                                tintColor: '#6366F1',
-                            }}
-                        />
+                        ))}
                     </View>
-
-                    <View className='flex gap-4 mt-8'>
-                        <TouchableOpacity
-                            onPress={handleCreateWorkout}
-                            className='bg-accent rounded-2xl py-4 shadow-lg shadow-accent/40 active:scale-95'
-                        >
-                            <Text className='text-white text-center font-pbold text-lg'>Create Workout</Text>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity
-                            onPress={() => setShowCreateWorkout(false)}
-                            className='bg-gray-700 py-4 rounded-2xl active:bg-gray-600'
-                        >
-                            <Text className='text-white text-center font-pbold text-lg'>Cancel</Text>
-                        </TouchableOpacity>
-                    </View>
-                    </View>
-
+                    <View className='w-6' />
                 </View>
-            </View>
+
+               
+                {currentStep === 1 && renderStep1()}
+                {currentStep === 2 && renderStep2()}
+                {currentStep === 3 && renderStep3()}
+            </SafeAreaView>
         </Modal>
     );
 };
