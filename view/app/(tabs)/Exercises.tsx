@@ -4,9 +4,11 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import AntDesign from '@expo/vector-icons/AntDesign';
 import useAxiosPrivate from '@/hooks/useAxiosPrivate';
 import { Menu, MenuOption, MenuOptions, MenuTrigger } from 'react-native-popup-menu';
-import AddExercise from '@/components/AddExercise';
+import AddExercise from '@/components/ExerciseScreen/AddExercise';
 import useAuth from '@/hooks/useAuth';
 import { GenerateUUID } from 'react-native-uuid';
+import EditExercise from '@/components/ExerciseScreen/EditExercise';
+import DeleteExercisePopup from '@/components/ExerciseScreen/DeleteExercisePopup';
 
 const EXERCISES_URL = '/api/exercises'
 
@@ -16,7 +18,7 @@ interface Exercise {
   exercise_instructions: string,
   exercise_category: string,
   user_id: string
-  id: string
+  id: number
 }
 
 interface ExerciseItem {
@@ -77,13 +79,40 @@ const Exercises = () => {
 
   const [showMyExercisesOnly, setShowMyExercisesOnly] = useState<boolean>(false);
 
+  const [editExerciseModal, setEditExerciseModal] = useState<boolean>(false);
+  const [exerciseToEdit, setExerciseToEdit] = useState<number>(0);
 
-  const deleteExercise = () => {
+  const [deleteExercisePopup, setDeleteExercisePopup] = useState<boolean>(false);
+  const [exerciseToDelete, setExerciseToDelete] = useState<number>(0);
 
+  const deleteExercise = async (exercise_id: number) => {
+    try {
+      const response = await axiosPrivate.delete(`/api/exercises/exercise/${exercise_id}`)
+      if (response.status === 200) {
+        Alert.alert("Exercise Deleted", "The exercise has been deleted");
+        setDeleteExercisePopup(false)
+        setRefresh(refresh + 1)
+        setExerciseToDelete(0)
+      }
+    } catch (error) {
+      console.error(error)
+    }
   }
 
-  const updateExercise = () => {
-    
+  const updateExercise = async (exercise: Exercise) => {
+    try {
+      const response = await axiosPrivate.patch(`/api/exercises/exercise/${exerciseToEdit}`, {
+        exercise
+      })
+      if (response.status === 200) {
+        Alert.alert("Exercise updated", "You have succesfully updated the exercise");
+        setEditExerciseModal(false)
+        setRefresh(refresh + 1)
+        setExerciseToEdit(0)
+      }
+    } catch (error) {
+      console.error(error)
+    }
   }
 
 
@@ -155,8 +184,8 @@ const Exercises = () => {
                 <View style={{ height: 1, backgroundColor: '#374151', marginHorizontal: 8 }} />
                 <MenuOption
                   onSelect={() => {
-                    // Edit functionality placeholder
-                    console.log('Edit exercise:', item.id);
+                    setEditExerciseModal(true)
+                    setExerciseToEdit(item.id)
                   }}
                   style={{
                     padding: 14,
@@ -172,8 +201,8 @@ const Exercises = () => {
                 <View style={{ height: 1, backgroundColor: '#374151', marginHorizontal: 8 }} />
                 <MenuOption
                   onSelect={() => {
-                    // Delete functionality placeholder
-                    console.log('Delete exercise:', item.id);
+                    setDeleteExercisePopup(true)
+                    setExerciseToDelete(item.id)
                   }}
                   style={{
                     padding: 14,
@@ -586,7 +615,7 @@ const Exercises = () => {
       <FlatList
         data={filteredExercises}
         renderItem={renderExercise}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item.id.toString()}
         contentContainerStyle={{ paddingBottom: 20 }}
       />
       {
@@ -723,12 +752,12 @@ const Exercises = () => {
             <View className="flex-1 bg-black/80 justify-end">
               <View className="bg-surface rounded-t-3xl border-t-2 border-accent/30">
 
-                {/* Drag Handle */}
+
                 <View className="items-center py-3">
                   <View className="w-12 h-1 bg-gray-600 rounded-full" />
                 </View>
 
-                {/* Header */}
+
                 <View className="flex-row justify-between items-center px-6 pb-4">
                   <View className="flex-1">
                     <Text className="text-white text-2xl font-pbold mb-1">Filter by Category</Text>
@@ -744,7 +773,7 @@ const Exercises = () => {
                   </TouchableOpacity>
                 </View>
 
-                {/* Categories List */}
+
                 <View className="max-h-96">
                   <FlatList
                     data={CATEGORIES}
@@ -754,7 +783,7 @@ const Exercises = () => {
                   />
                 </View>
 
-                {/* Action Buttons */}
+
                 <View className="px-6 pb-8 pt-4 border-t border-gray-700">
                   <View className="flex-row gap-3">
                     <TouchableOpacity
@@ -784,6 +813,20 @@ const Exercises = () => {
         visible={addModalVisible}
         onClose={() => setAddModalVisible(false)}
         onSubmit={handleAddExercise}
+      />
+
+      <EditExercise
+        visible={editExerciseModal}
+        onClose={() => setEditExerciseModal(false)}
+        onSubmit={updateExercise}
+        exercise_id={exerciseToEdit}
+      />
+
+      <DeleteExercisePopup
+        visible={deleteExercisePopup}
+        exercise_id={exerciseToDelete}
+        setVisible={setDeleteExercisePopup}
+        onSubmit={deleteExercise}
       />
     </SafeAreaView>
   )

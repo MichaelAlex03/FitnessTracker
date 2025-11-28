@@ -20,6 +20,21 @@ const updatePassword = async (email, newPassword) => {
     return data;
 }
 
+const updateExercise = async (exerciseId, exercise) => {
+    const { data, error } = await supabase
+        .from('exercises')
+        .update({
+            exercise_name: exercise.exercise_name,
+            exercise_category: exercise.exercise_category,
+            exercise_bodypart: exercise.exercise_bodypart,
+            exercise_instructions: exercise.exercise_instructions,
+            user_id: exercise.user_id
+        })
+        .eq('id', exerciseId)
+    if (error) console.log(error);
+    return data;
+}
+
 
 const verifyUser = async (email) => {
     const { data, error } = await supabase
@@ -152,6 +167,19 @@ const updateWorkout = async (workoutId, workoutName) => {
 }
 
 //---------------------------- Get Routes Queries ------------------------------//
+
+const getExercise = async (exerciseId) => {
+
+    const { data, error } = await supabase
+        .from('exercises')
+        .select('*')
+        .eq('id', exerciseId)
+    if (error) throw error;
+    return data;
+
+}
+
+
 const getVerificationCode = async (email) => {
     try {
         const { data, error } = await supabase
@@ -449,7 +477,7 @@ const deleteSet = async (setId) => {
     return data;
 };
 
-const deleteExercise = async (exerciseId) => {
+const deleteExerciseFromWorkout = async (exerciseId) => {
     try {
         const { data: setsData, error: setsError } = await supabase
             .from('workout_sets')
@@ -491,6 +519,15 @@ const deleteWorkoutFromHistory = async (workoutId) => {
 
 }
 
+const deleteExercise = async (exerciseId) => {
+    console.log(exerciseId)
+    const { error } = await supabase
+        .from('exercises')
+        .delete()
+        .eq('id', exerciseId)
+    if (error) throw error
+}
+
 
 module.exports = {
     findUser,
@@ -511,7 +548,7 @@ module.exports = {
     getWorkoutSets,
     addSet,
     deleteSet,
-    deleteExercise,
+    deleteExerciseFromWorkout,
     updateSets,
     updateWorkout,
     updateUserExercises,
@@ -526,5 +563,8 @@ module.exports = {
     verifyUser,
     updateVerificationCode,
     updatePassword,
-    addExercise
+    addExercise,
+    getExercise,
+    updateExercise,
+    deleteExercise
 }

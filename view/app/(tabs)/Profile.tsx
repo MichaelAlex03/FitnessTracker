@@ -100,7 +100,7 @@ const Profile = () => {
       setProfileImageKey(key)
       setRefresh(refresh + 1);
       setIsEdit(false);
-      setPendingImage(null); // clear pending image after update
+      setPendingImage(null); 
     } catch (error) {
       Alert.alert('Failed Update', 'Failed to update user info')
     }
@@ -142,7 +142,6 @@ const Profile = () => {
           await axiosPrivate.delete(S3_URL, {
             data: { key: profileImageKey }
           })
-          console.log("delteee")
         }
 
         const response = await axiosPrivate.get(S3_URL, { params: { fileType } });

@@ -53,13 +53,48 @@ const getWorkoutExercises = async (req, res) => {
     return res.status(200).json({ exercises: result });
 }
 
-const deleteExercise = async (req, res) => {
+const deleteExerciseFromWorkout = async (req, res) => {
     const { exerciseId } = req.params;
     try {
-        const result = await pg.deleteExercise(exerciseId);
+        const result = await pg.deleteExerciseFromWorkout(exerciseId);
         if (result == true) return res.status(200).json({ 'message': 'exercise deleted!' });
     } catch (err) {
         return res.status(500).json({ 'message': err.message });
+    }
+}
+
+const getExercise = async (req, res) => {
+    const { exercise_id } = req.params;
+
+    try {
+        const result = await pg.getExercise(exercise_id);
+        return res.status(200).json({ result })
+    } catch (error) {
+        return res.status(500).json({ 'message': error.message });
+    }
+}
+
+const updateExercise = async (req, res) => {
+    const { exercise_id } = req.params;
+
+    const { exercise } = req.body
+
+    try {
+        const result = await pg.updateExercise(exercise_id, exercise);
+        return res.status(200).json({ result })
+    } catch (error) {
+        return res.status(500).json({ 'message': error.message });
+    }
+}
+
+const deleteExercise = async (req, res) => {
+    const { exercise_id } = req.params;
+
+    try {
+        await pg.deleteExercise(exercise_id);
+        return res.sendStatus(200)
+    } catch (error) {
+        return res.status(500).json({ 'message': error.message });
     }
 }
 
@@ -68,7 +103,10 @@ module.exports = {
     addExercisesToWorkout,
     deleteAllWorkoutExercises,
     getWorkoutExercises,
-    deleteExercise,
+    deleteExerciseFromWorkout,
     updateWorkoutExercises,
-    addExercise
+    addExercise,
+    getExercise,
+    updateExercise,
+    deleteExercise
 }
