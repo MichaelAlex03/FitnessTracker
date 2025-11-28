@@ -68,10 +68,14 @@ const Exercises = () => {
   const [refresh, setRefresh] = useState<number>(0);
 
   const [bodyParts, setBodyParts] = useState<bodyPartToFilterMap>(new Map());
+  const [bodyPartsSelected, setBodyPartsSelected] = useState<bodyPartToFilterMap>(new Map());
   const [showBodyPartFilter, setShowBodyPartFilter] = useState<boolean>(false);
 
   const [categories, setCategories] = useState<categoryToFilterMap>(new Map())
+  const [categoriesSelected, setCategoriesSelected] = useState<categoryToFilterMap>(new Map())
   const [showCategoryFilter, setShowCategoryFilter] = useState<boolean>(false);
+
+  const [showMyExercisesOnly, setShowMyExercisesOnly] = useState<boolean>(false);
 
 
   const renderExercise = ({ item }: ExerciseItem) => {
@@ -109,16 +113,16 @@ const Exercises = () => {
 
   const renderBodyPartFilter = ({ item }: { item: BodyParts }) => {
     let name = item.value
-    const isSelected = bodyParts.get(name) !== undefined;
+    const isSelected = bodyPartsSelected.get(name) !== undefined;
 
     const toggleBodyPart = () => {
-      const newMap = new Map(bodyParts);
+      const newMap = new Map(bodyPartsSelected);
       if (isSelected) {
         newMap.delete(name);
       } else {
         newMap.set(name, 1);
       }
-      setBodyParts(newMap);
+      setBodyPartsSelected(newMap);
     };
 
     return (
@@ -157,17 +161,17 @@ const Exercises = () => {
   const renderCategoryItems = ({ item }: { item: CategoriesToFilter }) => {
 
     let category = item.value;
-    let isSelected = categories.get(category) !== undefined
+    let isSelected = categoriesSelected.get(category) !== undefined
 
     const toggleCategory = () => {
-      const newMap = new Map(categories)
+      const newMap = new Map(categoriesSelected)
       if (isSelected) {
         newMap.delete(category)
       } else {
         newMap.set(category, 1)
       }
 
-      setCategories(newMap)
+      setCategoriesSelected(newMap)
     }
 
     return (
@@ -241,64 +245,80 @@ const Exercises = () => {
 
 
   const filterByBodyPart = () => {
-
-    if (bodyParts.size === 0) {
-      setFilteredExercises(exercises)
-      setShowBodyPartFilter(false)
-      return;
-    }
-
-    const filtered = exercises.filter(exercise =>
-      bodyParts.get(exercise.exercise_bodypart) !== undefined
-    )
-    setFilteredExercises(filtered)
-    setShowBodyPartFilter(false)
-    setCategories(new Map())
+    setBodyParts(bodyPartsSelected)
+    setShowBodyPartFilter(false);
   }
+
 
   const filterByCategory = () => {
-    if (categories.size === 0) {
-      setFilteredExercises(exercises)
-      setShowCategoryFilter(false)
-      return;
-    }
-
-    const filtered = exercises.filter(exercise =>
-      categories.get(exercise.exercise_category) !== undefined
-    )
-
-    setFilteredExercises(filtered)
+    setCategories(categoriesSelected)
     setShowCategoryFilter(false);
-    setBodyParts(new Map())
   }
 
-  const filterUserWorkouts = () => {
-    const filtered = exercises.filter(exercise => (
-      exercise.user_id === auth.userId
-    ))
-    setFilteredExercises(filtered)
-  }
 
   const resetFilter = () => {
-    setFilteredExercises(exercises)
-    setBodyParts(new Map())
-    setCategories(new Map())
+    clearAllFilters();
   }
+
+  const applyAllFilters = () => {
+    let filtered = exercises;
+
+    filtered = filtered.filter(exercise =>
+      exercise.exercise_name.toLowerCase().startsWith(searchData.toLowerCase())
+    );
+
+    // Filter by user's exercises if enabled
+    if (showMyExercisesOnly) {
+      filtered = filtered.filter(exercise => exercise.user_id === auth.userId);
+    }
+
+    // Filter by body parts
+    if (bodyParts.size > 0) {
+      filtered = filtered.filter(exercise =>
+        bodyParts.get(exercise.exercise_bodypart) !== undefined
+      );
+    }
+
+    // Filter by categories
+    if (categories.size > 0) {
+      filtered = filtered.filter(exercise =>
+        categories.get(exercise.exercise_category) !== undefined
+      );
+    }
+
+    setFilteredExercises(filtered);
+  };
+
+  const removeBodyPartFilter = (bodyPart: string) => {
+    const newBodyParts = new Map(bodyParts);
+    newBodyParts.delete(bodyPart);
+    setBodyParts(newBodyParts);
+  };
+
+  const removeCategoryFilter = (category: string) => {
+    const newCategories = new Map(categories);
+    newCategories.delete(category);
+    setCategories(newCategories);
+  };
+
+  const removeMyExercisesFilter = () => {
+    setShowMyExercisesOnly(false);
+  };
+
+  const clearAllFilters = () => {
+    setBodyParts(new Map());
+    setCategories(new Map());
+    setShowMyExercisesOnly(false);
+    setFilteredExercises(exercises);
+  };
 
   useEffect(() => {
     fetchExercises();
   }, [refresh])
 
   useEffect(() => {
-    if (searchData.trim() === '') {
-      setFilteredExercises(exercises); //If search is empty show all exercises
-    }
-
-    const filtered = exercises.filter(exercise =>
-      exercise.exercise_name.toLowerCase().startsWith(searchData.toLowerCase())
-    );
-    setFilteredExercises(filtered);
-  }, [searchData])
+    applyAllFilters()
+  }, [bodyParts, categories, showMyExercisesOnly, exercises, searchData])
 
 
   return (
@@ -369,7 +389,7 @@ const Exercises = () => {
                 </MenuOption>
                 <View style={{ height: 1, backgroundColor: '#374151', marginHorizontal: 8 }} />
                 <MenuOption
-                  onSelect={filterUserWorkouts}
+                  onSelect={() => setShowMyExercisesOnly(true)}
                   style={{
                     padding: 14,
                     flexDirection: 'row',
@@ -377,7 +397,7 @@ const Exercises = () => {
                   }}
                 >
                   <View className="w-6 h-6 rounded-full items-center justify-center mr-3" style={{ backgroundColor: '#6366F120' }}>
-                    <AntDesign name="reload1" size={14} color="#6366F1" />
+                    <AntDesign name="user" size={14} color="#6366F1" />
                   </View>
                   <Text className="text-white text-base font-pmedium">My Exercises</Text>
                 </MenuOption>
@@ -419,6 +439,54 @@ const Exercises = () => {
           )}
         </View>
       </View>
+
+      {(showMyExercisesOnly || bodyParts.size > 0 || categories.size > 0) && (
+        <View className='px-5 mb-4'>
+          <View className='flex-row items-center mb-2'>
+            <Text className='text-gray-400 font-pmedium text-sm'>Active Filters:</Text>
+            <TouchableOpacity
+              onPress={clearAllFilters}
+              className='ml-auto'
+            >
+              <Text className='text-accent font-psemibold text-sm'>Clear All</Text>
+            </TouchableOpacity>
+          </View>
+          <View className='flex-row flex-wrap gap-2'>
+            {showMyExercisesOnly && (
+              <View className='bg-accent/20 border-2 border-accent rounded-xl px-3 py-1.5 flex-row items-center'>
+                <Text className='text-accent font-pmedium text-sm mr-2'>My Exercises</Text>
+                <TouchableOpacity onPress={removeMyExercisesFilter}>
+                  <AntDesign name="close" size={14} color="#6366F1" />
+                </TouchableOpacity>
+              </View>
+            )}
+
+            {Array.from(bodyParts.keys()).map((bodyPart) => (
+              <View
+                key={bodyPart}
+                className='bg-secondary-200/20 border-2 border-secondary-200 rounded-xl px-3 py-1.5 flex-row items-center'
+              >
+                <Text className='text-secondary-200 font-pmedium text-sm mr-2'>{bodyPart}</Text>
+                <TouchableOpacity onPress={() => removeBodyPartFilter(bodyPart)}>
+                  <AntDesign name="close" size={14} color="#FF9C01" />
+                </TouchableOpacity>
+              </View>
+            ))}
+
+            {Array.from(categories.keys()).map((category) => (
+              <View
+                key={category}
+                className='bg-green-500/20 border-2 border-green-500 rounded-xl px-3 py-1.5 flex-row items-center'
+              >
+                <Text className='text-green-500 font-pmedium text-sm mr-2'>{category}</Text>
+                <TouchableOpacity onPress={() => removeCategoryFilter(category)}>
+                  <AntDesign name="close" size={14} color="#10B981" />
+                </TouchableOpacity>
+              </View>
+            ))}
+          </View>
+        </View>
+      )}
 
       <FlatList
         data={filteredExercises}
