@@ -23,7 +23,6 @@ const Chatbot = () => {
   const [messages, setMessages] = useState<Message[]>([])
   const [inputText, setInputText] = useState<string>('')
   const [isTyping, setIsTyping] = useState<boolean>(false)
-  const [error, setError] = useState<boolean>(false);
   const [showProModal, setShowProModal] = useState<boolean>(false);
   const flatListRef = useRef<FlatList>(null)
 

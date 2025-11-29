@@ -38,25 +38,81 @@ const WorkoutTemplates = ({ visible, onClose, workoutTemplates, workoutTemplateE
         template.workout_name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const renderTemplate = ({ item }: { item: WorkoutTemplate }) => (
-        <TouchableOpacity
-            className='mx-4 mb-3 bg-surface rounded-2xl border-2 border-accent/20 p-5 active:scale-[0.98]'
-            onPress={() => {
-                setTemplateId(item.id);
-                setTemplateWorkoutName(item.workout_name);
-                setViewWorkoutTemplate(true);
-            }}
-        >
-            <View className='flex-row items-center justify-between mb-2'>
-                <View className='flex-row items-center flex-1'>
+    // Calculate exercise count for each template
+    const getExerciseCount = (templateId: number) => {
+        return workoutTemplateExercises.filter(ex => ex.workout_template_id === templateId).length;
+    };
+
+    const renderTemplate = ({ item }: { item: WorkoutTemplate }) => {
+        const exerciseCount = getExerciseCount(item.id);
+
+        return (
+            <TouchableOpacity
+                className='mx-5 mb-3 bg-surface rounded-2xl border-2 border-gray-700 p-4 active:scale-[0.98]'
+                onPress={() => {
+                    setTemplateId(item.id);
+                    setTemplateWorkoutName(item.workout_name);
+                    setViewWorkoutTemplate(true);
+                }}
+            >
+                <View className='flex-row items-center'>
+                    {/* Template Icon */}
+                    <View className='bg-accent/20 rounded-2xl p-3 mr-4'>
+                        <Icon name="content-copy" size={28} color="#6366F1" />
+                    </View>
+
+                    {/* Template Info */}
                     <View className='flex-1'>
-                        <Text className='text-white font-pbold text-lg mb-1'>
+                        <Text className='text-white font-pbold text-lg mb-1' numberOfLines={1}>
                             {item.workout_name}
                         </Text>
+                        <View className='flex-row items-center'>
+                            <Icon name="fitness-center" size={14} color="#6B7280" style={{ marginRight: 4 }} />
+                            <Text className='text-gray-400 font-pmedium text-sm'>
+                                {exerciseCount} exercise{exerciseCount !== 1 ? 's' : ''}
+                            </Text>
+                        </View>
+                    </View>
+
+                    {/* Arrow Icon */}
+                    <View className='bg-gray-700 rounded-full p-2'>
+                        <AntDesign name="right" size={16} color="#6B7280" />
                     </View>
                 </View>
+            </TouchableOpacity>
+        );
+    };
+
+    const renderEmptyState = () => (
+        <View className='flex-1 items-center justify-center px-6 py-20'>
+            <View className='bg-gray-700/30 rounded-full p-8 mb-6'>
+                <Icon name="content-copy" size={64} color="#6B7280" />
             </View>
-        </TouchableOpacity>
+            <Text className='text-white font-pbold text-2xl mb-3 text-center'>
+                No Templates Found
+            </Text>
+            <Text className='text-gray-400 font-pmedium text-base text-center mb-6'>
+                {searchQuery
+                    ? 'Try adjusting your search query'
+                    : 'Templates will appear here once created'}
+            </Text>
+        </View>
+    );
+
+    const renderHeader = () => (
+        <View className='px-5 pb-4'>
+            <View className='bg-accent/10 border-2 border-accent/30 rounded-2xl p-4 flex-row items-center mb-4'>
+                <View className='bg-accent rounded-full p-3 mr-4'>
+                    <Icon name="wb-auto" size={24} color="white" />
+                </View>
+                <View className='flex-1'>
+                    <Text className='text-white font-pbold text-sm mb-1'>Quick Start</Text>
+                    <Text className='text-gray-400 font-pmedium text-xs'>
+                        {workoutTemplates.length} template{workoutTemplates.length !== 1 ? 's' : ''} available
+                    </Text>
+                </View>
+            </View>
+        </View>
     );
 
     return (
@@ -70,9 +126,10 @@ const WorkoutTemplates = ({ visible, onClose, workoutTemplates, workoutTemplateE
             <SafeAreaView className='flex-1 bg-primary' edges={['top', 'bottom']}>
                 <StatusBar barStyle="light-content" backgroundColor="#0A0E1A" />
 
-                <View className='flex-row items-center justify-between px-6 py-4 border-b border-gray-700'>
-                    <View className='flex-1'>
-                        <Text className='text-white font-pextrabold text-3xl mb-1'>
+               
+                <View className='flex-row items-center justify-between px-5 py-4 border-b-2 border-gray-700'>
+                    <View className='flex-1 mr-4'>
+                        <Text className='text-white font-pextrabold text-3xl mb-1' numberOfLines={1}>
                             Workout Templates
                         </Text>
                         <Text className='text-gray-400 font-pmedium text-sm'>
@@ -81,13 +138,14 @@ const WorkoutTemplates = ({ visible, onClose, workoutTemplates, workoutTemplateE
                     </View>
                     <TouchableOpacity
                         onPress={onClose}
-                        className='bg-gray-700 p-2 rounded-xl'
+                        className='bg-gray-700 p-3 rounded-xl'
                     >
-                        <AntDesign name="close" size={24} color="white" />
+                        <AntDesign name="close" size={22} color="white" />
                     </TouchableOpacity>
                 </View>
 
-                <View className='px-6 py-4'>
+               
+                <View className='px-5 py-4'>
                     <View className='bg-surface border-2 border-gray-700 rounded-2xl h-14 flex-row items-center px-4'>
                         <AntDesign name="search1" size={20} color="#6B7280" />
                         <TextInput
@@ -105,12 +163,15 @@ const WorkoutTemplates = ({ visible, onClose, workoutTemplates, workoutTemplateE
                     </View>
                 </View>
 
+                
                 <FlatList
                     data={filteredTemplates}
                     renderItem={renderTemplate}
                     keyExtractor={(item) => item.id.toString()}
                     contentContainerStyle={{ paddingBottom: 20 }}
                     showsVerticalScrollIndicator={false}
+                    ListHeaderComponent={renderHeader}
+                    ListEmptyComponent={renderEmptyState}
                 />
 
             </SafeAreaView>
