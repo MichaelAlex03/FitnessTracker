@@ -168,6 +168,26 @@ const updateWorkout = async (workoutId, workoutName) => {
 
 //---------------------------- Get Routes Queries ------------------------------//
 
+const getWorkoutTemplates = async () => {
+    const { data, error } = await supabase
+        .from('workout_templates')
+        .select('*')
+    if (error) throw error;
+    console.log("a", data)
+    return data;
+}
+
+const getTemplateExercises = async () => {
+    const { data, error } = await supabase
+        .from('workout_template_exercises')
+        .select('*')
+    if (error) throw error;
+    console.log("d", data)
+    return data;
+}
+
+
+
 const getExercise = async (exerciseId) => {
 
     const { data, error } = await supabase
@@ -566,5 +586,7 @@ module.exports = {
     addExercise,
     getExercise,
     updateExercise,
-    deleteExercise
+    deleteExercise,
+    getWorkoutTemplates,
+    getTemplateExercises
 }

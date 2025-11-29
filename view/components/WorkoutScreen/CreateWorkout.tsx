@@ -1,4 +1,4 @@
-import { Text, View, Modal, TextInput, Alert, FlatList } from 'react-native'
+import { Text, View, Modal, TextInput, Alert, FlatList, StatusBar } from 'react-native'
 import React, { useState } from 'react'
 import useAuth from '@/hooks/useAuth'
 import { TouchableOpacity } from 'react-native'
@@ -311,9 +311,12 @@ const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises, set
             visible={showCreateWorkout}
             animationType="slide"
             onRequestClose={handleClose}
+            presentationStyle="fullScreen"
+            statusBarTranslucent={false}
         >
-            <SafeAreaView className='flex-1 bg-primary'>
-                
+            <SafeAreaView className='flex-1 bg-primary' edges={['top', 'bottom']}>
+                <StatusBar barStyle="light-content" backgroundColor="#0A0E1A" />
+
                 <View className='flex-row items-center justify-between px-6 py-4 border-b border-gray-700'>
                     <TouchableOpacity onPress={handleClose}>
                         <AntDesign name="close" size={24} color="white" />

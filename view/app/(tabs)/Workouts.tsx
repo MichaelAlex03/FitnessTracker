@@ -14,7 +14,8 @@ import EditWorkout from '@/components/EditWorkout';
 import WorkoutScreen from '@/components/WorkoutScreen/WorkoutScreen';
 import CreateWorkout from '@/components/WorkoutScreen/CreateWorkout';
 import DeleteWorkoutPopup from '@/components/WorkoutScreen/DeleteWorkoutPopop';
-import ProBenefits from '@/components/ProBenefits'
+import ProBenefits from '@/components/ProBenefits';
+import WorkoutTemplates from '@/components/WorkoutTemplates';
 
 
 const EXERCISES_URL = '/api/exercises';
@@ -37,6 +38,17 @@ interface Workout {
   user_id: string
 }
 
+interface WorkoutTemplate {
+  id: number
+  workout_name: string
+}
+
+interface TemplateExercises {
+  id: number
+  exercise_name: string
+  workout_template_id: number
+}
+
 
 export default function Workouts() {
   const [refresh, setRefresh] = useState(0);
@@ -47,11 +59,14 @@ export default function Workouts() {
   const [showRename, setShowRename] = useState(false);
   const [editWorkout, setEditWorkout] = useState(false);
   const [workoutName, setWorkoutName] = useState('');
+  const [workoutTemplates, setWorkoutTemplates] = useState<WorkoutTemplate[]>([]);
+  const [templateExercises, setTemplateExercises] = useState<TemplateExercises[]>([]);
 
   const [workoutToDelete, setWorkoutToDelete] = useState<number>(0)
   const [showDeleteWorkoutPopup, setShowDeleteWorkoutPopup] = useState<boolean>(false);
 
   const [showProModal, setShowProModal] = useState<boolean>(false);
+  const [showTemplatesModal, setShowTemplatesModal] = useState<boolean>(false);
 
 
   const axiosPrivate = useAxiosPrivate();
@@ -70,9 +85,21 @@ export default function Workouts() {
     }
   }
 
+
+  const fetchTemplates = async () => {
+    try {
+      const response = await axiosPrivate.get('/api/templates')
+      setWorkoutTemplates(response.data.templates)
+      setTemplateExercises(response.data.templateExercises)
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   //On mount retrieve the exercises the users can select from
   useEffect(() => {
     fetchExercises();
+    fetchTemplates();
   }, [])
 
 
@@ -127,6 +154,9 @@ export default function Workouts() {
     setActiveWorkout(id)
     setWorkoutName(workoutName)
   }
+
+
+
 
 
   const workoutItem = (item: Workout) => {
@@ -216,6 +246,7 @@ export default function Workouts() {
   return (
     <MenuProvider>
       <SafeAreaView className="bg-primary flex-1">
+        <StatusBar className='bg-white' />
 
         <FlatList
           data={workouts}
@@ -246,9 +277,7 @@ export default function Workouts() {
                 <TouchableOpacity
                   className='w-full bg-accent rounded-2xl p-2 active:scale-95 shadow-lg shadow-accent/40 mb-3'
                   onPress={() => {
-                    console.log(workouts.length)
-                    console.log(auth.isPaid)
-                    if (auth.isPaid === false && workouts.length === 6){
+                    if (auth.isPaid === false && workouts.length === 6) {
                       Alert.alert("Too many exercises", "To make unlimited exercises upgrade to pro!",
                         [{
                           text: 'Ok'
@@ -272,9 +301,21 @@ export default function Workouts() {
                 <TouchableOpacity
                   className='w-full bg-surface border-2 border-accent/30 rounded-2xl p-2 active:scale-95'
                   onPress={() => {
-                    // Template logic will be added
-                    console.log('Build from Template pressed');
-                  }}
+                    if (auth.isPaid === false && workouts.length === 6) {
+                      Alert.alert("Too many exercises", "To make unlimited exercises upgrade to pro!",
+                        [{
+                          text: 'Ok'
+                        },
+                        {
+                          text: 'Upgrade',
+                          onPress: () => setShowProModal(true)
+                        },]
+                      )
+                      return;
+                    }
+                    setShowTemplatesModal(true)
+                  }
+                  }
                 >
                   <View className='flex-row items-center justify-center'>
                     <Icon name="content-copy" size={20} color="#6366F1" style={{ marginRight: 8 }} />
@@ -316,11 +357,24 @@ export default function Workouts() {
           showDeleteWorkoutPopup && <DeleteWorkoutPopup workout_id={workoutToDelete} visible={showDeleteWorkoutPopup} setVisible={setShowDeleteWorkoutPopup} onSubmit={handleDeleteWorkout} />
         }
         {
-        showProModal && (
-          <ProBenefits showProModal={showProModal} setShowProModal={setShowProModal} />
-        )
-      }
-        <StatusBar className='bg-white' />
+          showProModal && (
+            <ProBenefits showProModal={showProModal} setShowProModal={setShowProModal} />
+          )
+        }
+        {
+          showTemplatesModal && (
+            <WorkoutTemplates
+              visible={showTemplatesModal}
+              onClose={() => setShowTemplatesModal(false)}
+              workoutTemplates={workoutTemplates}
+              workoutTemplateExercises={templateExercises}
+              refresh={refresh}
+              setRefresh={setRefresh}
+
+            />
+          )
+        }
+
 
       </SafeAreaView>
     </MenuProvider>
