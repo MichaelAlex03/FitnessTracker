@@ -52,7 +52,7 @@ const AddExercise = ({ visible, onClose, onSubmit }: AddExerciseProps) => {
         <View className="bg-surface rounded-3xl border-2 border-accent/30 w-full max-w-lg">
 
           <View className="flex-row justify-between items-center px-6 pt-6 pb-4">
-            <Text className="text-white text-2xl font-pbold">Edit Exercise</Text>
+            <Text className="text-white text-2xl font-pbold">Add Exercise</Text>
             <TouchableOpacity
               onPress={onClose}
               className="bg-gray-700 p-2 rounded-xl"

@@ -11,7 +11,6 @@ const generateResponse = async (req, res) => {
         input: userText
     });
 
-    console.log(response.output_text);
     res.status(200).json({ "response": response })
 }
 
