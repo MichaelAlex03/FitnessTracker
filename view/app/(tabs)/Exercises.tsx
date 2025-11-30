@@ -6,7 +6,6 @@ import useAxiosPrivate from '@/hooks/useAxiosPrivate';
 import { Menu, MenuOption, MenuOptions, MenuTrigger } from 'react-native-popup-menu';
 import AddExercise from '@/components/ExerciseScreen/AddExercise';
 import useAuth from '@/hooks/useAuth';
-import { GenerateUUID } from 'react-native-uuid';
 import EditExercise from '@/components/ExerciseScreen/EditExercise';
 import DeleteExercisePopup from '@/components/ExerciseScreen/DeleteExercisePopup';
 
@@ -434,6 +433,8 @@ const Exercises = () => {
     setCategories(new Map());
     setShowMyExercisesOnly(false);
     setFilteredExercises(exercises);
+    setBodyPartsSelected(new Map())
+    setCategoriesSelected(new Map())
   };
 
   useEffect(() => {
@@ -526,19 +527,6 @@ const Exercises = () => {
                   <Text className="text-white text-base font-pmedium">My Exercises</Text>
                 </MenuOption>
                 <View style={{ height: 1, backgroundColor: '#374151', marginHorizontal: 8 }} />
-                <MenuOption
-                  onSelect={resetFilter}
-                  style={{
-                    padding: 14,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                  }}
-                >
-                  <View className="w-6 h-6 rounded-full items-center justify-center mr-3" style={{ backgroundColor: '#6366F120' }}>
-                    <AntDesign name="reload1" size={14} color="#6366F1" />
-                  </View>
-                  <Text className="text-white text-base font-pmedium">Reset Filter</Text>
-                </MenuOption>
 
               </MenuOptions>
             </Menu>
@@ -684,7 +672,10 @@ const Exercises = () => {
             visible={showBodyPartFilter}
             transparent={true}
             animationType="slide"
-            onRequestClose={() => setShowBodyPartFilter(false)}
+            onRequestClose={() => {
+              setShowBodyPartFilter(false)
+              setBodyPartsSelected(new Map())
+            }}
           >
             <View className="flex-1 bg-black/80 justify-end">
               <View className="bg-surface rounded-t-3xl border-t-2 border-accent/30">
@@ -697,11 +688,14 @@ const Exercises = () => {
                   <View className="flex-1">
                     <Text className="text-white text-2xl font-pbold mb-1">Filter by Body Part</Text>
                     <Text className="text-gray-400 font-pmedium text-sm">
-                      {bodyParts.size > 0 ? `${bodyParts.size} selected` : 'Select one or more'}
+                      {bodyPartsSelected.size > 0 ? `${bodyPartsSelected.size} selected` : 'Select one or more'}
                     </Text>
                   </View>
                   <TouchableOpacity
-                    onPress={() => setShowBodyPartFilter(false)}
+                    onPress={() => {
+                      setShowBodyPartFilter(false)
+                      setBodyPartsSelected(bodyParts)
+                    }}
                     className="bg-gray-700 p-2 rounded-xl"
                   >
                     <AntDesign name="close" size={20} color="white" />
@@ -721,8 +715,8 @@ const Exercises = () => {
                   <View className="flex-row gap-3">
                     <TouchableOpacity
                       onPress={() => {
-                        setBodyParts(new Map());
                         setFilteredExercises(exercises);
+                        setBodyPartsSelected(new Map());
                       }}
                       className="flex-1 bg-gray-700 rounded-xl py-3.5 items-center"
                     >
@@ -747,7 +741,10 @@ const Exercises = () => {
             visible={showCategoryFilter}
             transparent={true}
             animationType="slide"
-            onRequestClose={() => setShowCategoryFilter(false)}
+            onRequestClose={() => {
+              setShowCategoryFilter(false)
+              setCategoriesSelected(new Map())
+            }}
           >
             <View className="flex-1 bg-black/80 justify-end">
               <View className="bg-surface rounded-t-3xl border-t-2 border-accent/30">
@@ -762,11 +759,14 @@ const Exercises = () => {
                   <View className="flex-1">
                     <Text className="text-white text-2xl font-pbold mb-1">Filter by Category</Text>
                     <Text className="text-gray-400 font-pmedium text-sm">
-                      {categories.size > 0 ? `${categories.size} selected` : 'Select one or more'}
+                      {categoriesSelected.size > 0 ? `${categoriesSelected.size} selected` : 'Select one or more'}
                     </Text>
                   </View>
                   <TouchableOpacity
-                    onPress={() => setShowCategoryFilter(false)}
+                    onPress={() => {
+                      setShowCategoryFilter(false)
+                      setCategoriesSelected(categories)
+                    }}
                     className="bg-gray-700 p-2 rounded-xl"
                   >
                     <AntDesign name="close" size={20} color="white" />
@@ -788,8 +788,8 @@ const Exercises = () => {
                   <View className="flex-row gap-3">
                     <TouchableOpacity
                       onPress={() => {
-                        setCategories(new Map());
                         setFilteredExercises(exercises);
+                        setCategoriesSelected(new Map());
                       }}
                       className="flex-1 bg-gray-700 rounded-xl py-3.5 items-center"
                     >

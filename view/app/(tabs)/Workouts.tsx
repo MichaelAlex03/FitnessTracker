@@ -29,6 +29,7 @@ interface Exercise {
   exercise_category: string
   exercise_bodypart: string
   exercise_instructions: string
+  user_id: string
   id: string
 }
 
@@ -100,7 +101,7 @@ export default function Workouts() {
   useEffect(() => {
     fetchExercises();
     fetchTemplates();
-  }, [])
+  }, [refresh])
 
 
   const handleDeleteWorkout = async (id: number) => {
