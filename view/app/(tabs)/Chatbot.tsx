@@ -11,6 +11,16 @@ interface Message {
   text: string
   isUser: boolean
   timestamp: Date
+  type?: 'text' | 'workout_proposal'  
+  workoutData?: {                     
+    workout_name: string
+    exercises: Array<{
+      exercise_name: string
+      exercise_category: string
+      exercise_bodypart: string
+    }>
+    reasoning: string
+  }
 }
 
 interface RateLimitError {
@@ -52,16 +62,17 @@ const Chatbot = () => {
       const response = await axiosPrivate.post(`/api/openAI`, {
         userText
       })
+      console.log(JSON.parse(response.data.response))
       const aiMessage: Message = {
         id: response.data.response.id,
-        text: response.data.response.output_text,
+        text: response.data.response,
         isUser: false,
         timestamp: new Date()
       }
       setMessages(prev => [...prev, aiMessage]);
     } catch (err) {
+      console.log(err)
       const error = err as AxiosError<RateLimitError>;
-      console.log("hello")
       if (error.response?.status === 429) {
         console.log(error.response.data)
         const { msg, remaining, reset } = error.response.data;

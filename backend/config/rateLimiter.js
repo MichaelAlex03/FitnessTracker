@@ -8,7 +8,7 @@ const redis = new Redis({
 
 const freeUserLimiter = new Ratelimit({
     redis,
-    limiter: Ratelimit.fixedWindow(5, "24 h")
+    limiter: Ratelimit.fixedWindow(100, "24 h")
 })
 
 const paidUserLimiter = new Ratelimit({
