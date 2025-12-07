@@ -7,6 +7,7 @@ interface Exercise {
     exercise_bodypart: string,
     exercise_category: string
     exercise_instructions: string,
+    user_id: string,
     id: string
 }
 
