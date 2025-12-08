@@ -5,6 +5,7 @@ import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons'
 import useAxiosPrivate from '@/hooks/useAxiosPrivate'
 import { AxiosError } from 'axios'
 import ProBenefits from '@/components/ProBenefits'
+import AIWorkoutModal from '@/components/AIWorkoutModal'
 
 interface Message {
   id: string
@@ -34,9 +35,16 @@ const Chatbot = () => {
   const [inputText, setInputText] = useState<string>('')
   const [isTyping, setIsTyping] = useState<boolean>(false)
   const [showProModal, setShowProModal] = useState<boolean>(false);
+  const [selectedWorkout, setSelectedWorkout] = useState<Message['workoutData'] | null>(null)
+  const [showWorkoutModal, setShowWorkoutModal] = useState<boolean>(false)
   const flatListRef = useRef<FlatList>(null)
 
   const axiosPrivate = useAxiosPrivate();
+
+  const handleViewWorkout = (workoutData: Message['workoutData']) => {
+    setSelectedWorkout(workoutData)
+    setShowWorkoutModal(true)
+  }
 
 
   const handleSendMessage = async () => {
@@ -62,20 +70,32 @@ const Chatbot = () => {
       const response = await axiosPrivate.post(`/api/openAI`, {
         userText
       })
-      console.log(JSON.parse(response.data.response))
-      const aiMessage: Message = {
-        id: response.data.response.id,
-        text: response.data.response,
+      console.log(response.data)
+
+      // Check if response contains a workout plan
+      const isWorkoutPlan = response.data.response?.exercises && response.data.response?.workout_name;
+
+      const aiMessage: Message = isWorkoutPlan ? {
+        id: response.data.id,
+        text: `I've created a workout plan for you: ${response.data.response.workout_name}`,
+        isUser: false,
+        timestamp: new Date(),
+        type: 'workout_proposal',
+        workoutData: response.data.response  
+      } : {
+        id: response.data.id,
+        text: response.data.response,  
         isUser: false,
         timestamp: new Date()
       }
+
       setMessages(prev => [...prev, aiMessage]);
     } catch (err) {
       console.log(err)
       const error = err as AxiosError<RateLimitError>;
       if (error.response?.status === 429) {
         console.log(error.response.data)
-        const { msg, remaining, reset } = error.response.data;
+        const { remaining, reset } = error.response.data;
         const resetDate = new Date(reset * 1000);
 
         const aiMessage: Message = {
@@ -99,6 +119,51 @@ const Chatbot = () => {
   }
 
   const renderMessage = ({ item }: { item: Message }) => {
+    // Render workout proposal with preview card
+    if (item.type === 'workout_proposal' && item.workoutData) {
+      return (
+        <View className='mb-4 px-4 items-start'>
+          <View className='max-w-[85%] bg-surface border-2 border-accent/30 rounded-2xl p-4'>
+           
+            <View className='flex-row items-center mb-3'>
+              <View className='bg-accent/20 rounded-full p-2 mr-3'>
+                <MaterialCommunityIcons name='dumbbell' size={20} color='#6366F1' />
+              </View>
+              <Text className='text-white font-pbold text-lg flex-1' numberOfLines={2}>
+                {item.workoutData.workout_name}
+              </Text>
+            </View>
+
+          
+            <View className='bg-accent/20 px-3 py-1 rounded-full self-start mb-3'>
+              <Text className='text-accent font-pmedium text-sm'>
+                {item.workoutData.exercises.length} {item.workoutData.exercises.length === 1 ? 'Exercise' : 'Exercises'}
+              </Text>
+            </View>
+
+           
+            <Text className='text-gray-400 font-pmedium text-sm leading-5 mb-4' numberOfLines={2}>
+              {item.workoutData.reasoning}
+            </Text>
+
+          
+            <TouchableOpacity
+              className='bg-accent rounded-xl py-3 items-center active:bg-accent/80'
+              onPress={() => handleViewWorkout(item.workoutData)}
+            >
+              <Text className='text-white font-pbold text-base'>View Full Workout</Text>
+            </TouchableOpacity>
+
+           
+            <Text className='text-gray-500 font-pregular text-xs mt-3'>
+              {item.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </Text>
+          </View>
+        </View>
+      )
+    }
+
+    // Regular text message
     return (
       <View className={`mb-4 px-4 ${item.isUser ? 'items-end' : 'items-start'}`}>
         <View className={`max-w-[80%] rounded-2xl p-4 ${item.isUser
@@ -257,6 +322,15 @@ const Chatbot = () => {
           <ProBenefits showProModal={showProModal} setShowProModal={setShowProModal} />
         )
       }
+
+      <AIWorkoutModal
+        visible={showWorkoutModal}
+        workoutData={selectedWorkout}
+        onClose={() => {
+          setShowWorkoutModal(false)
+          setSelectedWorkout(null)
+        }}
+      />
     </SafeAreaView>
   )
 }
