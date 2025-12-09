@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import useAxiosPrivate from './useAxiosPrivate';
+import useAuth from './useAuth';
 
 const WORKOUT_URL = '/api/workouts'
 
@@ -14,6 +15,7 @@ const usefetchWorkouts = (id: string, refresh: number) => {
     console.log("T", id)
     const axiosPrivate = useAxiosPrivate();
     const [workouts, setWorkouts] = useState<Workout[]>([]);
+    const { trigger } = useAuth();
 
     useEffect(() => {
         const getWorkouts = async () => {
@@ -24,9 +26,8 @@ const usefetchWorkouts = (id: string, refresh: number) => {
                 console.error(error)
             }
         }
-        console.log("LLLLL")
         getWorkouts();
-    }, [refresh])
+    }, [refresh, trigger])
     return workouts  
 }
 

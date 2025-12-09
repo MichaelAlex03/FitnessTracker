@@ -5,7 +5,6 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
 import useAxiosPrivate from '@/hooks/useAxiosPrivate'
 import useAuth from '@/hooks/useAuth'
 import { router } from 'expo-router'
-import { workoutEvents, WORKOUT_EVENTS } from '@/utils/eventEmiiter';
 
 interface Exercise {
   exercise_name: string
@@ -32,7 +31,7 @@ const AIWorkoutModal: React.FC<AIWorkoutModalProps> = ({ visible, workoutData, o
   if (!workoutData) return null
 
   const axiosPrivate = useAxiosPrivate();
-  const { auth } = useAuth()
+  const { auth, setTrigger, trigger } = useAuth()
 
   const handleSaveWorkout = async () => {
     if (workoutData.exercises.length === 0) {
@@ -61,7 +60,7 @@ const AIWorkoutModal: React.FC<AIWorkoutModalProps> = ({ visible, workoutData, o
       if (res.status === 201) {
         Alert.alert("Workout Created", `"${workoutData.workout_name}" has been created successfully!`);
         onClose()
-        workoutEvents.emit(WORKOUT_EVENTS.WORKOUT_CREATED)
+        setTrigger(trigger + 1)
         router.push('/(tabs)/Workouts')
       }
 
