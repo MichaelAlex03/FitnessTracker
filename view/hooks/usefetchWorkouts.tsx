@@ -11,7 +11,7 @@ interface Workout {
 
 const usefetchWorkouts = (id: string, refresh: number) => {
 
-    console.log(id)
+    console.log("T", id)
     const axiosPrivate = useAxiosPrivate();
     const [workouts, setWorkouts] = useState<Workout[]>([]);
 
@@ -24,6 +24,7 @@ const usefetchWorkouts = (id: string, refresh: number) => {
                 console.error(error)
             }
         }
+        console.log("LLLLL")
         getWorkouts();
     }, [refresh])
     return workouts  

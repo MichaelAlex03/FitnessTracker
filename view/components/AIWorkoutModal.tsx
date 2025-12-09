@@ -1,7 +1,11 @@
-import { View, Text, Modal, TouchableOpacity, FlatList, StatusBar } from 'react-native'
+import { View, Text, Modal, TouchableOpacity, FlatList, StatusBar, Alert } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
+import useAxiosPrivate from '@/hooks/useAxiosPrivate'
+import useAuth from '@/hooks/useAuth'
+import { router } from 'expo-router'
+import { workoutEvents, WORKOUT_EVENTS } from '@/utils/eventEmiiter';
 
 interface Exercise {
   exercise_name: string
@@ -21,8 +25,51 @@ interface AIWorkoutModalProps {
   onClose: () => void
 }
 
+const EXERCISES_URL = '/api/exercises';
+const WORKOUT_URL = '/api/workouts';
+
 const AIWorkoutModal: React.FC<AIWorkoutModalProps> = ({ visible, workoutData, onClose }) => {
   if (!workoutData) return null
+
+  const axiosPrivate = useAxiosPrivate();
+  const { auth } = useAuth()
+
+  const handleSaveWorkout = async () => {
+    if (workoutData.exercises.length === 0) {
+      Alert.alert("No Exercises Selected", "Please select at least one exercise to create a workout");
+      return;
+    }
+
+    if (!workoutData.workout_name.trim()) {
+      Alert.alert("No Workout Name", "Please enter a workout name");
+      return;
+    }
+
+    try {
+      const response = await axiosPrivate.post(WORKOUT_URL, {
+        userId: auth.userId,
+        workoutName: workoutData.workout_name,
+      })
+
+      const workoutId = response.data.workoutId;
+
+      const res = await axiosPrivate.post(EXERCISES_URL, {
+        workoutId,
+        selectedExercises: workoutData.exercises
+      })
+
+      if (res.status === 201) {
+        Alert.alert("Workout Created", `"${workoutData.workout_name}" has been created successfully!`);
+        onClose()
+        workoutEvents.emit(WORKOUT_EVENTS.WORKOUT_CREATED)
+        router.push('/(tabs)/Workouts')
+      }
+
+    } catch (err) {
+      console.error(err)
+      Alert.alert("Error", "Failed to create workout. Please try again.");
+    }
+  }
 
   const renderExercise = ({ item, index }: { item: Exercise; index: number }) => {
     return (
@@ -64,7 +111,7 @@ const AIWorkoutModal: React.FC<AIWorkoutModalProps> = ({ visible, workoutData, o
       <SafeAreaView className='flex-1 bg-primary'>
         <StatusBar barStyle='light-content' backgroundColor='#0A0E1A' />
 
-        {/* Header */}
+
         <View className='px-6 pt-4 pb-4 border-b-2 border-surface flex-row items-center justify-between'>
           <View className='flex-1 flex-row items-center'>
             <View className='bg-accent/20 rounded-full p-2 mr-3'>
@@ -94,7 +141,7 @@ const AIWorkoutModal: React.FC<AIWorkoutModalProps> = ({ visible, workoutData, o
           contentContainerStyle={{ paddingBottom: 20 }}
           ListHeaderComponent={
             <View>
-              {/* Reasoning Section */}
+
               <View className='mx-4 mt-4 mb-3 bg-surface rounded-2xl border-2 border-accent/30 p-4'>
                 <View className='flex-row items-center mb-2'>
                   <MaterialCommunityIcons name='lightbulb-on' size={20} color='#6366F1' />
@@ -105,7 +152,7 @@ const AIWorkoutModal: React.FC<AIWorkoutModalProps> = ({ visible, workoutData, o
                 </Text>
               </View>
 
-              {/* Exercise Count Banner */}
+
               <View className='mx-4 mb-4 bg-accent/10 border border-accent/30 rounded-xl p-3 flex-row items-center'>
                 <View className='bg-accent/20 rounded-full p-2 mr-3'>
                   <MaterialCommunityIcons name='dumbbell' size={20} color='#6366F1' />
@@ -121,7 +168,19 @@ const AIWorkoutModal: React.FC<AIWorkoutModalProps> = ({ visible, workoutData, o
               <Text className='text-gray-400 font-pmedium text-base'>No exercises found</Text>
             </View>
           }
+          ListFooterComponent={
+            <View className='mx-4 mt-4'>
+              <TouchableOpacity
+                className='bg-accent rounded-xl py-3 items-center active:bg-accent/80'
+                onPress={handleSaveWorkout}
+              >
+                <Text className='text-white text-lg'>Save Workout</Text>
+              </TouchableOpacity>
+            </View>
+          }
         />
+
+
       </SafeAreaView>
     </Modal>
   )

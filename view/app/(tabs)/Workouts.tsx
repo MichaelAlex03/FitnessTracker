@@ -16,6 +16,7 @@ import CreateWorkout from '@/components/WorkoutScreen/CreateWorkout';
 import DeleteWorkoutPopup from '@/components/WorkoutScreen/DeleteWorkoutPopop';
 import ProBenefits from '@/components/ProBenefits';
 import WorkoutTemplates from '@/components/WorkoutTemplates';
+import { workoutEvents, WORKOUT_EVENTS } from '@/utils/eventEmiiter';
 
 
 const EXERCISES_URL = '/api/exercises';
@@ -101,7 +102,24 @@ export default function Workouts() {
   useEffect(() => {
     fetchExercises();
     fetchTemplates();
-  }, [refresh])
+
+  }, [refresh]);
+
+
+  useEffect(() => {
+    const handleWorkoutCreated = () => {
+      setRefresh(prev => prev + 1)
+    }
+    // Subscribe to the workout created event
+    workoutEvents.on(WORKOUT_EVENTS.WORKOUT_CREATED, handleWorkoutCreated)
+
+    return () => {
+      workoutEvents.off(WORKOUT_EVENTS.WORKOUT_CREATED, handleWorkoutCreated)
+    }
+
+  }, [])
+
+  
 
 
   const handleDeleteWorkout = async (id: number) => {

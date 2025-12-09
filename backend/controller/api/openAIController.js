@@ -104,9 +104,8 @@ const generateResponse = async (req, res) => {
             input: input
         });
 
-        console.log(response)
+       
         const workoutPlan = parseWorkout(response.output[1].arguments);
-        console.log(workoutPlan)
 
         // If a workoutPlan was generated return it else just return the models normal response
         if (workoutPlan) {

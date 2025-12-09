@@ -119,7 +119,7 @@ const Chatbot = () => {
   }
 
   const renderMessage = ({ item }: { item: Message }) => {
-    // Render workout proposal with preview card
+    
     if (item.type === 'workout_proposal' && item.workoutData) {
       return (
         <View className='mb-4 px-4 items-start'>
