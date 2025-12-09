@@ -90,7 +90,6 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
         fetchExercises();
     }, [refresh]);
 
-    console.log("EXERCISES", exercises)
 
     /* Retrieves sets for the workout */
     useEffect(() => {
@@ -105,7 +104,6 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
         fetchSets();
     }, [refresh]);
 
-    console.log("SETS", exerciseSets)
 
     useEffect(() => {
         const fetchAllPreviousSets = async () => {
@@ -235,7 +233,6 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
         ])
     }
 
-    console.log("SETS", exerciseSets)
 
     const handleRepChange = (set: Sets, reps: number) => {
         setExerciseSets(prevSets => prevSets.map(s =>

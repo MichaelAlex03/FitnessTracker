@@ -93,7 +93,7 @@ const WorkoutHistoryModal = ({ workout, exercises, sets, showWorkoutHistory, set
                         }) : ''}
                     </Text>
 
-                    <View className='flex flex-row justify-between items-center mt-5'>
+                    <View className='flex flex-row justify-start gap-4 items-center mt-5'>
                         <View className='flex flex-row items-center'>
                             <AntDesign name="clockcircleo" size={20} color="white" className='mr-2' />
                             <Text className='text-white'>{formatTime()}</Text>
@@ -104,10 +104,7 @@ const WorkoutHistoryModal = ({ workout, exercises, sets, showWorkoutHistory, set
                             <Text className='text-white'>{totalWeight}lb</Text>
                         </View>
 
-                        <View className='flex flex-row items-center'>
-                            <AntDesign name="Trophy" size={20} color="white" className='mr-2' />
-                            <Text className='text-white'>0 PRs</Text>
-                        </View>
+                        
                     </View>
 
                     <View className='flex mt-5'>
@@ -121,7 +118,6 @@ const WorkoutHistoryModal = ({ workout, exercises, sets, showWorkoutHistory, set
                                         <View className='flex-1'>
                                             <View className='flex flex-row justify-between'>
                                                 <Text className='text-white font-bold text-xl'>{exercise.exercise_name}</Text>
-                                                <Text className='text-white font-bold text-xl'>1RM</Text>
                                             </View>
                                             {exerciseSets.map((set) => {
                                                 return (
@@ -130,9 +126,7 @@ const WorkoutHistoryModal = ({ workout, exercises, sets, showWorkoutHistory, set
                                                             {set.exercise_weight} lb x {set.exercise_reps} reps
                                                         </Text>
 
-                                                        <Text className='text-white text-lg font-base mt-1'>
-                                                            90
-                                                        </Text>
+                                                       
                                                     </View>
                                                 )
                                             })}

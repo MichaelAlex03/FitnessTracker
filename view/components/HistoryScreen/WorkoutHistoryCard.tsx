@@ -146,15 +146,7 @@ const WorkoutHistoryCard = ({ workout, exercises, sets, refresh, setRefresh }: H
             <Text className='text-white font-pbold text-base'>{totalWeight} lb</Text>
           </View>
 
-          <View className='w-px h-12 bg-gray-700' />
-
-          <View className='flex items-center flex-1'>
-            <View className='bg-accent-orange/20 rounded-full p-2 mb-2'>
-              <AntDesign name="Trophy" size={18} color="#F97316" />
-            </View>
-            <Text className='text-gray-400 text-xs font-pmedium mb-1'>PRs</Text>
-            <Text className='text-white font-pbold text-base'>0</Text>
-          </View>
+         
         </View>
 
         {/* Exercises List */}

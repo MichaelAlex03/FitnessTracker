@@ -73,7 +73,7 @@ const History = () => {
 
   return (
     <SafeAreaView className="bg-primary flex-1">
-      {/* Modern Header */}
+
       <View className='px-6 pt-6 pb-4'>
         <Text className='text-white font-pextrabold text-4xl mb-2'>Workout History</Text>
         <Text className='text-gray-400 font-pmedium text-base'>Track your fitness journey</Text>
