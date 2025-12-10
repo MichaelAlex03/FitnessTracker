@@ -1,9 +1,9 @@
-import { Text, View, FlatList, Modal, TextInput, Alert } from 'react-native'
+import { Text, View, FlatList, Modal, TextInput, Alert, StatusBar } from 'react-native'
 import React, { useState, useEffect, useRef, useContext } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { TouchableOpacity } from 'react-native'
 import useAxiosPrivate from '@/hooks/useAxiosPrivate'
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Menu, MenuOption, MenuOptions, MenuProvider, MenuTrigger } from 'react-native-popup-menu';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import RenderSet from '@/components/WorkoutScreen/RenderSet';
@@ -269,15 +269,24 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
         )
 
         return (
-            <View className='px-5 py-4 mb-4 bg-surface rounded-3xl border-2 border-accent/20'>
-                <View className='flex flex-row items-center mb-4'>
+            <View className='px-5 py-5 mb-4 bg-surface rounded-3xl border-2 border-accent/20 shadow-lg'>
+                {/* Header */}
+                <View className='flex flex-row items-center mb-5 pb-4 border-b border-gray-700/50'>
+                    <View className='bg-accent/10 rounded-full p-3 mr-3'>
+                        <MaterialCommunityIcons name="dumbbell" size={24} color="#6366F1" />
+                    </View>
                     <View className='flex-1'>
-                        <Text className='text-white font-pbold text-xl mb-1'>{item.exercise_name}</Text>
-                        <Text className='text-gray-400 font-pmedium text-sm'>{exerciseSetsFiltered.length} sets</Text>
+                        <Text className='text-white font-pextrabold text-xl mb-1'>{item.exercise_name}</Text>
+                        <View className='flex-row items-center'>
+                            <MaterialCommunityIcons name="counter" size={14} color="#9CA3AF" />
+                            <Text className='text-gray-400 font-pmedium text-sm ml-1'>
+                                {exerciseSetsFiltered.length} {exerciseSetsFiltered.length === 1 ? 'set' : 'sets'}
+                            </Text>
+                        </View>
                     </View>
                     <Menu>
                         <MenuTrigger>
-                            <View className="bg-accent/20 p-3 rounded-xl">
+                            <View className="bg-accent/10 p-3 rounded-xl border border-accent/30">
                                 <AntDesign name="ellipsis1" size={20} color="#6366F1" />
                             </View>
                         </MenuTrigger>
@@ -296,8 +305,8 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                                     handleDeleteExercise(item.id)
                                 }}
                             >
-                                <AntDesign name="delete" size={20} color="#EF4444" className='mr-2' />
-                                <Text className="text-white text-base font-pmedium ml-2">Remove Exercise</Text>
+                                <MaterialCommunityIcons name="delete-outline" size={22} color="#EF4444" />
+                                <Text className="text-white text-base font-pmedium ml-3">Remove Exercise</Text>
                             </MenuOption>
                             <MenuOption
                                 onSelect={() => {
@@ -306,8 +315,8 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                                 }}
                                 style={{ padding: 16, flexDirection: 'row', alignItems: 'center', borderTopWidth: 1, borderTopColor: '#374151' }}
                             >
-                                <Icon name="edit" size={20} color="#6366F1" className='mr-2' />
-                                <Text className="text-white text-base font-pmedium ml-2">Replace Exercise</Text>
+                                <MaterialCommunityIcons name="swap-horizontal" size={22} color="#6366F1" />
+                                <Text className="text-white text-base font-pmedium ml-3">Replace Exercise</Text>
                             </MenuOption>
                             <MenuOption
                                 onSelect={() => {
@@ -316,13 +325,14 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                                 }}
                                 style={{ padding: 16, flexDirection: 'row', alignItems: 'center', borderTopWidth: 1, borderTopColor: '#374151' }}
                             >
-                                <Icon name="history" size={20} color="#6366F1" className='mr-2' />
-                                <Text className="text-white text-base font-pmedium ml-2">History</Text>
+                                <MaterialCommunityIcons name="history" size={22} color="#6366F1" />
+                                <Text className="text-white text-base font-pmedium ml-3">History</Text>
                             </MenuOption>
                         </MenuOptions>
                     </Menu>
                 </View>
 
+                {/* Sets List */}
                 <View className='space-y-2'>
                     {exerciseSetsFiltered.map((set, index) => (
                         <RenderSet
@@ -337,11 +347,13 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                         />
                     ))}
 
+                    {/* Add Set Button */}
                     <TouchableOpacity
-                        className='mt-3 bg-accent/20 py-3 rounded-xl active:bg-accent/30 border-2 border-accent/30'
+                        className='mt-3 bg-accent/10 py-3.5 rounded-xl active:bg-accent/20 border-2 border-accent/30 flex-row items-center justify-center'
                         onPress={() => { handleAddSet(item) }}
                     >
-                        <Text className='text-accent text-center font-pbold text-base'>Add Set</Text>
+                        <MaterialCommunityIcons name="plus-circle" size={20} color="#6366F1" />
+                        <Text className='text-accent text-center font-pbold text-base ml-2'>Add Set</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -359,6 +371,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
             }}
         >
             <SafeAreaView className="flex-1 bg-primary">
+                <StatusBar barStyle='light-content' backgroundColor='#0A0E1A' />
                 <MenuProvider skipInstanceCheck={true}>
                     <FlatList
                         data={exercises}
@@ -366,18 +379,19 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                         keyExtractor={(item) => item.id.toString()}
                         ListHeaderComponent={() => (
                             <View className='px-5 pt-6 pb-4'>
+                                {/* Top Actions */}
                                 <View className="flex flex-row justify-between items-center mb-6">
                                     <TouchableOpacity
-                                        className='bg-surface-elevated border-2 border-gray-700 px-4 py-3 rounded-xl active:bg-surface-hover'
+                                        className='bg-surface border-2 border-gray-700 p-3 rounded-xl active:bg-gray-800'
                                         onPress={() => {
                                             setShowTimerPopup(true)
                                         }}
                                     >
-                                        <Icon name="access-time" size={20} color="#6B7280" />
+                                        <MaterialCommunityIcons name="timer-outline" size={24} color="#9CA3AF" />
                                     </TouchableOpacity>
 
                                     <TouchableOpacity
-                                        className='bg-success px-6 py-3 rounded-xl shadow-lg shadow-success/30 active:scale-95'
+                                        className='bg-success px-6 py-3.5 rounded-xl shadow-lg shadow-success/40 active:scale-95 flex-row items-center'
                                         onPress={() => {
                                             Alert.alert("Finishing Workout", "Are you sure you want to finish your workout?", [
                                                 {
@@ -395,42 +409,68 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                                             ])
                                         }}
                                     >
-                                        <Text className='text-white font-pbold text-base'>Finish Workout</Text>
+                                        <MaterialCommunityIcons name="check-circle" size={20} color="white" />
+                                        <Text className='text-white font-pbold text-base ml-2'>Finish Workout</Text>
                                     </TouchableOpacity>
                                 </View>
 
-                              
-                                <View className='bg-gradient-to-br from-accent/10 to-accent-purple/10 rounded-3xl p-5 mb-6 border-2 border-accent/30'>
-                                    <Text className='text-white font-pextrabold text-3xl mb-3'>{workoutName}</Text>
-
-                                    <View className='flex flex-row items-center bg-primary-light rounded-2xl px-4 py-3'>
-                                        <View className='bg-accent/20 rounded-full p-2 mr-3'>
-                                            <Icon name="timer" size={20} color="#6366F1" />
+                                {/* Workout Info Card */}
+                                <View className='bg-surface rounded-3xl p-6 mb-6 border-2 border-accent/30 shadow-xl'>
+                                    <View className='flex-row items-center mb-4'>
+                                        <View className='bg-accent/20 rounded-full p-2.5 mr-3'>
+                                            <MaterialCommunityIcons name="weight-lifter" size={28} color="#6366F1" />
                                         </View>
-                                        <View>
-                                            <Text className='text-gray-400 text-xs font-pmedium mb-1'>Duration</Text>
-                                            <Text className='text-white font-pbold text-xl'>{formatTime(elapsedTime)}</Text>
+                                        <View className='flex-1'>
+                                            <Text className='text-gray-400 font-pmedium text-sm mb-1'>Active Workout</Text>
+                                            <Text className='text-white font-pextrabold text-2xl'>{workoutName}</Text>
+                                        </View>
+                                    </View>
+
+                                    {/* Timer Display */}
+                                    <View className='bg-primary-light/80 rounded-2xl px-5 py-4 border border-accent/20'>
+                                        <View className='flex-row items-center justify-between'>
+                                            <View className='flex-row items-center'>
+                                                <View className='bg-accent/20 rounded-full p-2 mr-3'>
+                                                    <MaterialCommunityIcons name="clock-outline" size={20} color="#6366F1" />
+                                                </View>
+                                                <View>
+                                                    <Text className='text-gray-400 text-xs font-pmedium mb-1'>Duration</Text>
+                                                    <Text className='text-white font-pbold text-2xl'>{formatTime(elapsedTime)}</Text>
+                                                </View>
+                                            </View>
+                                            <View className='bg-accent/10 rounded-full px-3 py-1'>
+                                                <Text className='text-accent font-pbold text-xs'>LIVE</Text>
+                                            </View>
                                         </View>
                                     </View>
                                 </View>
 
-                                <Text className='text-white font-pbold text-xl mb-4'>Exercises</Text>
+                                {/* Section Header */}
+                                <View className='flex-row items-center justify-between mb-4'>
+                                    <Text className='text-white font-pbold text-xl'>Exercises</Text>
+                                    <View className='bg-accent/10 rounded-full px-3 py-1'>
+                                        <Text className='text-accent font-pbold text-xs'>{exercises.length} total</Text>
+                                    </View>
+                                </View>
                             </View>
                         )}
                         ListFooterComponent={() => (
                             <View className='flex gap-4 items-center px-5 py-6'>
                                 <TouchableOpacity
-                                    className="bg-accent/20 border-2 border-accent/30 rounded-2xl w-full py-4 active:bg-accent/30"
+                                    className="bg-accent/10 border-2 border-accent/30 rounded-2xl w-full py-4 active:bg-accent/20 flex-row items-center justify-center"
                                     onPress={() => {
                                         setToggleAddExercise(prev => !prev)
                                     }}
                                 >
-                                    <Text className="text-accent font-pbold text-lg text-center">Add Exercise</Text>
+                                    <MaterialCommunityIcons name="plus-circle-outline" size={22} color="#6366F1" />
+                                    <Text className="text-accent font-pbold text-lg ml-2">Add Exercise</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
-                                    className="bg-error/20 border-2 border-error/30 rounded-2xl w-full py-4 active:bg-error/30"
-                                    onPress={handleCancelWorkout}>
-                                    <Text className="text-error font-pbold text-lg text-center">Cancel Workout</Text>
+                                    className="bg-error/10 border-2 border-error/30 rounded-2xl w-full py-4 active:bg-error/20 flex-row items-center justify-center"
+                                    onPress={handleCancelWorkout}
+                                >
+                                    <MaterialCommunityIcons name="close-circle-outline" size={22} color="#EF4444" />
+                                    <Text className="text-error font-pbold text-lg ml-2">Cancel Workout</Text>
                                 </TouchableOpacity>
                             </View>
                         )}
@@ -471,15 +511,13 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                 {
                     showHistory && (
                         <ExerciseHistory
-                            visible={showHistory} 
+                            visible={showHistory}
                             exerciseName={historyExercise}
                             onClose={() => setShowHistory(false)}
                         />
                     )
                 }
-
             </SafeAreaView>
-
         </Modal>
     )
 }
