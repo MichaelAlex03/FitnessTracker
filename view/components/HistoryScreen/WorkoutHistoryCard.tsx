@@ -91,7 +91,7 @@ const WorkoutHistoryCard = ({ workout, exercises, sets, refresh, setRefresh }: H
           <Menu>
             <MenuTrigger>
               <View className="bg-accent/20 p-3 rounded-xl">
-                <AntDesign name="ellipsis1" size={20} color="#6366F1" />
+                <AntDesign name="ellipsis" size={20} color="#6366F1" />
               </View>
             </MenuTrigger>
             <MenuOptions
@@ -130,7 +130,7 @@ const WorkoutHistoryCard = ({ workout, exercises, sets, refresh, setRefresh }: H
         <View className='flex flex-row justify-between items-center bg-primary-light rounded-2xl p-4 mb-4'>
           <View className='flex items-center flex-1'>
             <View className='bg-accent/20 rounded-full p-2 mb-2'>
-              <AntDesign name="clockcircleo" size={18} color="#6366F1" />
+              <AntDesign name="clock-circle" size={18} color="#6366F1" />
             </View>
             <Text className='text-gray-400 text-xs font-pmedium mb-1'>Duration</Text>
             <Text className='text-white font-pbold text-base'>{formatTime()}</Text>

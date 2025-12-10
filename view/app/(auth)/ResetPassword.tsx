@@ -44,7 +44,7 @@ const ResetPassword = () => {
 
     const renderRequirement = (isMet: boolean, text: string) => {
         const isEmpty = newPassword.length === 0;
-        const iconName = isEmpty ? 'minuscircleo' : isMet ? 'checkcircle' : 'closecircle';
+        const iconName = isEmpty ? 'minus-circle' : isMet ? 'check-circle' : 'close-circle';
         const iconColor = isEmpty ? '#9CA3AF' : isMet ? '#10B981' : '#EF4444';
         const textColor = isEmpty ? 'text-gray-100' : isMet ? 'text-green-500' : 'text-red-500';
 
@@ -131,7 +131,7 @@ const ResetPassword = () => {
                     />
                     {matchFocus && matchPassword && !validMatch &&
                         <View className='flex-row items-start justify-start gap-2 mt-2 w-full bg-warning/10 border border-warning/30 p-3 rounded-xl'>
-                            <AntDesign name="exclamationcircle" size={14} color="#F59E0B" className='mt-[2px]' />
+                            <AntDesign name="exclamation-circle" size={14} color="#F59E0B" className='mt-[2px]' />
                             <Text className='text-warning text-sm font-pmedium flex-1'>
                                 Passwords do not match
                             </Text>

@@ -198,7 +198,7 @@ export default function Workouts() {
                 }
               }}
             >
-              <AntDesign name="ellipsis1" size={20} color="#6366F1" />
+              <AntDesign name="ellipsis" size={20} color="#6366F1" />
 
             </MenuTrigger>
             <MenuOptions

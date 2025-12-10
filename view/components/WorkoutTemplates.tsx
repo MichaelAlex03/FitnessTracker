@@ -147,7 +147,7 @@ const WorkoutTemplates = ({ visible, onClose, workoutTemplates, workoutTemplateE
                
                 <View className='px-5 py-4'>
                     <View className='bg-surface border-2 border-gray-700 rounded-2xl h-14 flex-row items-center px-4'>
-                        <AntDesign name="search1" size={20} color="#6B7280" />
+                        <AntDesign name="search" size={20} color="#6B7280" />
                         <TextInput
                             className='text-white flex-1 ml-3 font-pmedium text-base'
                             value={searchQuery}
@@ -157,7 +157,7 @@ const WorkoutTemplates = ({ visible, onClose, workoutTemplates, workoutTemplateE
                         />
                         {searchQuery.length > 0 && (
                             <TouchableOpacity onPress={() => setSearchQuery('')}>
-                                <AntDesign name="closecircle" size={18} color="#6B7280" />
+                                <AntDesign name="close-circle" size={18} color="#6B7280" />
                             </TouchableOpacity>
                         )}
                     </View>

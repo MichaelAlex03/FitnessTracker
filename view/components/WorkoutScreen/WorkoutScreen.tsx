@@ -131,12 +131,12 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
     }, [exercises]);
 
     useEffect(() => {
-        let intervalId: NodeJS.Timeout;
+        let intervalId: number;
 
         if (!showCompletedScreen) {
             intervalId = setInterval(() => {
                 setElapsedTime(prev => prev + 1);
-            }, 1000)
+            }, 1000) as unknown as number;
         }
 
 
@@ -287,7 +287,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                     <Menu>
                         <MenuTrigger>
                             <View className="bg-accent/10 p-3 rounded-xl border border-accent/30">
-                                <AntDesign name="ellipsis1" size={20} color="#6366F1" />
+                                <AntDesign name="ellipsis" size={20} color="#6366F1" />
                             </View>
                         </MenuTrigger>
                         <MenuOptions

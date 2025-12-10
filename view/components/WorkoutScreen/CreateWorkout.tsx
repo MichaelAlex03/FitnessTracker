@@ -288,7 +288,7 @@ const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises, set
                     <View className='flex-row gap-3'>
 
                         <View className='flex-1 bg-surface border-2 border-gray-700 rounded-2xl h-14 flex-row items-center px-4'>
-                            <AntDesign name="search1" size={20} color="#6B7280" />
+                            <AntDesign name="search" size={20} color="#6B7280" />
                             <TextInput
                                 className='text-white flex-1 ml-3 font-pmedium text-base'
                                 value={searchQuery}
@@ -298,7 +298,7 @@ const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises, set
                             />
                             {searchQuery.length > 0 && (
                                 <TouchableOpacity onPress={() => setSearchQuery('')}>
-                                    <AntDesign name="closecircle" size={18} color="#6B7280" />
+                                    <AntDesign name="close-circle" size={18} color="#6B7280" />
                                 </TouchableOpacity>
                             )}
                         </View>
@@ -362,7 +362,7 @@ const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises, set
                                     }}
                                 >
                                     <View className="w-6 h-6 rounded-full items-center justify-center mr-3" style={{ backgroundColor: '#6366F120' }}>
-                                        <AntDesign name="appstore-o" size={14} color="#6366F1" />
+                                        <AntDesign name="appstore" size={14} color="#6366F1" />
                                     </View>
                                     <Text className="text-white text-base font-pmedium">Category</Text>
                                 </MenuOption>

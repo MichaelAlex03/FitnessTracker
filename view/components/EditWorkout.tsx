@@ -228,7 +228,7 @@ const EditWorkout = ({ editWorkout, setEditWorkout, workoutId, setActiveWorkout,
                     <Menu>
                         <MenuTrigger>
                             <View className="bg-secondary/20 p-2 rounded-xl">
-                                <AntDesign name="ellipsis1" size={20} color="#6366F1" />
+                                <AntDesign name="ellipsis" size={20} color="#6366F1" />
                             </View>
                         </MenuTrigger>
                         <MenuOptions
@@ -341,7 +341,7 @@ const EditWorkout = ({ editWorkout, setEditWorkout, workoutId, setActiveWorkout,
                                         <Menu>
                                             <MenuTrigger>
                                                 <View className="bg-secondary/20 p-2 rounded-xl">
-                                                    <AntDesign name="ellipsis1" size={16} color="#6366F1" />
+                                                    <AntDesign name="ellipsis" size={16} color="#6366F1" />
                                                 </View>
                                             </MenuTrigger>
                                             <MenuOptions

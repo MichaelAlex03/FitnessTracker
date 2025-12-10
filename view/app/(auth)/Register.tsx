@@ -92,7 +92,7 @@ const Register = () => {
   // Helper function to render requirement with checkbox
   const renderRequirement = (isMet: boolean, text: string) => {
     const isEmpty = pwd.length === 0;
-    const iconName = isEmpty ? 'minuscircleo' : isMet ? 'checkcircle' : 'closecircle';
+    const iconName = isEmpty ? 'minus-circle' : isMet ? 'check-circle' : 'close-circle';
     const iconColor = isEmpty ? '#9CA3AF' : isMet ? '#10B981' : '#EF4444';
     const textColor = isEmpty ? 'text-gray-100' : isMet ? 'text-green-500' : 'text-red-500';
 
@@ -211,7 +211,7 @@ const Register = () => {
           />
           {userFocus && user && !validName &&
             <View className='flex-row items-start justify-start gap-2 mt-2 w-full md:w-1/2 bg-warning/10 border border-warning/30 p-3 rounded-xl'>
-              <AntDesign name="exclamationcircle" size={14} color="#F59E0B" className='mt-[2px]' />
+              <AntDesign name="exclamation-circle" size={14} color="#F59E0B" className='mt-[2px]' />
               <Text className='text-warning text-sm font-pmedium flex-1'>
                 4 to 24 characters. Must begin with a letter. Letters, numbers, underscores, hyphens allowed.
               </Text>
@@ -228,7 +228,7 @@ const Register = () => {
           />
           {emailFocus && email && !validEmail &&
             <View className='flex-row items-start justify-start gap-2 mt-2 w-full md:w-1/2 bg-warning/10 border border-warning/30 p-3 rounded-xl'>
-              <AntDesign name="exclamationcircle" size={14} color="#F59E0B" className='mt-[2px]' />
+              <AntDesign name="exclamation-circle" size={14} color="#F59E0B" className='mt-[2px]' />
               <Text className='text-warning text-sm font-pmedium flex-1'>
                 Your email address should follow the format: username@domain.com.
               </Text>
@@ -245,7 +245,7 @@ const Register = () => {
           />
           {phoneFocus && phoneNum && !validPhone &&
             <View className='flex-row items-start justify-start gap-2 mt-2 w-full md:w-1/2 bg-warning/10 border border-warning/30 p-3 rounded-xl'>
-              <AntDesign name="exclamationcircle" size={14} color="#F59E0B" className='mt-[2px]' />
+              <AntDesign name="exclamation-circle" size={14} color="#F59E0B" className='mt-[2px]' />
               <Text className='text-warning text-sm font-pmedium flex-1'>
                 Phone number must be in format XXX-XXX-XXXX
               </Text>
@@ -281,7 +281,7 @@ const Register = () => {
           />
           {matchPwd && !validMatch && matchFocus &&
             <View className='flex-row items-start justify-start gap-2 mt-2 w-full md:w-1/2 bg-warning/10 border border-warning/30 p-3 rounded-xl'>
-              <AntDesign name="exclamationcircle" size={14} color="#F59E0B" className='mt-[2px]' />
+              <AntDesign name="exclamation-circle" size={14} color="#F59E0B" className='mt-[2px]' />
               <Text className='text-warning text-sm font-pmedium flex-1'>
                 Does not match the password
               </Text>
