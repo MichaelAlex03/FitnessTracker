@@ -408,7 +408,7 @@ const ExerciseListPopup = ({
                 <SafeAreaView className='flex-1 bg-primary' edges={['top', 'bottom']}>
                     <StatusBar barStyle="light-content" backgroundColor="#0A0E1A" />
 
-                    <View className='flex-row items-center justify-between px-5 py-4 border-b-2 border-gray-700'>
+                    <View className='flex-row items-center justify-between px-5 py-4 border-b-2 border-gray-700 mt-10'>
                         <TouchableOpacity
                             className='bg-surface border-2 border-gray-700 py-2 px-4 rounded-xl'
                             onPress={() => {
@@ -447,7 +447,7 @@ const ExerciseListPopup = ({
 
 
                     <View className='px-5 pt-4 pb-2'>
-                        <View className='flex-row gap-3'>
+                        <View className='flex-row gap-3 '>
                             <View className='flex-1 bg-surface border-2 border-gray-700 rounded-2xl h-14 flex-row items-center px-4'>
                                 <AntDesign name="search1" size={20} color="#6B7280" />
                                 <TextInput

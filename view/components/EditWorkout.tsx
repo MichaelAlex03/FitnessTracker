@@ -11,6 +11,7 @@ import RenderSet from '@/components/WorkoutScreen/RenderSet';
 import ExerciseListPopup from '@/components/WorkoutScreen/ExerciseListPopup';
 import uuid from 'react-native-uuid';
 import useAuth from '@/hooks/useAuth';
+import ExerciseHistory from './ExerciseHistory'
 
 
 const EXERCISES_URL = '/api/exercises';
@@ -67,6 +68,9 @@ const EditWorkout = ({ editWorkout, setEditWorkout, workoutId, setActiveWorkout,
     const [currentWorkoutName, setCurrentWorkoutName] = useState<string>(workoutName);
     const [newWorkoutName, setNewWorkoutName] = useState<string>(workoutName);
     const [previousSetsMap, setPreviousSetsMap] = useState<Record<string, HistorySet[]>>({});
+
+    const [showHistory, setShowHistory] = useState<boolean>(false);
+    const [historyExercise, setHistoryExercise] = useState<string>("");
 
 
     const axiosPrivate = useAxiosPrivate();
@@ -252,7 +256,10 @@ const EditWorkout = ({ editWorkout, setEditWorkout, workoutId, setActiveWorkout,
                                 <Text className="text-white text-base">Replace Exercise</Text>
                             </MenuOption>
                             <MenuOption
-                                onSelect={() => { }}
+                                onSelect={() => { 
+                                    setShowHistory(true)
+                                    setHistoryExercise(item.exercise_name)
+                                }}
                                 style={{ padding: 12, flexDirection: 'row', alignItems: 'center' }}
                             >
                                 <Icon name="edit" size={20} color="white" className='mr-2' />
@@ -405,6 +412,15 @@ const EditWorkout = ({ editWorkout, setEditWorkout, workoutId, setActiveWorkout,
                             exerciseToReplace={exerciseToReplace ?? ''}
                             refresh={refresh}
                             setRefresh={setRefresh}
+                        />
+                    )
+                }
+                {
+                    showHistory && (
+                        <ExerciseHistory
+                            visible={showHistory}
+                            exerciseName={historyExercise}
+                            onClose={() => setShowHistory(false)}
                         />
                     )
                 }

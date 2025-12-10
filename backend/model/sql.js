@@ -330,11 +330,12 @@ const getRecentWorkoutHistory = async (userId, limit) => {
     };
 }
 
-const getPreviousSets = async (exerciseName) => {
+const getPreviousSets = async (exerciseName, userId) => {
     const { data, error } = await supabase
         .from('sets_history')
         .select('*')
         .eq('exercise_name', exerciseName)
+        .eq('user_id', userId)
     if (error) throw error
     return data
 }
@@ -425,7 +426,8 @@ const addSetsToHistory = async (workoutId, sets, exerciseHistoryMap, userId) => 
             exercise_weight: set.exercise_weight,
             set_type: set.set_type,
             user_id: userId,
-            exercise_name: exerciseHistoryMap[set.exercise_id][1]
+            exercise_name: exerciseHistoryMap[set.exercise_id][1],
+            created_at: new Date().toISOString()
         })));
     if (error) throw error;
     return data;

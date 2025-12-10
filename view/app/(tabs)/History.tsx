@@ -6,6 +6,7 @@ import WorkoutHistoryCard from '@/components/HistoryScreen/WorkoutHistoryCard';
 import useAuth from '@/hooks/useAuth';
 import { useFocusEffect } from '@react-navigation/native';
 import WorkoutHistoryModal from '@/components/HistoryScreen/WorkoutHistoryModal';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const HISTORY_DATA_URL = '/api/history'
 
@@ -51,8 +52,6 @@ const History = () => {
       const fetchWorkoutHistory = async () => {
         try {
           const workoutHistoryData = await axiosPrivate.get(`${HISTORY_DATA_URL}/${auth.userId}`);
-
-          console.log(workoutHistoryData.data)
 
           const sortedWorkouts = [...workoutHistoryData.data.workouts].sort(
             (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
@@ -120,6 +119,58 @@ const History = () => {
         }}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={{ paddingBottom: 20 }}
+        ListEmptyComponent={
+          <View className='flex-1 justify-center items-center px-8 py-20'>
+            
+            <View className='bg-accent/10 rounded-full p-8 mb-6'>
+              <MaterialCommunityIcons
+                name="history"
+                size={80}
+                color="#6366F1"
+              />
+            </View>
+
+           
+            <Text className='text-white text-3xl font-pextrabold text-center mb-3'>
+              No Workout History
+            </Text>
+
+            
+            <Text className='text-gray-400 text-base font-pmedium text-center mb-8 leading-6'>
+              Your completed workouts will appear here. Start your fitness journey by completing your first workout!
+            </Text>
+
+            
+            <View className='w-full bg-surface border-2 border-accent/20 rounded-2xl p-6 mb-6'>
+              <View className='flex-row items-center mb-3'>
+                <MaterialCommunityIcons name="chart-line" size={24} color="#6366F1" />
+                <Text className='text-white font-pbold text-lg ml-3'>
+                  Track Your Progress
+                </Text>
+              </View>
+              <Text className='text-gray-400 font-pmedium text-sm leading-5'>
+                Complete workouts to see stats like volume, duration, personal records, and workout frequency over time.
+              </Text>
+            </View>
+
+            {/* Call to Action Hints */}
+            <View className='w-full gap-3'>
+              <View className='bg-surface/50 border border-accent/30 rounded-xl p-4 flex-row items-center'>
+                <MaterialCommunityIcons name="dumbbell" size={20} color="#6366F1" />
+                <Text className='text-gray-300 font-pmedium text-sm ml-3 flex-1'>
+                  Go to Workouts tab to start a new session
+                </Text>
+              </View>
+
+              <View className='bg-surface/50 border border-accent/30 rounded-xl p-4 flex-row items-center'>
+                <MaterialCommunityIcons name="robot-excited-outline" size={20} color="#6366F1" />
+                <Text className='text-gray-300 font-pmedium text-sm ml-3 flex-1'>
+                  Try the AI Coach to generate custom workouts
+                </Text>
+              </View>
+            </View>
+          </View>
+        }
       />
       <StatusBar className='bg-white' />
     </SafeAreaView>

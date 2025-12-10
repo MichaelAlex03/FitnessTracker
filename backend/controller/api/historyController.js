@@ -26,9 +26,13 @@ const deleteWorkout = async (req, res) => {
 
 const getPreviousSets = async (req, res) => {
     const { exerciseName } = req.params
+    const userId = req.user.id;
+
+    console.log(exerciseName, userId)
 
     try {
-        const previousSets = await pg.getPreviousSets(exerciseName);
+        const previousSets = await pg.getPreviousSets(exerciseName, userId);
+        console.log(previousSets)
         return res.status(200).json({ "message": "previous sets retrieved", previousSets });
     } catch (error) {
         console.error(error);

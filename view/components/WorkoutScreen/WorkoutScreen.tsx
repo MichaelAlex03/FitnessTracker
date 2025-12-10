@@ -11,6 +11,7 @@ import ExerciseListPopup from '@/components/WorkoutScreen/ExerciseListPopup';
 import uuid from 'react-native-uuid';
 import useAuth from '@/hooks/useAuth'
 import CompletedWorkout from './CompletedWorkout'
+import ExerciseHistory from '../ExerciseHistory'
 
 
 const EXERCISES_URL = '/api/exercises';
@@ -69,6 +70,8 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
     const [elapsedTime, setElapsedTime] = useState<number>(0);
     const [completedTime, setCompletedTime] = useState<number>(0);
 
+    const [showHistory, setShowHistory] = useState<boolean>(false);
+    const [historyExercise, setHistoryExercise] = useState<string>("");
 
 
     const axiosPrivate = useAxiosPrivate();
@@ -307,7 +310,10 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                                 <Text className="text-white text-base font-pmedium ml-2">Replace Exercise</Text>
                             </MenuOption>
                             <MenuOption
-                                onSelect={() => { }}
+                                onSelect={() => {
+                                    setShowHistory(true)
+                                    setHistoryExercise(item.exercise_name)
+                                }}
                                 style={{ padding: 16, flexDirection: 'row', alignItems: 'center', borderTopWidth: 1, borderTopColor: '#374151' }}
                             >
                                 <Icon name="history" size={20} color="#6366F1" className='mr-2' />
@@ -360,7 +366,6 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                         keyExtractor={(item) => item.id.toString()}
                         ListHeaderComponent={() => (
                             <View className='px-5 pt-6 pb-4'>
-                                {/* Modern Action Bar */}
                                 <View className="flex flex-row justify-between items-center mb-6">
                                     <TouchableOpacity
                                         className='bg-surface-elevated border-2 border-gray-700 px-4 py-3 rounded-xl active:bg-surface-hover'
@@ -394,7 +399,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                                     </TouchableOpacity>
                                 </View>
 
-                                {/* Workout Header Card */}
+                              
                                 <View className='bg-gradient-to-br from-accent/10 to-accent-purple/10 rounded-3xl p-5 mb-6 border-2 border-accent/30'>
                                     <Text className='text-white font-pextrabold text-3xl mb-3'>{workoutName}</Text>
 
@@ -460,6 +465,15 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                             sets={exerciseSets}
                             showWorkout={showWorkout}
                             setShowWorkout={setShowWorkout}
+                        />
+                    )
+                }
+                {
+                    showHistory && (
+                        <ExerciseHistory
+                            visible={showHistory} 
+                            exerciseName={historyExercise}
+                            onClose={() => setShowHistory(false)}
                         />
                     )
                 }
