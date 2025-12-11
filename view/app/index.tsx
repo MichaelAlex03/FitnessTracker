@@ -7,7 +7,7 @@ import '../index.css'
 
 export default function Index() {
   return (
-    <SafeAreaView className='w-full justify-center bg-[#161622] h-full items-center'>
+    <SafeAreaView className='flex-1 w-full justify-center bg-[#161622] h-full items-center' edges={['top', 'left', 'right']}>
       <View>
         <Text className="text-white text-3xl font-bold">Welcome To <Text className="text-secondary-200">FitTrackr</Text></Text>
       </View>

@@ -226,7 +226,7 @@ const Chatbot = () => {
   )
 
   return (
-    <SafeAreaView className='bg-primary flex-1'>
+    <SafeAreaView className='bg-primary flex-1' edges={['top', 'left', 'right']}>
       <KeyboardAvoidingView
         className='flex-1'
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}

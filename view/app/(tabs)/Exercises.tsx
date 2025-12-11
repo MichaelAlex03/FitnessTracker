@@ -447,7 +447,7 @@ const Exercises = () => {
 
 
   return (
-    <SafeAreaView className='bg-primary flex-1'>
+    <SafeAreaView className='bg-primary flex-1' edges={['top', 'left', 'right']}>
       <View className='px-5 pt-6 pb-4'>
         <Text className='text-white font-pextrabold text-4xl mb-2'>Exercise Library</Text>
 

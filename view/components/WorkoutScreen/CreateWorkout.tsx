@@ -460,7 +460,7 @@ const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises, set
                                                     {item.exercise_bodypart}
                                                 </Text>
                                             </View>
-                                            <View className="rounded-full px-3 py-1" style={{ backgroundColor: '#6366F120'}}>
+                                            <View className="rounded-full px-3 py-1" style={{ backgroundColor: '#6366F120' }}>
                                                 <Text className="text-xs font-pmedium" style={{ color: '#6366F1' }}>
                                                     {item.exercise_category}
                                                 </Text>
@@ -697,7 +697,7 @@ const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises, set
     }, [bodyParts, categories, showMyExercisesOnly, exercises, searchQuery])
 
 
-    console.log(bodyParts)
+
     return (
         <Modal
             visible={showCreateWorkout}
@@ -725,10 +725,12 @@ const CreateWorkout = ({ showCreateWorkout, setShowCreateWorkout, exercises, set
                     <View className='w-6' />
                 </View>
 
+                <View className='mt-6 flex-1'>
+                    {currentStep === 1 && renderStep1()}
+                    {currentStep === 2 && renderStep2()}
+                    {currentStep === 3 && renderStep3()}
+                </View>
 
-                {currentStep === 1 && renderStep1()}
-                {currentStep === 2 && renderStep2()}
-                {currentStep === 3 && renderStep3()}
 
 
                 {

@@ -30,7 +30,8 @@ interface SetProps {
     handleRemoveSet: (id: String) => void;
     handleRepChange?: (set: Set, reps: number) => void
     handleWeightChange?: (set: Set, weight: number) => void
-    handleSetTypeChange: (id: string, type: string) => void,
+    handleSetTypeChange: (id: string, type: string) => void
+    handleCompletedSet?: (id: string, isCompleted: boolean) => void
     editWorkout?: boolean,
     prevSet: HistorySet
 }
@@ -43,10 +44,12 @@ const RenderSet = ({
     handleRepChange,
     handleWeightChange,
     handleSetTypeChange,
+    handleCompletedSet,
     editWorkout,
     prevSet
 }: SetProps) => {
 
+    
     const [showSetTypeInfo, setShowSetTypeInfo] = useState(false);
     const [setTypeInfo, setSetTypeInfo] = useState('');
     const [isCompleted, setIsCompleted] = useState(false);
@@ -240,7 +243,7 @@ const RenderSet = ({
                             <View className='px-3 py-1 '>
                                 <Text className='text-gray-300 font-pmedium text-sm text-center font-bold p-1'>
                                     {prevSet.exercise_reps && prevSet.exercise_weight ?
-                                        `${prevSet.exercise_weight} lb ×${prevSet.exercise_reps}` :
+                                        `${prevSet.exercise_weight} lb × ${prevSet.exercise_reps}` :
                                         '-'
                                     }
                                 </Text>
@@ -284,7 +287,13 @@ const RenderSet = ({
                         <View className='items-center justify-center'>
                             {index === 0 && <Text className='text-gray-400 font-pmedium text-xs mb-2'>Done</Text>}
                             <TouchableOpacity
-                                onPress={() => setIsCompleted(!isCompleted)}
+                                onPress={() => {
+                                    if(handleCompletedSet) {
+                                        handleCompletedSet(set.id, !isCompleted)
+                                    }
+                                    setIsCompleted(!isCompleted)
+                                }}
+                                disabled={editWorkout}
                                 className={`w-10 h-10 rounded-lg items-center justify-center border-2 ${isCompleted
                                     ? 'bg-success border-success'
                                     : 'bg-surface border-gray-600'

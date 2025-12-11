@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { TouchableOpacity } from 'react-native'
 import useAxiosPrivate from '@/hooks/useAxiosPrivate'
-import { AntDesign } from '@expo/vector-icons';
 import { Menu, MenuOption, MenuOptions, MenuProvider, MenuTrigger } from 'react-native-popup-menu';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import RenamePopup from '@/components/RenamePopup';
@@ -12,6 +11,7 @@ import ExerciseListPopup from '@/components/WorkoutScreen/ExerciseListPopup';
 import uuid from 'react-native-uuid';
 import useAuth from '@/hooks/useAuth';
 import ExerciseHistory from './ExerciseHistory'
+import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 
 
 const EXERCISES_URL = '/api/exercises';
@@ -129,9 +129,11 @@ const EditWorkout = ({ editWorkout, setEditWorkout, workoutId, setActiveWorkout,
         }
     }, [exercises]);
 
+    console.log("TEST", previousSetsMap)
+
     //Update refresh name in the edit workout screen after you change it in popup
     useEffect(() => {
-        if (currentWorkoutName !== newWorkoutName){
+        if (currentWorkoutName !== newWorkoutName) {
             setCurrentWorkoutName(newWorkoutName)
         }
     }, [refresh])
@@ -184,7 +186,6 @@ const EditWorkout = ({ editWorkout, setEditWorkout, workoutId, setActiveWorkout,
                 userId: auth.userId
             });
 
-            console.log(response)
 
             Alert.alert("Saved Workout", "Your workout is saved!");
             setActiveWorkout(0);
@@ -209,68 +210,79 @@ const EditWorkout = ({ editWorkout, setEditWorkout, workoutId, setActiveWorkout,
         // Filter sets for this specific exercise
         const exerciseSetsFiltered = exerciseSets.filter(set => set.exercise_id === item.id);
 
-         // Get previous sets for this exercise from the map
-         const previousSets = previousSetsMap[item.exercise_name] || [];
+        // Get previous sets for this exercise from the map
+        const previousSets = previousSetsMap[item.exercise_name] || [];
 
-         // Sort sets so that ones with the highest weight appear first
-         const sortedSets = previousSets.sort(
-             (a,b) => a.exercise_weight - b.exercise_weight
-         )
- 
-
+        // Sort sets so that ones with the highest weight appear first
+        const sortedSets = previousSets.sort(
+            (a, b) => b.exercise_weight - a.exercise_weight
+        )
 
         return (
-            <View className='p-4'>
-                <View className='flex flex-row items-center'>
-                    <TouchableOpacity className='mr-auto'>
-                        <Text className='text-secondary font-semibold text-2xl'>{item.exercise_name}</Text>
-                    </TouchableOpacity>
+            <View className='px-2 py-5 mb-4 bg-surface rounded-3xl border-2 border-accent/20 shadow-lg mx-4'>
+
+                <View className='flex flex-row items-center mb-5 pb-4 border-b border-gray-700/50'>
+                    <View className='bg-accent/10 rounded-full p-3 mr-3'>
+                        <MaterialCommunityIcons name="dumbbell" size={24} color="#6366F1" />
+                    </View>
+                    <View className='flex-1'>
+                        <Text className='text-white font-pextrabold text-xl mb-1'>{item.exercise_name}</Text>
+                        <View className='flex-row items-center'>
+                            <MaterialCommunityIcons name="counter" size={14} color="#9CA3AF" />
+                            <Text className='text-gray-400 font-pmedium text-sm ml-1'>
+                                {exerciseSetsFiltered.length} {exerciseSetsFiltered.length === 1 ? 'set' : 'sets'}
+                            </Text>
+                        </View>
+                    </View>
                     <Menu>
                         <MenuTrigger>
-                            <View className="bg-secondary/20 p-2 rounded-xl">
+                            <View className="bg-accent/10 p-3 rounded-xl border border-accent/30">
                                 <AntDesign name="ellipsis" size={20} color="#6366F1" />
                             </View>
                         </MenuTrigger>
                         <MenuOptions
                             optionsContainerStyle={{
-                                backgroundColor: '#1E1E1E',
-                                borderRadius: 8,
+                                backgroundColor: '#252D3F',
+                                borderRadius: 16,
                                 marginTop: 40,
+                                borderWidth: 1,
+                                borderColor: '#6366F1',
                             }}
                         >
                             <MenuOption
-                                style={{ padding: 12, flexDirection: 'row', alignItems: 'center' }}
-                                onSelect={() => handleDeleteExercise(item.id)}
+                                style={{ padding: 16, flexDirection: 'row', alignItems: 'center' }}
+                                onSelect={() => {
+                                    handleDeleteExercise(item.id)
+                                }}
                             >
-                                <AntDesign name="delete" size={20} color="red" className='mr-2' />
-                                <Text className="text-white text-base">Remove Exercise</Text>
+                                <MaterialCommunityIcons name="delete-outline" size={22} color="#EF4444" />
+                                <Text className="text-white text-base font-pmedium ml-3">Remove Exercise</Text>
                             </MenuOption>
                             <MenuOption
                                 onSelect={() => {
                                     setToggleReplaceExercise(true)
                                     setExerciseToReplace(item.exercise_name)
                                 }}
-                                style={{ padding: 12, flexDirection: 'row', alignItems: 'center' }}
+                                style={{ padding: 16, flexDirection: 'row', alignItems: 'center', borderTopWidth: 1, borderTopColor: '#374151' }}
                             >
-                                <Icon name="edit" size={20} color="white" className='mr-2' />
-                                <Text className="text-white text-base">Replace Exercise</Text>
+                                <MaterialCommunityIcons name="swap-horizontal" size={22} color="#6366F1" />
+                                <Text className="text-white text-base font-pmedium ml-3">Replace Exercise</Text>
                             </MenuOption>
                             <MenuOption
-                                onSelect={() => { 
+                                onSelect={() => {
                                     setShowHistory(true)
                                     setHistoryExercise(item.exercise_name)
                                 }}
-                                style={{ padding: 12, flexDirection: 'row', alignItems: 'center' }}
+                                style={{ padding: 16, flexDirection: 'row', alignItems: 'center', borderTopWidth: 1, borderTopColor: '#374151' }}
                             >
-                                <Icon name="edit" size={20} color="white" className='mr-2' />
-                                <Text className="text-white text-base">History</Text>
+                                <MaterialCommunityIcons name="history" size={22} color="#6366F1" />
+                                <Text className="text-white text-base font-pmedium ml-3">History</Text>
                             </MenuOption>
                         </MenuOptions>
                     </Menu>
                 </View>
 
-                <View className='mt-4'>
-
+                <View className='space-y-2'>
                     {exerciseSetsFiltered.map((set, index) => (
                         <RenderSet
                             key={set.id}
@@ -278,21 +290,23 @@ const EditWorkout = ({ editWorkout, setEditWorkout, workoutId, setActiveWorkout,
                             index={index}
                             handleRemoveSet={handleRemoveSet}
                             handleSetTypeChange={handleSetTypeChange}
-                            editWorkout={true}
                             prevSet={sortedSets[index] || {}}
                         />
                     ))}
 
+
                     <TouchableOpacity
-                        className='mt-2 bg-secondary/20 p-2 rounded-xl'
+                        className='mt-3 bg-accent/10 py-3.5 rounded-xl active:bg-accent/20 border-2 border-accent/30 flex-row items-center justify-center'
                         onPress={() => { handleAddSet(item) }}
                     >
-                        <Text className='text-secondary text-center'>Add Set</Text>
+                        <MaterialCommunityIcons name="plus-circle" size={20} color="#6366F1" />
+                        <Text className='text-accent text-center font-pbold text-base ml-2'>Add Set</Text>
                     </TouchableOpacity>
                 </View>
             </View>
         )
     }
+
 
 
     return (
@@ -312,9 +326,9 @@ const EditWorkout = ({ editWorkout, setEditWorkout, workoutId, setActiveWorkout,
                         keyExtractor={(item) => item.id.toString()}
                         ListHeaderComponent={() => (
                             <View className='px-6 py-6 gap-4 mt-16'>
-                                <View className="flex flex-row justify-evenly items-center">
+                                <View className="flex flex-row justify-between items-center">
                                     <TouchableOpacity
-                                        className='bg-gray-400 px-6 py-2 rounded-lg mr-auto'
+                                         className='bg-gray-400 px-6 py-3.5 rounded-xl shadow-lg shadow-success/40 active:scale-95 flex-row items-center justify-center'
                                         onPress={() => {
                                             setEditWorkout(false)
                                             setActiveWorkout(0)
@@ -323,15 +337,28 @@ const EditWorkout = ({ editWorkout, setEditWorkout, workoutId, setActiveWorkout,
                                         <Text className='text-white'>Back</Text>
                                     </TouchableOpacity>
 
+                                    
                                     <TouchableOpacity
-                                        className='bg-secondary px-4 py-2 rounded-lg'
+                                        className='bg-success px-6 py-3.5 rounded-xl shadow-lg shadow-success/40 active:scale-95 flex-row items-center justify-center'
                                         onPress={() => {
-                                            handleSave()
-                                            setActiveWorkout(0)
-
+                                            Alert.alert("Finishing Workout", "Are you sure you want to finish your workout?", [
+                                                {
+                                                    text: "Ok",
+                                                    onPress: () => {
+                                                        handleSave()
+                                                        setActiveWorkout(0)
+                                                    }
+                                                },
+                                                {
+                                                    text: "Cancel",
+                                                    onPress: () => {
+                                                    }
+                                                }
+                                            ])
                                         }}
                                     >
-                                        <Text className=' text-white'>Save</Text>
+                                        <MaterialCommunityIcons name="check-circle" size={20} color="white" />
+                                        <Text className='text-white font-pbold text-base ml-2'>Save Workout</Text>
                                     </TouchableOpacity>
                                 </View>
 
@@ -370,16 +397,25 @@ const EditWorkout = ({ editWorkout, setEditWorkout, workoutId, setActiveWorkout,
                             </View>
                         )}
                         ListFooterComponent={() => (
-                            <View className='flex gap-8 items-center p-6'>
+                            <View className='flex gap-4 items-center px-5 py-6'>
                                 <TouchableOpacity
-                                    className="bg-gray-600 rounded-xl w-full p-3 "
+                                    className="bg-accent/10 border-2 border-accent/30 rounded-2xl w-full py-4 active:bg-accent/20 flex-row items-center justify-center"
                                     onPress={() => {
                                         setToggleAddExercise(prev => !prev)
                                     }}
                                 >
-                                    <Text className="text-white font-bold text-center">Add Exercise</Text>
+                                    <MaterialCommunityIcons name="plus-circle-outline" size={22} color="#6366F1" />
+                                    <Text className="text-accent font-pbold text-lg ml-2">Add Exercise</Text>
                                 </TouchableOpacity>
-
+                                <TouchableOpacity
+                                    className="bg-error/10 border-2 border-error/30 rounded-2xl w-full py-4 active:bg-error/20 flex-row items-center justify-center"
+                                    onPress={() => {
+                                        setEditWorkout(false)
+                                    }}
+                                >
+                                    <MaterialCommunityIcons name="close-circle-outline" size={22} color="#EF4444" />
+                                    <Text className="text-error font-pbold text-lg ml-2">Cancel Edit</Text>
+                                </TouchableOpacity>
                             </View>
                         )}
                     />

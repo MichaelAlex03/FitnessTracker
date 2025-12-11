@@ -117,7 +117,7 @@ const ViewWorkoutTemplate = ({ visible, setVisible, workoutTemplateExercises, wo
             statusBarTranslucent={false}
         >
             <SafeAreaView className='flex-1 bg-primary' edges={['top', 'left', 'right']}>
-                <View className='flex-row items-center justify-between px-5 py-4 border-b-2 border-gray-700'>
+                <View className='flex-row items-center justify-between px-5 py-4 border-b-2 border-gray-700 mt-10'>
                     <View className='flex-1 mr-4'>
                         <Text className='text-white font-pextrabold text-3xl mb-1' numberOfLines={1}>
                             {workoutTemplateName}

@@ -599,7 +599,7 @@ const ExerciseListPopup = ({
                             presentationStyle="fullScreen"
                             statusBarTranslucent={false}
                         >
-                            <SafeAreaView className='flex-1 bg-primary' edges={['top', 'bottom']}>
+                            <SafeAreaView className='flex-1 bg-primary' edges={['top', 'left', 'right']}>
             
                                 <View className='flex-row items-center justify-between px-5 py-4 border-b-2 border-gray-700'>
                                     <TouchableOpacity
@@ -637,7 +637,7 @@ const ExerciseListPopup = ({
                             presentationStyle="fullScreen"
                             statusBarTranslucent={false}
                         >
-                            <SafeAreaView className='flex-1 bg-primary' edges={['top', 'bottom']}>
+                            <SafeAreaView className='flex-1 bg-primary' edges={['top', 'left', 'right']}>
             
                                 <View className='flex-row items-center justify-between px-5 py-4 border-b-2 border-gray-700'>
                                     <TouchableOpacity

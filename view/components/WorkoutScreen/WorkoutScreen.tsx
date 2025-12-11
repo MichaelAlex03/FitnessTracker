@@ -5,7 +5,6 @@ import { TouchableOpacity } from 'react-native'
 import useAxiosPrivate from '@/hooks/useAxiosPrivate'
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Menu, MenuOption, MenuOptions, MenuProvider, MenuTrigger } from 'react-native-popup-menu';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import RenderSet from '@/components/WorkoutScreen/RenderSet';
 import ExerciseListPopup from '@/components/WorkoutScreen/ExerciseListPopup';
 import uuid from 'react-native-uuid';
@@ -51,6 +50,7 @@ interface Sets {
     workout_id: number,
     exercise_weight: number,
     set_type: string
+    completed?: boolean
 }
 
 
@@ -170,6 +170,12 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
             s.id === id ? { ...s, set_type: type } : s))
     }
 
+    const handleCompleteSet = (id: string, isCompleted: boolean) => {
+        setExerciseSets(prevSets => prevSets.map(s =>
+            s.id === id ? { ...s, completed: isCompleted } : s
+        ))
+    }
+
 
     const handleSave = async () => {
 
@@ -180,9 +186,24 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
             return;
         }
 
+        const setsFinished = exerciseSets.filter(set => set?.completed === true);
+        if (setsFinished.length !== exerciseSets.length) {
+            Alert.alert("Incomplete Sets", "Make sure to mark all your sets as done before finishing you workout");
+            return
+        }
+
+        const setsToUpdate = exerciseSets.map(set => ({
+            id: set.id,
+            exercise_id: set.exercise_id,
+            exercise_reps: set.exercise_reps,
+            workout_id: set.workout_id,
+            exercise_weight: set.exercise_weight,
+            set_type: set.set_type
+        }))
+
         try {
-            const response = await axiosPrivate.patch(SETS_URL, {
-                exerciseSets,
+            await axiosPrivate.patch(SETS_URL, {
+                exerciseSets: setsToUpdate,
                 workoutId,
                 exercises,
                 workoutName,
@@ -192,7 +213,6 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
 
             });
 
-            console.log(response)
             setActiveWorkout(0);
             setCompletedTime(elapsedTime);
             setElapsedTime(0);
@@ -218,6 +238,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
             console.error(error)
         }
     }
+
 
     const handleCancelWorkout = () => {
         Alert.alert("Canceling Workout", "Are you sure you want to cancel your workout?", [
@@ -265,12 +286,12 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
 
         // Sort sets so that ones with the highest weight appear first
         const sortedSets = previousSets.sort(
-            (a,b) => a.exercise_weight - b.exercise_weight
+            (a, b) => b.exercise_weight - a.exercise_weight
         )
 
         return (
             <View className='px-2 py-5 mb-4 bg-surface rounded-3xl border-2 border-accent/20 shadow-lg mx-4'>
-           
+
                 <View className='flex flex-row items-center mb-5 pb-4 border-b border-gray-700/50'>
                     <View className='bg-accent/10 rounded-full p-3 mr-3'>
                         <MaterialCommunityIcons name="dumbbell" size={24} color="#6366F1" />
@@ -340,13 +361,15 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                             index={index}
                             handleRemoveSet={handleRemoveSet}
                             handleRepChange={handleRepChange}
+                            handleCompletedSet={handleCompleteSet}
                             handleWeightChange={handleWeightChange}
                             handleSetTypeChange={handleSetTypeChange}
                             prevSet={sortedSets[index] || {}}
+
                         />
                     ))}
 
-                  
+
                     <TouchableOpacity
                         className='mt-3 bg-accent/10 py-3.5 rounded-xl active:bg-accent/20 border-2 border-accent/30 flex-row items-center justify-center'
                         onPress={() => { handleAddSet(item) }}
@@ -358,6 +381,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
             </View>
         )
     }
+
 
 
     return (
@@ -376,20 +400,29 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                         renderItem={({ item }) => renderItem(item)}
                         keyExtractor={(item) => item.id.toString()}
                         ListHeaderComponent={() => (
-                            <View className='px-5 pt-6 pb-4'>
-                               
-                                <View className="flex flex-row justify-between items-center mb-6">
-                                    <TouchableOpacity
-                                        className='bg-surface border-2 border-gray-700 p-3 rounded-xl active:bg-gray-800'
-                                        onPress={() => {
-                                            setShowTimerPopup(true)
-                                        }}
-                                    >
-                                        <MaterialCommunityIcons name="timer-outline" size={24} color="#9CA3AF" />
-                                    </TouchableOpacity>
+                            <View className='px-5 pt-6 pb-4 mt-10'>
+
+                                <View className='bg-primary-light/80 rounded-2xl px-5 py-4 border border-accent/20'>
+                                    <View className='flex-row items-center justify-between'>
+                                        <View className='flex-row items-center'>
+                                            <View className='bg-accent/20 rounded-full p-2 mr-3'>
+                                                <MaterialCommunityIcons name="clock-outline" size={20} color="#6366F1" />
+                                            </View>
+                                            <View>
+                                                <Text className='text-gray-400 text-xs font-pmedium mb-1'>Duration</Text>
+                                                <Text className='text-white font-pbold text-2xl'>{formatTime(elapsedTime)}</Text>
+                                            </View>
+                                        </View>
+                                        <View className='bg-accent/10 rounded-full px-3 py-1'>
+                                            <Text className='text-accent font-pbold text-xs'>LIVE</Text>
+                                        </View>
+                                    </View>
+                                </View>
+
+                                <View className="mb-6 mt-6 w-full">
 
                                     <TouchableOpacity
-                                        className='bg-success px-6 py-3.5 rounded-xl shadow-lg shadow-success/40 active:scale-95 flex-row items-center'
+                                        className='bg-success px-6 py-3.5 rounded-xl shadow-lg shadow-success/40 active:scale-95 flex-row items-center justify-center'
                                         onPress={() => {
                                             Alert.alert("Finishing Workout", "Are you sure you want to finish your workout?", [
                                                 {
@@ -412,7 +445,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                                     </TouchableOpacity>
                                 </View>
 
-                                
+
                                 <View className='bg-surface rounded-3xl p-6 mb-6 border-2 border-accent/30 shadow-xl'>
                                     <View className='flex-row items-center mb-4'>
                                         <View className='bg-accent/20 rounded-full p-2.5 mr-3'>
@@ -424,26 +457,9 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                                         </View>
                                     </View>
 
-                                  
-                                    <View className='bg-primary-light/80 rounded-2xl px-5 py-4 border border-accent/20'>
-                                        <View className='flex-row items-center justify-between'>
-                                            <View className='flex-row items-center'>
-                                                <View className='bg-accent/20 rounded-full p-2 mr-3'>
-                                                    <MaterialCommunityIcons name="clock-outline" size={20} color="#6366F1" />
-                                                </View>
-                                                <View>
-                                                    <Text className='text-gray-400 text-xs font-pmedium mb-1'>Duration</Text>
-                                                    <Text className='text-white font-pbold text-2xl'>{formatTime(elapsedTime)}</Text>
-                                                </View>
-                                            </View>
-                                            <View className='bg-accent/10 rounded-full px-3 py-1'>
-                                                <Text className='text-accent font-pbold text-xs'>LIVE</Text>
-                                            </View>
-                                        </View>
-                                    </View>
                                 </View>
 
-                               
+
                                 <View className='flex-row items-center justify-between mb-4'>
                                     <Text className='text-white font-pbold text-xl'>Exercises</Text>
                                     <View className='bg-accent/10 rounded-full px-3 py-1'>

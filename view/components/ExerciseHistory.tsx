@@ -180,14 +180,14 @@ const ExerciseHistory = ({ exerciseName, visible, onClose }: ExerciseHistoryProp
             presentationStyle='fullScreen'
         >
             <SafeAreaView className='flex-1 bg-primary' edges={['top', 'left', 'right']}>
-                <View className='flex-1 px-4 pt-4'>
+                <View className='flex-1 px-4 pt-4 mt-10'>
                     <FlatList
                         data={groupedSets}
                         renderItem={({ item }) => renderSets(item)}
                         keyExtractor={(item) => item[0].id.toString()}
                         contentContainerStyle={{ paddingBottom: 20 }}
                         ListHeaderComponent={
-                            <View className='mb-4'>
+                            <SafeAreaView className='flex-1 bg-primary' edges={['top', 'left', 'right']}>
                                 <View className='flex-row items-center justify-between mb-6'>
                                     <TouchableOpacity
                                         className='bg-surface border-2 border-gray-700 p-3 rounded-xl flex-row items-center'
@@ -234,7 +234,7 @@ const ExerciseHistory = ({ exerciseName, visible, onClose }: ExerciseHistoryProp
                                         </View>
                                     )}
                                 </View>
-                            </View>
+                            </SafeAreaView>
                         }
                         ListEmptyComponent={
                             <View className='flex-1 justify-center items-center px-8 py-20'>

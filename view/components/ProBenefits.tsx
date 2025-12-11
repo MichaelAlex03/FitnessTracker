@@ -47,7 +47,7 @@ const ProBenefits = ({ showProModal, setShowProModal }: ProModalProps) => {
             onRequestClose={() => setShowProModal(false)}
         >
             <SafeAreaView className='flex-1 bg-primary' edges={['top', 'left', 'right']}>
-                <ScrollView className='flex-1' showsVerticalScrollIndicator={false}>
+                <ScrollView className='flex-1 mt-10' showsVerticalScrollIndicator={false}>
 
                     <View className='items-center px-6 pt-4 pb-8'>
                         <View className='bg-yellow-500/20 rounded-full p-6 mb-6'>
