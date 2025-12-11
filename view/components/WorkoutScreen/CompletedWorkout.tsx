@@ -1,6 +1,7 @@
 import React from 'react'
-import { View, Text, Modal, TouchableOpacity, ScrollView, StatusBar } from 'react-native'
+import { View, Text, Modal, TouchableOpacity, ScrollView } from 'react-native'
 import { AntDesign, MaterialCommunityIcons, Ionicons } from '@expo/vector-icons'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 interface Exercise {
   id: number,
@@ -42,11 +43,9 @@ const CompletedWorkout = ({ exercises, sets, workoutName, workoutTimer, showWork
       animationType='slide'
       onRequestClose={() => setShowWorkout(false)}
     >
-      <View className='flex-1 justify-end bg-black/50'>
+      <SafeAreaView className='flex-1 justify-end bg-black/50' edges={['top', 'left', 'right']}>
         <View className='bg-primary rounded-t-3xl max-h-[90%]'>
-          <StatusBar barStyle='light-content' backgroundColor='rgba(0,0,0,0.5)' />
-
-          {/* Celebration Header */}
+          
           <View className='items-center px-6 py-6 border-b border-gray-700'>
             <View className='bg-success/20 rounded-full p-4 mb-4'>
               <MaterialCommunityIcons name="trophy" size={48} color="#10B981" />
@@ -56,7 +55,7 @@ const CompletedWorkout = ({ exercises, sets, workoutName, workoutTimer, showWork
             <Text className='text-gray-400 font-pmedium text-sm mt-2'>Great job! You crushed it!</Text>
           </View>
 
-          {/* Stats Cards */}
+         
           <View className='flex-row gap-3 px-6 py-4'>
             <View className='flex-1 bg-surface border-2 border-accent/20 rounded-2xl p-4'>
               <View className='bg-accent/20 rounded-full p-2 w-10 h-10 items-center justify-center mb-2'>
@@ -83,7 +82,7 @@ const CompletedWorkout = ({ exercises, sets, workoutName, workoutTimer, showWork
             </View>
           </View>
 
-          {/* Exercise List */}
+         
           <ScrollView className='px-6 pb-4' showsVerticalScrollIndicator={false}>
             <Text className='text-white font-pbold text-lg mb-3'>Exercise Summary</Text>
 
@@ -161,7 +160,7 @@ const CompletedWorkout = ({ exercises, sets, workoutName, workoutTimer, showWork
               );
             })}
 
-            {/* Finish Button */}
+           
             <TouchableOpacity
               className='bg-success rounded-2xl p-4 mt-2 mb-6 flex-row items-center justify-center shadow-lg'
               onPress={() => setShowWorkout(false)}
@@ -171,7 +170,7 @@ const CompletedWorkout = ({ exercises, sets, workoutName, workoutTimer, showWork
             </TouchableOpacity>
           </ScrollView>
         </View>
-      </View>
+      </SafeAreaView>
     </Modal>
   )
 }

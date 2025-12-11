@@ -1,4 +1,4 @@
-import { View, Text, Modal, TouchableOpacity, FlatList, StatusBar, Alert } from 'react-native'
+import { View, Text, Modal, TouchableOpacity, FlatList, Alert } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
@@ -107,10 +107,7 @@ const AIWorkoutModal: React.FC<AIWorkoutModalProps> = ({ visible, workoutData, o
       statusBarTranslucent={false}
       onRequestClose={onClose}
     >
-      <SafeAreaView className='flex-1 bg-primary'>
-        <StatusBar barStyle='light-content' backgroundColor='#0A0E1A' />
-
-
+      <SafeAreaView className='flex-1 bg-primary' edges={['top', 'left', 'right']}>
         <View className='px-6 pt-4 pb-4 border-b-2 border-surface flex-row items-center justify-between'>
           <View className='flex-1 flex-row items-center'>
             <View className='bg-accent/20 rounded-full p-2 mr-3'>

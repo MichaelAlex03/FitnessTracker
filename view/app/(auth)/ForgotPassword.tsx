@@ -35,7 +35,7 @@ const ForgotPassword = () => {
 
 
     return (
-        <SafeAreaView className='bg-primary flex-1 items-center'>
+        <SafeAreaView className='bg-primary flex-1 items-center' edges={['top', 'left', 'right']}>
             <View className='p-6 items-center w-full'>
 
                 <View className='items-center'>

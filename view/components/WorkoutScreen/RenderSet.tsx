@@ -120,168 +120,183 @@ const RenderSet = ({
                     transform: [{ translateX: pan }],
                 }}
             >
-                <View className='bg-primary-light/80 rounded-xl border border-gray-700/50'>
-                    <View className='flex flex-row items-center gap-3 px-3 py-3'>
-                
-                    <View className='items-center justify-center'>
-                        {index === 0 && <Text className='text-gray-400 font-pmedium text-xs mb-2'>Set</Text>}
-                        <Menu>
-                            <MenuTrigger>
-                                <View className='items-center justify-center'>
-                                    {set.set_type === 'default' &&
-                                        <View className="bg-accent/20 w-9 h-9 rounded-lg items-center justify-center border border-accent/30">
-                                            <Text className='text-accent font-pbold text-base'>{index + 1}</Text>
+                <View className={`${isCompleted ? 'bg-green-500/10' : 'bg-primary-light/80'} rounded-xl border border-gray-700/50`}>
+                    <View className='flex flex-row items-center justify-evenly gap-1 px-3 py-3'>
+
+                        <View className='items-center justify-center'>
+                            {index === 0 && <Text className='text-gray-400 font-pmedium text-xs mb-2'>Set</Text>}
+                            <Menu>
+                                <MenuTrigger>
+                                    <View className='items-center justify-center'>
+                                        {set.set_type === 'default' &&
+                                            <View className={`${isCompleted ? 'bg-transparent' : 'bg-accent/20 border border-accent/30'} w-10 h-10 rounded-lg items-center justify-center`}>
+                                                <Text className={`${isCompleted ? 'text-white' : 'text-accent'} font-pbold text-base`}>{index + 1}</Text>
+                                            </View>
+                                        }
+                                        {set.set_type === 'warmup' &&
+                                            <View className={`${isCompleted ? 'bg-transparent' : 'bg-orange-500/20 border border-orange-500/40'} w-10 h-10 rounded-lg items-center justify-center`}>
+                                                <Text className={`${isCompleted ? 'text-white' : 'text-orange-400'} font-pbold text-base`}>W</Text>
+                                            </View>
+                                        }
+                                        {set.set_type === 'drop' &&
+                                            <View className={`${isCompleted ? 'bg-transparent' : 'bg-purple-500/20 border border-purple-500/40'} w-10 h-10 rounded-lg items-center justify-center`}>
+                                                <Text className={`${isCompleted ? 'text-white' : 'text-purple-400'} font-pbold text-base`}>D</Text>
+                                            </View>
+                                        }
+                                        {set.set_type === 'failure' &&
+                                            <View className={`${isCompleted ? 'bg-transparent' : 'bg-red-500/20 border-red-500/40'} w-10 h-10 rounded-lg items-center justify-center`}>
+                                                <Text className={`${isCompleted ? 'text-white' : 'text-red-400'} font-pbold text-base`}>D</Text>
+                                            </View>
+                                        }
+                                    </View>
+                                </MenuTrigger>
+                                <MenuOptions
+                                    optionsContainerStyle={{
+                                        backgroundColor: '#252D3F',
+                                        borderRadius: 16,
+                                        marginTop: 40,
+                                        borderWidth: 1,
+                                        borderColor: '#6366F1',
+                                    }}
+                                >
+                                    <MenuOption
+                                        style={{ padding: 14, flexDirection: 'row', alignItems: 'center' }}
+                                        onSelect={() => handleSetTypeChange(set.id, 'default')}
+                                    >
+                                        <View className="bg-blue-500/20 w-8 h-8 rounded-lg items-center justify-center mr-3">
+                                            <Text className="text-blue-400 font-pbold text-sm">D</Text>
                                         </View>
-                                    }
-                                    {set.set_type === 'warmup' &&
-                                        <View className="bg-blue-500/20 w-9 h-9 rounded-lg items-center justify-center border border-blue-500/40">
-                                            <Text className="text-blue-400 font-pbold text-sm">W</Text>
+                                        <Text className="text-white text-base font-pmedium flex-1">Default Set</Text>
+                                        <TouchableOpacity
+                                            className='bg-accent/10 p-2 rounded-full'
+                                            onPress={() => {
+                                                setShowSetTypeInfo(true);
+                                                setSetTypeInfo('default');
+                                            }}
+                                        >
+                                            <Ionicons name="information-circle-outline" size={18} color="#6366F1" />
+                                        </TouchableOpacity>
+                                    </MenuOption>
+                                    <MenuOption
+                                        style={{ padding: 14, flexDirection: 'row', alignItems: 'center', borderTopWidth: 1, borderTopColor: '#374151' }}
+                                        onSelect={() => handleSetTypeChange(set.id, 'warmup')}
+                                    >
+                                        <View className="bg-orange-500/20 w-8 h-8 rounded-lg items-center justify-center mr-3">
+                                            <Text className="text-orange-400 font-pbold text-sm">W</Text>
                                         </View>
-                                    }
-                                    {set.set_type === 'drop' &&
-                                        <View className="bg-purple-500/20 w-9 h-9 rounded-lg items-center justify-center border border-purple-500/40">
+                                        <Text className="text-white text-base font-pmedium flex-1">Warmup Set</Text>
+                                        <TouchableOpacity
+                                            className='bg-accent/10 p-2 rounded-full'
+                                            onPress={() => {
+                                                setShowSetTypeInfo(true);
+                                                setSetTypeInfo('warmup');
+                                            }}
+                                        >
+                                            <Ionicons name="information-circle-outline" size={18} color="#6366F1" />
+                                        </TouchableOpacity>
+                                    </MenuOption>
+                                    <MenuOption
+                                        style={{ padding: 14, flexDirection: 'row', alignItems: 'center', borderTopWidth: 1, borderTopColor: '#374151' }}
+                                        onSelect={() => handleSetTypeChange(set.id, 'drop')}
+                                    >
+                                        <View className="bg-purple-500/20 w-8 h-8 rounded-lg items-center justify-center mr-3">
                                             <Text className="text-purple-400 font-pbold text-sm">D</Text>
                                         </View>
-                                    }
-                                    {set.set_type === 'failure' &&
-                                        <View className="bg-red-500/20 w-9 h-9 rounded-lg items-center justify-center border border-red-500/40">
+                                        <Text className="text-white text-base font-pmedium flex-1">Drop Set</Text>
+                                        <TouchableOpacity
+                                            className='bg-accent/10 p-2 rounded-full'
+                                            onPress={() => {
+                                                setShowSetTypeInfo(true);
+                                                setSetTypeInfo('drop');
+                                            }}
+                                        >
+                                            <Ionicons name="information-circle-outline" size={18} color="#6366F1" />
+                                        </TouchableOpacity>
+                                    </MenuOption>
+                                    <MenuOption
+                                        style={{ padding: 14, flexDirection: 'row', alignItems: 'center', borderTopWidth: 1, borderTopColor: '#374151' }}
+                                        onSelect={() => handleSetTypeChange(set.id, 'failure')}
+                                    >
+                                        <View className="bg-red-500/20 w-8 h-8 rounded-lg items-center justify-center mr-3">
                                             <Text className="text-red-400 font-pbold text-sm">F</Text>
                                         </View>
-                                    }
-                                </View>
-                            </MenuTrigger>
-                            <MenuOptions
-                                optionsContainerStyle={{
-                                    backgroundColor: '#252D3F',
-                                    borderRadius: 16,
-                                    marginTop: 40,
-                                    borderWidth: 1,
-                                    borderColor: '#6366F1',
-                                }}
-                            >
-                                <MenuOption
-                                    style={{ padding: 14, flexDirection: 'row', alignItems: 'center' }}
-                                    onSelect={() => handleSetTypeChange(set.id, 'warmup')}
-                                >
-                                    <View className="bg-blue-500/20 w-8 h-8 rounded-lg items-center justify-center mr-3">
-                                        <Text className="text-blue-400 font-pbold text-sm">W</Text>
-                                    </View>
-                                    <Text className="text-white text-base font-pmedium flex-1">Warmup Set</Text>
-                                    <TouchableOpacity
-                                        className='bg-accent/10 p-2 rounded-full'
-                                        onPress={() => {
-                                            setShowSetTypeInfo(true);
-                                            setSetTypeInfo('warmup');
-                                        }}
-                                    >
-                                        <Ionicons name="information-circle-outline" size={18} color="#6366F1" />
-                                    </TouchableOpacity>
-                                </MenuOption>
-                                <MenuOption
-                                    style={{ padding: 14, flexDirection: 'row', alignItems: 'center', borderTopWidth: 1, borderTopColor: '#374151' }}
-                                    onSelect={() => handleSetTypeChange(set.id, 'drop')}
-                                >
-                                    <View className="bg-purple-500/20 w-8 h-8 rounded-lg items-center justify-center mr-3">
-                                        <Text className="text-purple-400 font-pbold text-sm">D</Text>
-                                    </View>
-                                    <Text className="text-white text-base font-pmedium flex-1">Drop Set</Text>
-                                    <TouchableOpacity
-                                        className='bg-accent/10 p-2 rounded-full'
-                                        onPress={() => {
-                                            setShowSetTypeInfo(true);
-                                            setSetTypeInfo('drop');
-                                        }}
-                                    >
-                                        <Ionicons name="information-circle-outline" size={18} color="#6366F1" />
-                                    </TouchableOpacity>
-                                </MenuOption>
-                                <MenuOption
-                                    style={{ padding: 14, flexDirection: 'row', alignItems: 'center', borderTopWidth: 1, borderTopColor: '#374151' }}
-                                    onSelect={() => handleSetTypeChange(set.id, 'failure')}
-                                >
-                                    <View className="bg-red-500/20 w-8 h-8 rounded-lg items-center justify-center mr-3">
-                                        <Text className="text-red-400 font-pbold text-sm">F</Text>
-                                    </View>
-                                    <Text className="text-white text-base font-pmedium flex-1">Failure Set</Text>
-                                    <TouchableOpacity
-                                        className='bg-accent/10 p-2 rounded-full'
-                                        onPress={() => {
-                                            setShowSetTypeInfo(true);
-                                            setSetTypeInfo('failure');
-                                        }}
-                                    >
-                                        <Ionicons name="information-circle-outline" size={18} color="#6366F1" />
-                                    </TouchableOpacity>
-                                </MenuOption>
-                            </MenuOptions>
-                        </Menu>
-                    </View>
-
-                    <View className='flex-1 items-center justify-center min-w-[70px]'>
-                        {index === 0 && <Text className='text-gray-400 font-pmedium text-xs mb-2'>Previous</Text>}
-                        <View className='bg-surface/50 px-3 py-2 rounded-lg border border-gray-700/30'>
-                            <Text className='text-gray-300 font-pmedium text-xs text-center'>
-                                {prevSet.exercise_reps && prevSet.exercise_weight ?
-                                    `${prevSet.exercise_weight}×${prevSet.exercise_reps}` :
-                                    '-'
-                                }
-                            </Text>
+                                        <Text className="text-white text-base font-pmedium flex-1">Failure Set</Text>
+                                        <TouchableOpacity
+                                            className='bg-accent/10 p-2 rounded-full'
+                                            onPress={() => {
+                                                setShowSetTypeInfo(true);
+                                                setSetTypeInfo('failure');
+                                            }}
+                                        >
+                                            <Ionicons name="information-circle-outline" size={18} color="#6366F1" />
+                                        </TouchableOpacity>
+                                    </MenuOption>
+                                </MenuOptions>
+                            </Menu>
                         </View>
-                    </View>
 
-                    <View className='flex-1 items-center justify-center min-w-[70px]'>
-                        {index === 0 && <Text className='text-gray-400 font-pmedium text-xs mb-2'>lbs</Text>}
-                        <TextInput
-                            className='text-white font-pbold text-base px-3 py-2 bg-surface rounded-lg border border-accent/30 text-center'
-                            style={{
-                                textAlignVertical: 'center',
-                                paddingVertical: 8,
-                                includeFontPadding: false
-                            }}
-                            placeholder="0"
-                            placeholderTextColor="#6B7280"
-                            onChangeText={(e) => handleWeightChange?.(set, Number(e))}
-                            maxLength={4}
-                            keyboardType="numeric"
-                            editable={!editWorkout}
-                        />
-                    </View>
+                        <View className=' items-center justify-center'>
+                            {index === 0 && <Text className='text-gray-400 font-pmedium text-xs mb-2'>Previous</Text>}
+                            <View className='px-3 py-1 '>
+                                <Text className='text-gray-300 font-pmedium text-sm text-center font-bold p-1'>
+                                    {prevSet.exercise_reps && prevSet.exercise_weight ?
+                                        `${prevSet.exercise_weight} lb ×${prevSet.exercise_reps}` :
+                                        '-'
+                                    }
+                                </Text>
+                            </View>
+                        </View>
 
-                    <View className='flex-1 items-center justify-center min-w-[70px]'>
-                        {index === 0 && <Text className='text-gray-400 font-pmedium text-xs mb-2'>Reps</Text>}
-                        <TextInput
-                            className='text-white font-pbold text-base px-3 py-2 bg-surface rounded-lg border border-accent/30 text-center'
-                            style={{
-                                textAlignVertical: 'center',
-                                paddingVertical: 8,
-                                includeFontPadding: false
-                            }}
-                            placeholder="0"
-                            placeholderTextColor="#6B7280"
-                            onChangeText={(e) => handleRepChange?.(set, Number(e))}
-                            maxLength={3}
-                            keyboardType="numeric"
-                            editable={!editWorkout}
-                        />
-                    </View>
+                        <View className='flex-2 items-center justify-center min-w-[70px]'>
+                            {index === 0 && <Text className='text-gray-400 font-pmedium text-xs mb-2'>lbs</Text>}
+                            <TextInput
+                                className={`${isCompleted ? 'text-white bg-transparent' : 'border border-accent/30 bg-surface rounded-lg '}text-white font-pbold text-base px-3 py-2 text-center min-w-[70px]`}
+                                style={{
+                                    textAlignVertical: 'center',
+                                    paddingVertical: 8,
+                                    includeFontPadding: false
+                                }}
+                                onChangeText={(e) => handleWeightChange?.(set, Number(e))}
+                                maxLength={4}
+                                keyboardType="numeric"
+                                editable={!editWorkout}
+                            />
+                        </View>
 
-                    <View className='items-center justify-center'>
-                        {index === 0 && <Text className='text-gray-400 font-pmedium text-xs mb-2'>Done</Text>}
-                        <TouchableOpacity
-                            onPress={() => setIsCompleted(!isCompleted)}
-                            className={`w-9 h-9 rounded-lg items-center justify-center border-2 ${
-                                isCompleted
+                        <View className='flex-2 items-center justify-center min-w-[70px]'>
+                            {index === 0 && <Text className='text-gray-400 font-pmedium text-xs mb-2'>Reps</Text>}
+                            <TextInput
+                                className={`${isCompleted ? 'text-white bg-transparent ' : 'border border-accent/30 bg-surface rounded-lg '}text-white font-pbold text-base px-3 py-2 text-center min-w-[70px]`}
+                                style={{
+                                    textAlignVertical: 'center',
+                                    paddingVertical: 10,
+                                    includeFontPadding: false
+                                }}
+                                placeholder="   "
+                                placeholderTextColor="#6B7280"
+                                onChangeText={(e) => handleRepChange?.(set, Number(e))}
+                                maxLength={3}
+                                keyboardType="numeric"
+                                editable={!editWorkout}
+                            />
+                        </View>
+
+                        <View className='items-center justify-center'>
+                            {index === 0 && <Text className='text-gray-400 font-pmedium text-xs mb-2'>Done</Text>}
+                            <TouchableOpacity
+                                onPress={() => setIsCompleted(!isCompleted)}
+                                className={`w-10 h-10 rounded-lg items-center justify-center border-2 ${isCompleted
                                     ? 'bg-success border-success'
                                     : 'bg-surface border-gray-600'
-                            }`}
-                        >
-                            {isCompleted && (
-                                <Ionicons name="checkmark" size={20} color="white" />
-                            )}
-                        </TouchableOpacity>
+                                    }`}
+                            >
+                                {isCompleted && (
+                                    <Ionicons name="checkmark" size={20} color="white" />
+                                )}
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
-            </View>
             </Animated.View>
 
             <SetTypeInfo

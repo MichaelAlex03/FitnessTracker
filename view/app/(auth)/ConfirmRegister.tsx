@@ -55,7 +55,7 @@ const ConfirmRegister = () => {
     }
 
     return (
-        <SafeAreaView className='bg-primary h-full'>
+        <SafeAreaView className='bg-primary h-full' edges={['top', 'left', 'right']}>
             <ScrollView>
                 <View className='w-full items-center justify-start min-h-[85vh] px-6 my-6'>
 

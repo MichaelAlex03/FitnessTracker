@@ -1,4 +1,4 @@
-import { Text, View, FlatList, Modal, TextInput, Alert, StatusBar } from 'react-native'
+import { Text, View, FlatList, Modal, TextInput, Alert } from 'react-native'
 import React, { useState, useEffect, useRef } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { TouchableOpacity } from 'react-native'
@@ -304,7 +304,7 @@ const EditWorkout = ({ editWorkout, setEditWorkout, workoutId, setActiveWorkout,
                 setActiveWorkout(0)
             }}
         >
-            <SafeAreaView className="flex-1 bg-primary">
+            <SafeAreaView className="flex-1 bg-primary" edges={['top', 'left', 'right']}>
                 <MenuProvider skipInstanceCheck={true}>
                     <FlatList
                         data={exercises}
@@ -424,7 +424,6 @@ const EditWorkout = ({ editWorkout, setEditWorkout, workoutId, setActiveWorkout,
                         />
                     )
                 }
-                <StatusBar />
             </SafeAreaView>
 
         </Modal>

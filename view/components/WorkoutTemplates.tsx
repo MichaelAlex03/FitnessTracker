@@ -1,4 +1,4 @@
-import { View, Text, Modal, TouchableOpacity, FlatList, TextInput, StatusBar } from 'react-native'
+import { View, Text, Modal, TouchableOpacity, FlatList, TextInput } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { AntDesign } from '@expo/vector-icons'
@@ -56,12 +56,12 @@ const WorkoutTemplates = ({ visible, onClose, workoutTemplates, workoutTemplateE
                 }}
             >
                 <View className='flex-row items-center'>
-                    {/* Template Icon */}
+                   
                     <View className='bg-accent/20 rounded-2xl p-3 mr-4'>
                         <Icon name="content-copy" size={28} color="#6366F1" />
                     </View>
 
-                    {/* Template Info */}
+                   
                     <View className='flex-1'>
                         <Text className='text-white font-pbold text-lg mb-1' numberOfLines={1}>
                             {item.workout_name}
@@ -74,7 +74,7 @@ const WorkoutTemplates = ({ visible, onClose, workoutTemplates, workoutTemplateE
                         </View>
                     </View>
 
-                    {/* Arrow Icon */}
+                    
                     <View className='bg-gray-700 rounded-full p-2'>
                         <AntDesign name="right" size={16} color="#6B7280" />
                     </View>
@@ -123,10 +123,9 @@ const WorkoutTemplates = ({ visible, onClose, workoutTemplates, workoutTemplateE
             presentationStyle="fullScreen"
             statusBarTranslucent={false}
         >
-            <SafeAreaView className='flex-1 bg-primary' edges={['top', 'bottom']}>
-                <StatusBar barStyle="light-content" backgroundColor="#0A0E1A" />
+            <SafeAreaView className='flex-1 bg-primary' edges={['top', 'left', 'right']}>
 
-               
+
                 <View className='flex-row items-center justify-between px-5 py-4 border-b-2 border-gray-700'>
                     <View className='flex-1 mr-4'>
                         <Text className='text-white font-pextrabold text-3xl mb-1' numberOfLines={1}>

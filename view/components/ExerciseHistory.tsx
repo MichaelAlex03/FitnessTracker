@@ -1,4 +1,4 @@
-import { View, Text, Modal, TouchableOpacity, StatusBar } from 'react-native'
+import { View, Text, Modal, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import useAxiosPrivate from '@/hooks/useAxiosPrivate'
@@ -179,9 +179,7 @@ const ExerciseHistory = ({ exerciseName, visible, onClose }: ExerciseHistoryProp
             onRequestClose={onClose}
             presentationStyle='fullScreen'
         >
-            <SafeAreaView className='flex-1 bg-primary'>
-                <StatusBar barStyle='light-content' backgroundColor='#0A0E1A' />
-
+            <SafeAreaView className='flex-1 bg-primary' edges={['top', 'left', 'right']}>
                 <View className='flex-1 px-4 pt-4'>
                     <FlatList
                         data={groupedSets}

@@ -1,21 +1,19 @@
 import { Stack } from "expo-router";
+import { StatusBar } from 'expo-status-bar';
 import { AuthProvider } from "@/context/AuthProvider";
 import { MenuProvider } from 'react-native-popup-menu';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { STRIPE_PUBLISHABLE_KEY } from "@env";
-import { StripeProvider } from '@stripe/stripe-react-native'
-import { useState } from "react";
 import '../index.css'
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export default function RootLayout() {
 
-  const [publishableKey] = useState<string>(process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY as string)
+
 
   return (
-    <StripeProvider
-      publishableKey={publishableKey}
-    >
-      <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <StatusBar style="light" backgroundColor="#0A0E1A" />
         <AuthProvider>
           <MenuProvider>
             <Stack>
@@ -25,7 +23,7 @@ export default function RootLayout() {
             </Stack>
           </MenuProvider>
         </AuthProvider>
-      </GestureHandlerRootView>
-    </StripeProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   )
 }

@@ -55,7 +55,7 @@ const VerifyEmailSent = () => {
     }
 
     return (
-        <SafeAreaView className='bg-primary flex-1'>
+        <SafeAreaView className='bg-primary flex-1' edges={['top', 'left', 'right']}>
 
             <View className='w-full items-center justify-start px-6 my-6 '>
 

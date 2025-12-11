@@ -1,8 +1,9 @@
-import { Text, View, Modal, TouchableOpacity, StatusBar, ScrollView } from 'react-native'
+import { Text, View, Modal, TouchableOpacity, ScrollView } from 'react-native'
 import React from 'react'
 import { Menu, MenuOption, MenuOptions, MenuTrigger } from 'react-native-popup-menu'
 import { AntDesign, Ionicons } from '@expo/vector-icons'
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface Set {
     id: string
@@ -57,10 +58,8 @@ const WorkoutHistoryModal = ({ workout, exercises, sets, showWorkoutHistory, set
             transparent={true}
             onRequestClose={() => { setShowWorkoutHistory(false) }}
         >
-            <View className='flex-1 justify-end bg-black/50'>
+            <SafeAreaView className='flex-1 justify-end bg-black/50' edges={['top', 'left', 'right']}>
                 <View className='bg-primary rounded-t-3xl max-h-[90%]'>
-                    <StatusBar barStyle='light-content' backgroundColor='rgba(0,0,0,0.5)' />
-
                     <View className='border-b border-gray-700 px-6 py-4'>
                         <View className='flex-row justify-between items-center mb-3'>
                             <View className='flex-1'>
@@ -218,7 +217,7 @@ const WorkoutHistoryModal = ({ workout, exercises, sets, showWorkoutHistory, set
                         </TouchableOpacity>
                     </ScrollView>
                 </View>
-            </View>
+            </SafeAreaView>
         </Modal>
     )
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, TouchableOpacity, TextInput, FlatList, Alert, Modal, StatusBar } from 'react-native'
+import { View, Text, TouchableOpacity, TextInput, FlatList, Alert, Modal } from 'react-native'
 import fetchExercises from '@/hooks/fetchExercises';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import useAxiosPrivate from '@/hooks/useAxiosPrivate';
@@ -405,8 +405,7 @@ const ExerciseListPopup = ({
             statusBarTranslucent={false}
         >
             <MenuProvider>
-                <SafeAreaView className='flex-1 bg-primary' edges={['top', 'bottom']}>
-                    <StatusBar barStyle="light-content" backgroundColor="#0A0E1A" />
+                <SafeAreaView className='flex-1 bg-primary' edges={['top', 'left', 'right']}>
 
                     <View className='flex-row items-center justify-between px-5 py-4 border-b-2 border-gray-700 mt-10'>
                         <TouchableOpacity
@@ -601,8 +600,7 @@ const ExerciseListPopup = ({
                             statusBarTranslucent={false}
                         >
                             <SafeAreaView className='flex-1 bg-primary' edges={['top', 'bottom']}>
-                                <StatusBar barStyle="light-content" backgroundColor="#0A0E1A" />
-
+            
                                 <View className='flex-row items-center justify-between px-5 py-4 border-b-2 border-gray-700'>
                                     <TouchableOpacity
                                         className='bg-surface border-2 border-gray-700 py-2 px-4 rounded-xl'
@@ -640,8 +638,7 @@ const ExerciseListPopup = ({
                             statusBarTranslucent={false}
                         >
                             <SafeAreaView className='flex-1 bg-primary' edges={['top', 'bottom']}>
-                                <StatusBar barStyle="light-content" backgroundColor="#0A0E1A" />
-
+            
                                 <View className='flex-row items-center justify-between px-5 py-4 border-b-2 border-gray-700'>
                                     <TouchableOpacity
                                         className='bg-surface border-2 border-gray-700 py-2 px-4 rounded-xl'

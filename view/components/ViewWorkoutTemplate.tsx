@@ -1,4 +1,4 @@
-import { View, Text, Modal, TouchableOpacity, FlatList, StatusBar, Alert } from 'react-native'
+import { View, Text, Modal, TouchableOpacity, FlatList, Alert } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { AntDesign } from '@expo/vector-icons'
@@ -116,9 +116,7 @@ const ViewWorkoutTemplate = ({ visible, setVisible, workoutTemplateExercises, wo
             presentationStyle="fullScreen"
             statusBarTranslucent={false}
         >
-            <SafeAreaView className='flex-1 bg-primary' edges={['top', 'bottom']}>
-                <StatusBar barStyle="light-content" backgroundColor="#0A0E1A" />
-
+            <SafeAreaView className='flex-1 bg-primary' edges={['top', 'left', 'right']}>
                 <View className='flex-row items-center justify-between px-5 py-4 border-b-2 border-gray-700'>
                     <View className='flex-1 mr-4'>
                         <Text className='text-white font-pextrabold text-3xl mb-1' numberOfLines={1}>

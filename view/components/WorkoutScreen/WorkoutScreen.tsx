@@ -1,4 +1,4 @@
-import { Text, View, FlatList, Modal, TextInput, Alert, StatusBar } from 'react-native'
+import { Text, View, FlatList, Modal, TextInput, Alert } from 'react-native'
 import React, { useState, useEffect, useRef, useContext } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { TouchableOpacity } from 'react-native'
@@ -269,8 +269,8 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
         )
 
         return (
-            <View className='px-5 py-5 mb-4 bg-surface rounded-3xl border-2 border-accent/20 shadow-lg'>
-                {/* Header */}
+            <View className='px-2 py-5 mb-4 bg-surface rounded-3xl border-2 border-accent/20 shadow-lg mx-4'>
+           
                 <View className='flex flex-row items-center mb-5 pb-4 border-b border-gray-700/50'>
                     <View className='bg-accent/10 rounded-full p-3 mr-3'>
                         <MaterialCommunityIcons name="dumbbell" size={24} color="#6366F1" />
@@ -332,7 +332,6 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                     </Menu>
                 </View>
 
-                {/* Sets List */}
                 <View className='space-y-2'>
                     {exerciseSetsFiltered.map((set, index) => (
                         <RenderSet
@@ -347,7 +346,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                         />
                     ))}
 
-                    {/* Add Set Button */}
+                  
                     <TouchableOpacity
                         className='mt-3 bg-accent/10 py-3.5 rounded-xl active:bg-accent/20 border-2 border-accent/30 flex-row items-center justify-center'
                         onPress={() => { handleAddSet(item) }}
@@ -370,8 +369,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                 setActiveWorkout(0)
             }}
         >
-            <SafeAreaView className="flex-1 bg-primary">
-                <StatusBar barStyle='light-content' backgroundColor='#0A0E1A' />
+            <SafeAreaView className="flex-1 bg-primary" edges={['top', 'left', 'right']}>
                 <MenuProvider skipInstanceCheck={true}>
                     <FlatList
                         data={exercises}
@@ -379,7 +377,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                         keyExtractor={(item) => item.id.toString()}
                         ListHeaderComponent={() => (
                             <View className='px-5 pt-6 pb-4'>
-                                {/* Top Actions */}
+                               
                                 <View className="flex flex-row justify-between items-center mb-6">
                                     <TouchableOpacity
                                         className='bg-surface border-2 border-gray-700 p-3 rounded-xl active:bg-gray-800'
@@ -414,7 +412,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                                     </TouchableOpacity>
                                 </View>
 
-                                {/* Workout Info Card */}
+                                
                                 <View className='bg-surface rounded-3xl p-6 mb-6 border-2 border-accent/30 shadow-xl'>
                                     <View className='flex-row items-center mb-4'>
                                         <View className='bg-accent/20 rounded-full p-2.5 mr-3'>
@@ -426,7 +424,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                                         </View>
                                     </View>
 
-                                    {/* Timer Display */}
+                                  
                                     <View className='bg-primary-light/80 rounded-2xl px-5 py-4 border border-accent/20'>
                                         <View className='flex-row items-center justify-between'>
                                             <View className='flex-row items-center'>
@@ -445,7 +443,7 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                                     </View>
                                 </View>
 
-                                {/* Section Header */}
+                               
                                 <View className='flex-row items-center justify-between mb-4'>
                                     <Text className='text-white font-pbold text-xl'>Exercises</Text>
                                     <View className='bg-accent/10 rounded-full px-3 py-1'>
@@ -476,9 +474,6 @@ const WorkoutScreen = ({ showWorkout, setShowWorkout, workoutId, setActiveWorkou
                         )}
                     />
                 </MenuProvider>
-                {
-                    showTimerPopup
-                }
                 {
                     (toggleAddExercise || toggleReplaceExercise) && (
 

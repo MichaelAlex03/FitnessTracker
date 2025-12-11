@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, Alert, StatusBar, TouchableOpacity, TextInput, Image } from 'react-native'
+import { View, Text, ScrollView, Alert, TouchableOpacity, TextInput, Image } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router } from 'expo-router';
@@ -191,7 +191,7 @@ const Profile = () => {
 
 
   return (
-    <SafeAreaView className="bg-primary flex-1">
+    <SafeAreaView className="bg-primary flex-1" edges={['top', 'left', 'right']}>
       <ScrollView contentContainerStyle={{ flex: 1 }}>
         <View className='flex-1 p-8'>
 
@@ -298,7 +298,6 @@ const Profile = () => {
 
         </View>
       </ScrollView>
-      <StatusBar className='bg-white' />
     </SafeAreaView>
   )
 }

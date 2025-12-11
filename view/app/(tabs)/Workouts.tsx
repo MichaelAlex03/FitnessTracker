@@ -1,6 +1,5 @@
-import { Text, View, FlatList, Modal, TextInput, Alert, StatusBar } from 'react-native'
-import React, { useState, useEffect } from 'react'
-import { Dropdown } from 'react-native-element-dropdown';
+import { Text, View, FlatList, Modal, TextInput, Alert } from 'react-native'
+import { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import usefetchWorkouts from '@/hooks/usefetchWorkouts'
 import useAuth from '@/hooks/useAuth'
@@ -249,9 +248,8 @@ export default function Workouts() {
 
 
   return (
-    <MenuProvider>
-      <SafeAreaView className="bg-primary flex-1">
-        <StatusBar className='bg-white' />
+    <MenuProvider >
+      <SafeAreaView className="bg-primary flex-1" edges={['top', 'left', 'right']}>
 
         <FlatList
           data={workouts}

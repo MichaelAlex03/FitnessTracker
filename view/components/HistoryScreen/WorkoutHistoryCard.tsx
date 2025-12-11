@@ -76,7 +76,7 @@ const WorkoutHistoryCard = ({ workout, exercises, sets, refresh, setRefresh }: H
     <View className='bg-surface border-2 border-accent/30 rounded-3xl p-5 mb-4 shadow-lg'>
       <TouchableOpacity onPress={() => setShowWorkoutHistory(true)}>
 
-        {/* Header */}
+        
         <View className='flex-row justify-between items-center mb-3'>
           <View className='flex-1'>
             <Text className='text-white font-pbold text-xl mb-1'>{workout.workout_name}</Text>
@@ -126,7 +126,7 @@ const WorkoutHistoryCard = ({ workout, exercises, sets, refresh, setRefresh }: H
           </Menu>
         </View>
 
-        {/* Stats Row */}
+       
         <View className='flex flex-row justify-between items-center bg-primary-light rounded-2xl p-4 mb-4'>
           <View className='flex items-center flex-1'>
             <View className='bg-accent/20 rounded-full p-2 mb-2'>
@@ -149,7 +149,7 @@ const WorkoutHistoryCard = ({ workout, exercises, sets, refresh, setRefresh }: H
          
         </View>
 
-        {/* Exercises List */}
+       
         <View className='flex'>
           {exercises.slice(0, 4).map((exercise, index) => {
             // Filter sets for this exercise

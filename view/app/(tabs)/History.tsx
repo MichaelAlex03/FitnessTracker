@@ -1,4 +1,4 @@
-import { View, Text, FlatList, StatusBar } from 'react-native'
+import { View, Text, FlatList } from 'react-native'
 import React, { useEffect, useState, useCallback } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import useAxiosPrivate from '@/hooks/useAxiosPrivate';
@@ -71,7 +71,7 @@ const History = () => {
 
 
   return (
-    <SafeAreaView className="bg-primary flex-1">
+    <SafeAreaView className="bg-primary flex-1" edges={['top', 'left', 'right']}>
 
       <View className='px-6 pt-6 pb-4'>
         <Text className='text-white font-pextrabold text-4xl mb-2'>Workout History</Text>
@@ -172,7 +172,6 @@ const History = () => {
           </View>
         }
       />
-      <StatusBar className='bg-white' />
     </SafeAreaView>
   )
 }
