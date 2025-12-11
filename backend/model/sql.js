@@ -150,7 +150,7 @@ const updateSets = async (sets) => {
     sets.map(async set => {
         const { data, error } = await supabase
             .from('workout_sets')
-            .update({ exercise_reps: set.exercise_reps, exercise_weight: set.exercise_weight })
+            .update({ exercise_reps: 0, exercise_weight: 0 })
             .eq('id', set.id);
         if (error) throw error;
         return data;
