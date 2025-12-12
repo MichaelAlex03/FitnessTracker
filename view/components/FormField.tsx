@@ -14,7 +14,7 @@ interface FormProps {
     limit?: number
 }
 
-const FormField = ({ title, value, placeholder, handleChangeText, otherStyles, handleFocus, handleBlur,limit,  ...props }: FormProps) => {
+const FormField = ({ title, value, placeholder, handleChangeText, otherStyles, handleFocus, handleBlur, limit, ...props }: FormProps) => {
     const [showPassword, setShowPassword] = useState(false)
     const [isFocused, setIsFocused] = useState(false)
 

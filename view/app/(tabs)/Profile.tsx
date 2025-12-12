@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, Alert, TouchableOpacity, TextInput, Image } from 'react-native'
+import { View, Text, ScrollView, Alert, TouchableOpacity, TextInput, Image, ActivityIndicator } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router } from 'expo-router';
@@ -40,6 +40,8 @@ const Profile = () => {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
 
+  const [isUploadingImage, setIsUploadingImage] = useState<boolean>(false);
+
   //Fetch current user info
   const { userInfo } = fetchUserInfo({ refresh, name: auth?.user, accessToken: auth?.accessToken });
 
@@ -66,12 +68,14 @@ const Profile = () => {
     setIsEdit(false);
   }
 
+  console.log("TEST", userInfo)
+
 
   const handleLogout = async () => {
     try {
       const refreshToken = await SecureStore.getItemAsync('refreshToken');
       await axios.post(LOGOUT_URL, {
-        refreshToken 
+        refreshToken
       });
       Alert.alert('Signed Out', 'Sign out was succesful')
     } catch (error) {
@@ -91,22 +95,21 @@ const Profile = () => {
       profileImageKey: key
     }
 
-    try {
-      await axiosPrivate.patch(UPDATE_URL, {
-        updateData
-      });
-      Alert.alert('Success', 'User Profile Updated');
-      setAuth({ ...auth, user: name })
-      setProfileImageKey(key)
-      setRefresh(refresh + 1);
-      setIsEdit(false);
-      setPendingImage(null); 
-    } catch (error) {
-      Alert.alert('Failed Update', 'Failed to update user info')
-    }
+
+    await axiosPrivate.patch(UPDATE_URL, {
+      updateData
+    });
+    setAuth({ ...auth, user: name })
+    setProfileImageKey(key)
+    setRefresh(refresh + 1);
+    setProfileImage(imageUrl);
+    setPendingImage(null);
+
   }
 
+
   const handleUpdate = async () => {
+    setIsUploadingImage(true)
 
     //Check for any changes if not no need to make update call
     if (name === userInfo[0]?.user_name && email === userInfo[0]?.user_email && phone === userInfo[0]?.user_phone && userInfo[0]?.profile_image === profileImage) {
@@ -126,9 +129,36 @@ const Profile = () => {
       return;
     }
 
+
+    const updateData = {
+      name,
+      phone,
+      email,
+      prevName: auth?.user,
+      profileImage: null, // Dont want to upload image yet until we push to S3
+      profileImageKey
+    }
+
+    /* Upload non image data first as image upload sometimes takes a bit so just
+    *  do it in the background. If the upload fails just revert the image back to  
+    * what it was previously in userInfo object */
+    try {
+      await axiosPrivate.patch(UPDATE_URL, {
+        updateData
+      });
+      Alert.alert('Success', 'User Profile Updated');
+      setAuth({ ...auth, user: name })
+      setRefresh(refresh + 1);
+    } catch (error) {
+      Alert.alert('Failed Update', 'Failed to update user info')
+    } finally {
+      setIsUploadingImage(false);
+      setIsEdit(false);
+    }
+
     let imageUrl = profileImage; // default to current image
 
-    // If there's a new image picked (pendingImage), upload it
+    // If there's a new image picked (pendingImage), upload it in background
     if (pendingImage) {
       try {
         // Get file type
@@ -160,30 +190,9 @@ const Profile = () => {
         return;
       } catch (error) {
         Alert.alert('Upload Failed', 'Could not upload profile image.');
+        setProfileImage(userInfo[0].profile_image)
         return;
       }
-    }
-
-    const updateData = {
-      name,
-      phone,
-      email,
-      prevName: auth?.user,
-      imageUrl,
-      profileImageKey
-
-    }
-
-    try {
-      await axiosPrivate.patch(UPDATE_URL, {
-        updateData
-      });
-      Alert.alert('Success', 'User Profile Updated');
-      setAuth({ ...auth, user: name })
-      setRefresh(refresh + 1);
-      setIsEdit(false);
-    } catch (error) {
-      Alert.alert('Failed Update', 'Failed to update user info')
     }
 
 
@@ -191,11 +200,17 @@ const Profile = () => {
 
 
   return (
-    <SafeAreaView className="bg-primary flex-1" edges={['top', 'left', 'right']}>
+    <SafeAreaView className="bg-primary flex-1 relative" edges={['top', 'left', 'right']}>
+      {
+        isUploadingImage && (
+          <View className="absolute inset-0 flex-1 bg-black/60 items-center justify-center z-50">
+            <ActivityIndicator size="large" color="#6366F1" />
+            <Text className="text-white text-xs mt-2 font-pmedium">Uploading...</Text>
+          </View>
+        )
+      }
       <ScrollView contentContainerStyle={{ flex: 1 }}>
         <View className='flex-1 p-8'>
-
-          {/*Modern Profile Header*/}
           <View className='w-full mb-8'>
             <View className='flex-row justify-between items-center mb-6'>
               <Text className='text-white text-4xl font-pextrabold tracking-tight'>Profile</Text>
@@ -219,15 +234,13 @@ const Profile = () => {
             />
           </View>
 
-          {/*Profile Tab Content*/}
+
           <View className='flex flex-col items-center w-full gap-5 mb-10'>
 
-            {/*Username field*/}
             <View className='space-y-2 w-full'>
               <Text className='text-sm text-gray-400 font-pmedium mb-1'>Username</Text>
-              <View className={`border-2 w-full h-14 px-4 rounded-2xl flex flex-row items-center ${
-                isEdit ? 'bg-surface border-accent/30' : 'bg-surface-elevated border-gray-700'
-              }`}>
+              <View className={`border-2 w-full h-14 px-4 rounded-2xl flex flex-row items-center ${isEdit ? 'bg-surface border-accent/30' : 'bg-surface-elevated border-gray-700'
+                }`}>
                 <FontAwesome name="user" size={18} color="#6B7280" />
                 <TextInput
                   value={name}
@@ -240,9 +253,8 @@ const Profile = () => {
 
             <View className='space-y-2 w-full'>
               <Text className='text-sm text-gray-400 font-pmedium mb-1'>Email</Text>
-              <View className={`border-2 w-full h-14 px-4 rounded-2xl flex flex-row items-center ${
-                isEdit ? 'bg-surface border-accent/30' : 'bg-surface-elevated border-gray-700'
-              }`}>
+              <View className={`border-2 w-full h-14 px-4 rounded-2xl flex flex-row items-center ${isEdit ? 'bg-surface border-accent/30' : 'bg-surface-elevated border-gray-700'
+                }`}>
                 <FontAwesome name="envelope" size={16} color="#6B7280" />
                 <TextInput
                   value={email}
@@ -256,9 +268,8 @@ const Profile = () => {
 
             <View className='space-y-2 w-full'>
               <Text className='text-sm text-gray-400 font-pmedium mb-1'>Phone</Text>
-              <View className={`border-2 w-full h-14 px-4 rounded-2xl flex flex-row items-center ${
-                isEdit ? 'bg-surface border-accent/30' : 'bg-surface-elevated border-gray-700'
-              }`}>
+              <View className={`border-2 w-full h-14 px-4 rounded-2xl flex flex-row items-center ${isEdit ? 'bg-surface border-accent/30' : 'bg-surface-elevated border-gray-700'
+                }`}>
                 <FontAwesome name="phone" size={18} color="#6B7280" />
                 <TextInput
                   value={phone}
@@ -329,7 +340,7 @@ const ProfileImagePicker = ({ profileImage, setProfileImage, isEdit, setPendingI
       mediaTypes: ['images'],
       allowsEditing: true,
       aspect: [1, 1],
-      quality: 1,
+      quality: .7,
     });
 
     //Sets image assuming process was not canceled
