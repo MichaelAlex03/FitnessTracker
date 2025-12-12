@@ -16,20 +16,36 @@ const VerifyEmailSent = () => {
 
     const { email } = useLocalSearchParams();
 
+    const formatVerificationCode = (value: string) => {
+
+        const cleaned = value.replace(/\D/g, '');
+        const limited = cleaned.slice(0, 10);
+
+
+        if (limited.length <= 3) {
+            return limited
+        } else if (limited.length <= 6) {
+            return `${limited.slice(0, 3)}-${limited.slice(3)}`
+        } else {
+            return `${limited.slice(0, 3)}-${limited.slice(3, 6)}-${limited.slice(6)}`
+        }
+    }
+
     const handleVerifyCode = async () => {
 
-        if (verificationCode === '') {
+        let code = verificationCode.replace(/\D/g, '')
+
+        if (code === '') {
             Alert.alert("Empty field", "Please enter in the code you recieved from your email");
             return;
         }
 
         try {
             const response = await axios.post("/auth/passwordReset/verify", {
-                verificationCode,
+                verificationCode: code,
                 email
             });
 
-            console.log(response)
 
             if (response.status === 200) {
                 router.push({ pathname: '/(auth)/ResetPassword', params: { email } })
@@ -75,7 +91,7 @@ const VerifyEmailSent = () => {
                     <FormField
                         title='Verification Code'
                         value={verificationCode}
-                        handleChangeText={(e) => setVerificationCode(e)}
+                        handleChangeText={(e) => setVerificationCode(formatVerificationCode(e))}
                         otherStyles='mt-7'
                     />
                 </View>

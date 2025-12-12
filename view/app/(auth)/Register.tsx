@@ -52,6 +52,21 @@ const Register = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  const formatPhoneNumber = (value: string) => {
+
+    const cleaned = value.replace(/\D/g, '');
+    const limited = cleaned.slice(0, 10);
+  
+
+    if (limited.length <= 3){
+      return limited
+    } else if (limited.length <= 6){
+      return `${limited.slice(0, 3)}-${limited.slice(3)}`
+    } else {
+      return `${limited.slice(0, 3)}-${limited.slice(3, 6)}-${limited.slice(6)}`
+    }
+  }
+
   //Validates Name
   useEffect(() => {
     const result = USER_REGEX.test(user);
@@ -182,8 +197,6 @@ const Register = () => {
     <SafeAreaView className='bg-primary h-full' edges={['top', 'left', 'right']}>
       <ScrollView>
         <View className='w-full items-center justify-center min-h-[85vh] px-6 my-6'>
-
-          {/* Modern Header */}
           <View className='items-center mt-10 mb-6'>
             <View className='bg-accent/10 rounded-full p-4 mb-6'>
               <View className='bg-accent rounded-full p-3'>
@@ -194,7 +207,7 @@ const Register = () => {
             <Text className='text-gray-400 mt-3 text-base font-pmedium'>Create your account to begin</Text>
           </View>
 
-          {/* Error Message with Modern Styling */}
+         
           {errMsg && (
             <View className='bg-error/10 border border-error/30 rounded-2xl p-4 mb-4 w-full'>
               <Text className='text-error font-pmedium text-center'>{errMsg}</Text>
@@ -238,7 +251,7 @@ const Register = () => {
           <FormField
             title='Phone Number'
             value={phoneNum}
-            handleChangeText={(e) => setPhoneNum(e)}
+            handleChangeText={(e) => setPhoneNum(formatPhoneNumber(e))}
             otherStyles={'mt-7'}
             handleFocus={() => setPhoneFocus(true)}
             handleBlur={() => setPhoneFocus(false)}

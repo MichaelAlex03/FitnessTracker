@@ -10,10 +10,11 @@ interface FormProps {
     otherStyles?: string,
     handleFocus?: () => void,
     handleBlur?: () => void,
-    isEdit?: boolean;
+    isEdit?: boolean
+    limit?: number
 }
 
-const FormField = ({ title, value, placeholder, handleChangeText, otherStyles, handleFocus, handleBlur, ...props }: FormProps) => {
+const FormField = ({ title, value, placeholder, handleChangeText, otherStyles, handleFocus, handleBlur,limit,  ...props }: FormProps) => {
     const [showPassword, setShowPassword] = useState(false)
     const [isFocused, setIsFocused] = useState(false)
 
@@ -38,6 +39,7 @@ const FormField = ({ title, value, placeholder, handleChangeText, otherStyles, h
                         handleBlur?.()
                     }}
                     editable={!props.isEdit}
+                    maxLength={limit}
                 />
 
                 <View className='w-10 items-end'>
