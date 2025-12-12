@@ -6,7 +6,7 @@ const handleNewUser = async (req, res) => {
     const { user, pwd, email, phone } = req.body;
 
     const duplicate = await pg.findUser(user);
-    console.log(duplicate)
+    
     if (duplicate[0]?.user_name === user) return res.status(409).json({ message: "username already exists" });
 
 

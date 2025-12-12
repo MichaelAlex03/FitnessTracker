@@ -20,7 +20,7 @@ app.use(logger);
 app.use(credentials)
 
 //handle form data
-app.use(express.urlencoded({extended : true}));
+app.use(express.urlencoded({ extended: true }));
 
 //handle json request
 app.use(express.json());
@@ -56,9 +56,13 @@ app.use('/api/getPresignedUrl', require('./routes/api/s3'));
 app.use('/api/openAI', require('./middleware/checkChatRateLimit'), require('./routes/api/openAI'));
 
 
-
-
-app.listen(PORT, () => {
+/* This makes it so that when we test it in our integration tests we dont start listening on this 
+*  server we just import the app object. Without require.main === module the app object will start
+*  listening on this server while we test but the port will remain open since we dont close it in testing */
+if (require.main === module) {
+  app.listen(PORT, () => {
     console.log(`Server running on http://${IP}:${PORT}`);
   });
-  
+}
+
+module.exports = app

@@ -1,4 +1,4 @@
-const { generateVerificationCode, verifyCodeExpiration } = require('../functions');
+const { generateVerificationCode, verifyCodeExpiration } = require('../../utils/functions');
 
 describe('generateVerificationCode', () => {
     test('should return an 8 digit string', () => {

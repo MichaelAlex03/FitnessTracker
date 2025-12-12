@@ -366,7 +366,8 @@ const createUser = async (newUser) => {
             user_phone: newUser.phone,
             verification_code: newUser.verificationCode,
             verification_code_expiration: newUser.codeExpiration,
-            user_verified: newUser.verified
+            user_verified: newUser.verified,
+            created_at: new Date()
         }]);
     if (error) throw error;
     return data;
