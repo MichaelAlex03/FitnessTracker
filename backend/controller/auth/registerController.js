@@ -65,11 +65,13 @@ const resendVerificationCode = async (req, res) => {
 
     try {
         await pg.updateVerificationCode(lowercasedEmail, verificationCode)
+        await sendEmail(email, verificationCode)
+
+        return res.sendStatus(200)
     } catch (error) {
         return res.status(500).json({ 'message': err.message })
     }
 
-    await sendEmail(email, verificationCode)
 }
 
 module.exports = {

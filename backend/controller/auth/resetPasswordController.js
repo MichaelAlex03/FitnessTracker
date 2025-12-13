@@ -6,12 +6,19 @@ const { generateVerificationCode, verifyCodeExpiration, sendEmail } = require('.
 const sendEmailToUser = async (req, res) => {
 
     const { email } = req.body;
-    const verificationCode = generateVerificationCode();
-    const lowercasedEmail = email.toLowerCase()
+
+    const lowercasedEmail = email.toLowerCase();
+
 
     try {
-        await pg.updateVerificationCode(lowercasedEmail, verificationCode);
-        await sendEmail(lowercasedEmail, verificationCode);
+        const user = await pg.findUser(lowercasedEmail);
+
+        if (user && user.length > 0) {
+            const verificationCode = generateVerificationCode();
+            const codeExpiration = verifyCodeExpiration()
+            await pg.updateVerificationCode(lowercasedEmail, verificationCode, codeExpiration);
+            await sendEmail(lowercasedEmail, verificationCode);
+        }
         return res.sendStatus(200)
     } catch (err) {
         console.log(err)
@@ -59,18 +66,26 @@ const changePassword = async (req, res) => {
 
 const resendVerificationCode = async (req, res) => {
     const { email } = req.body;
-    
-    const lowercasedEmail = email.toLowerCase()
-    const verificationCode = generateVerificationCode();
+
+    const lowercasedEmail = email.toLowerCase();
+
 
     try {
-        await pg.updateVerificationCode(lowercasedEmail, verificationCode)
-    } catch (error) {
+        const user = await pg.findUser(lowercasedEmail);
+
+        if (user && user.length > 0) {
+            const verificationCode = generateVerificationCode();
+            const codeExpiration = verifyCodeExpiration()
+            await pg.updateVerificationCode(lowercasedEmail, verificationCode, codeExpiration);
+            await sendEmail(lowercasedEmail, verificationCode);
+        }
+        return res.sendStatus(200)
+    } catch (err) {
+        console.log(err)
         return res.status(500).json({ 'message': err.message })
     }
 
-    await sendEmail(lowercasedEmail, verificationCode)
-}   
+}
 
 module.exports = {
     sendEmailToUser,

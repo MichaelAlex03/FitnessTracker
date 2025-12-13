@@ -45,11 +45,12 @@ const verifyUser = async (email) => {
     return data;
 }
 
-const updateVerificationCode = async (email, verificationCode) => {
+const updateVerificationCode = async (email, verificationCode, codeExpiration) => {
     const { error } = await supabase
         .from('users')
-        .update({ verification_code: verificationCode, verification_code_expiration: new Date(new Date().getTime() + (15 * 60 * 1000)) })
-        .eq('user_email', email);
+        .update({ verification_code: verificationCode, verification_code_expiration: codeExpiration })
+        .eq('user_email', email)
+        .select();
     if (error) console.log(error);
 }
 
