@@ -45,7 +45,6 @@ const ConfirmRegister = () => {
                 email
             });
 
-            console.log(response)
 
             if (response.status === 200) {
                 Alert.alert("Registration Successful", "Your user was created now just login with your email and password")

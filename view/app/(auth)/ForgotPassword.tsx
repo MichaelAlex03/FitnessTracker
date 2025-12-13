@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Alert } from 'react-native'
+import { View, Text, TouchableOpacity, Alert, ActivityIndicator } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import CustomButton from '../../components/CustomButton'
@@ -11,10 +11,14 @@ import axios from '@/api/axios'
 const ForgotPassword = () => {
 
     const [email, setEmail] = useState<string>('');
+    const [isSendingEmail, setIsSendingEmail] = useState<boolean>(false);
 
     const handleResetPassword = async () => {
-        try {
 
+
+
+        try {
+            setIsSendingEmail(true);
             if (!email) {
                 Alert.alert("Email Blank", "Please enter in the email for your account");
                 return;
@@ -30,12 +34,22 @@ const ForgotPassword = () => {
 
         } catch (error) {
             Alert.alert("Failed to send email", "Failed to send email to user. Please try again later")
+        } finally {
+            setIsSendingEmail(false)
         }
     }
 
 
     return (
-        <SafeAreaView className='bg-primary flex-1 items-center' edges={['top', 'left', 'right']}>
+        <SafeAreaView className='bg-primary flex-1 items-center relative' edges={['top', 'left', 'right']}>
+            {
+                isSendingEmail && (
+                    <View className="absolute inset-0 flex-1 bg-black/60 items-center justify-center z-50">
+                        <ActivityIndicator size="large" color="#6366F1" />
+                        <Text className="text-white text-xs mt-2 font-pmedium">Sending Email...</Text>
+                    </View>
+                )
+            }
             <View className='p-6 items-center w-full'>
 
                 <View className='items-center'>

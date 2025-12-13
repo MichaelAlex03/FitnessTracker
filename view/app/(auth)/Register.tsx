@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TextInput } from 'react-native'
+import { View, Text, ScrollView, ActivityIndicator } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Link, router } from "expo-router";
@@ -46,6 +46,8 @@ const Register = () => {
   const [phoneFocus, setPhoneFocus] = useState(false);
   const [validPhone, setValidPhone] = useState(false);
 
+  const [isSendingEmail, setIsSendingEmail] = useState<boolean>(false);
+
 
   const [errMsg, setErrMsg] = useState('');
 
@@ -56,11 +58,11 @@ const Register = () => {
 
     const cleaned = value.replace(/\D/g, '');
     const limited = cleaned.slice(0, 10);
-  
 
-    if (limited.length <= 3){
+
+    if (limited.length <= 3) {
       return limited
-    } else if (limited.length <= 6){
+    } else if (limited.length <= 6) {
       return `${limited.slice(0, 3)}-${limited.slice(3)}`
     } else {
       return `${limited.slice(0, 3)}-${limited.slice(3, 6)}-${limited.slice(6)}`
@@ -120,6 +122,8 @@ const Register = () => {
   };
 
   async function handleSubmit() {
+
+    setIsSendingEmail(true)
 
     //Check for user fields and it validity
     if (!user) {
@@ -187,6 +191,8 @@ const Register = () => {
       } else {
         setErrMsg('Registration Failed');
       }
+    } finally {
+      setIsSendingEmail(false)
     }
 
 
@@ -194,7 +200,15 @@ const Register = () => {
 
 
   return (
-    <SafeAreaView className='bg-primary h-full' edges={['top', 'left', 'right']}>
+    <SafeAreaView className='bg-primary flex-1 relative' edges={['top', 'left', 'right']}>
+      {
+        isSendingEmail && (
+          <View className="absolute inset-0 flex-1 bg-black/60 items-center justify-center z-50">
+            <ActivityIndicator size="large" color="#6366F1" />
+            <Text className="text-white text-xs mt-2 font-pmedium">Sending Verification Email...</Text>
+          </View>
+        )
+      }
       <ScrollView>
         <View className='w-full items-center justify-center min-h-[85vh] px-6 my-6'>
           <View className='items-center mt-10 mb-6'>
@@ -207,7 +221,7 @@ const Register = () => {
             <Text className='text-gray-400 mt-3 text-base font-pmedium'>Create your account to begin</Text>
           </View>
 
-         
+
           {errMsg && (
             <View className='bg-error/10 border border-error/30 rounded-2xl p-4 mb-4 w-full'>
               <Text className='text-error font-pmedium text-center'>{errMsg}</Text>
